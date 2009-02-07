@@ -54,8 +54,8 @@ class FormGenerator {
     return $this->addElement($name, $label, 'checkbox', $extra);
   }
 
-  public function addRadio($name, $label, array $extra = null) {
-    return $this->addElement($name, $label, 'radio', $extra);
+  public function addRadio($name, $label, $value, array $extra = null) {
+    return $this->addElement($name, $label, 'radio', array('value'=>$value) + ($extra?$extra:array()));
   }
 
   public function addSubmit($name, $label, array $extra = null) {
@@ -161,7 +161,7 @@ class FormGenerator_Element extends ArrayObject {
       $this->props = $this->props + $extra;
     }
     if (!isset($this->props['id'])) {
-      $this->props['id'] = 'form-el'.(++$this->uniqueCounter).'-'.$name;
+      $this->props['id'] = 'form-el'.(++self::$uniqueCounter).'-'.$name;
     }
     if (!isset($newEl['class'])) {
       $this->props['class'] = $this->props['type'];
@@ -227,7 +227,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
       $this->props = $this->props + $extra;
     }
     if (!isset($this->props['id'])) {
-      $this->props['id'] = 'form-fs'.(++$this->uniqueCounter);
+      $this->props['id'] = 'form-fs'.(++self::$uniqueCounter);
     }
     ksort($this->props);
   }
@@ -250,8 +250,8 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $this->addElement($name, $label, 'checkbox', $extra);
   }
 
-  public function addRadio($name, $label, array $extra = null) {
-    return $this->addElement($name, $label, 'radio', $extra);
+  public function addRadio($name, $label, $value, array $extra = null) {
+    return $this->addElement($name, $label, 'radio', array('value'=>$value) + ($extra?$extra:array()));
   }
 
   public function addSubmit($name, $label, array $extra = null) {
