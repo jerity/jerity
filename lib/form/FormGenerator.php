@@ -20,6 +20,10 @@ class FormGenerator {
    * Whether to generate XHTML or just HTML
    */
   protected $xhtml = false;
+  /**
+   * Whether we need a top-level list
+   */
+  protected $topLevelList = true;
 
 
   /**
@@ -27,8 +31,9 @@ class FormGenerator {
    *
    * @param bool $xhtml Whether to generate XHTML or just HTML.
    */
-  public function __construct($xhtml = false) {
+  public function __construct($xhtml = false, $topLevelList=true) {
     $this->xhtml = $xhtml;
+    $this->topLevelList = $topLevelList;
   }
 
   protected function &addElement($name, $label, $type, array $extra = null) {
@@ -87,17 +92,17 @@ class FormGenerator {
     if (!count($elements)) {
       return '';
     }
-    $out = "<ul>\n";
+    if ($this->topLevelList) $out = "<ul>\n";
     foreach ($elements as $e) {
-      $out .= "<li>\n";
+      if ($this->topLevelList) $out .= "<li>\n";
       if (isset($e['name']) && $e['name']) {
         $out .= $e->render($this->xhtml, $this->getError($e['name']));
       } else {
         $out .= $e->render($this->xhtml);
       }
-      $out .= "</li>\n";
+      if ($this->topLevelList) $out .= "</li>\n";
     }
-    $out .= "</ul>\n";
+    if ($this->topLevelList) $out .= "</ul>\n";
 
     return $out;
   }
@@ -113,6 +118,8 @@ class FormGenerator {
     $props = $this->formProperties;
     if (!is_null($action))            $props['action'] = $action;
     elseif (!isset($props['action'])) $props['action'] = $_SERVER['REQUEST_URI'];
+    if (!is_null($method))            $props['method'] = strtoupper($method);
+    elseif (!isset($props['method'])) $props['method'] = 'POST';
     $out = '<form';
     foreach ($props as $k=>$v) {
       $out .= ' '.$k.'="'.htmlentities($v).'"';
@@ -138,10 +145,18 @@ class FormGenerator_Element extends ArrayObject {
 
   public function __construct($name, $label, $type, array $extra = null) {
     $this->props = array(
-      'name'  => $name,
-      'label' => $label,
       'type'  => $type,
     );
+    if (!is_null($name)) {
+      $this->props['name'] = $name;
+    }
+    if (!is_null($label)) {
+      if ($type=='submit' || $type=='reset') {
+        $this->props['value'] = $label;
+      } else {
+        $this->props['label'] = $label;
+      }
+    }
     if (!is_null($extra)) {
       $this->props = $this->props + $extra;
     }
@@ -183,12 +198,13 @@ class FormGenerator_Element extends ArrayObject {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
-      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label'])."</label>\n";
-      unset($this['label']);
+      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label']).":</label>\n";
     }
     $out .= '<input';
     foreach ($this as $k=>$v) {
-      $out .= ' '.$k.'="'.htmlentities($v).'"';
+      if ($k != 'label') {
+        $out .= ' '.$k.'="'.htmlentities($v).'"';
+      }
     }
     $out .= $xhtml ? " />\n" : ">\n";
 
@@ -197,7 +213,7 @@ class FormGenerator_Element extends ArrayObject {
 }
 
 class FormGenerator_Fieldset extends FormGenerator_Element {
-  protected $subfields = array();
+  protected $fields = array();
 
   public function __construct($label, array $extra = null) {
     $this->props = array(
@@ -208,14 +224,78 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
       $this->props = $this->props + $extra;
     }
     if (!isset($this->props['id'])) {
-      $this->props['id'] = 'form-el'.(++$this->uniqueCounter).'-'.$name;
-    }
-    if (!isset($newEl['class'])) {
-      $this->props['class'] = $this->props['type'];
-    } elseif (!preg_match('/(?:^| )'.preg_quote($this->props['type']).'(?:$| )/', $this->props['class'])) {
-      $this->props['class'] .= ' '.$this->props['type'];
+      $this->props['id'] = 'form-fs'.(++$this->uniqueCounter);
     }
     ksort($this->props);
+  }
+
+  protected function &addElement($name, $label, $type, array $extra = null) {
+    $newObj = new FormGenerator_Element($name, $label, $type, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
+  }
+
+  public function addInput($name, $label, array $extra = null) {
+    return $this->addElement($name, $label, 'text', $extra);
+  }
+
+  public function addPassword($name, $label, array $extra = null) {
+    return $this->addElement($name, $label, 'password', $extra);
+  }
+
+  public function addCheckbox($name, $label, array $extra = null) {
+    return $this->addElement($name, $label, 'checkbox', $extra);
+  }
+
+  public function addRadio($name, $label, array $extra = null) {
+    return $this->addElement($name, $label, 'radio', $extra);
+  }
+
+  public function addSubmit($name, $label, array $extra = null) {
+    return $this->addElement($name, $label, 'submit', $extra);
+  }
+
+  public function addReset($name, $label, array $extra = null) {
+    return $this->addElement($name, $label, 'reset', $extra);
+  }
+
+  public function renderElementList($elements) {
+    if (!count($elements)) {
+      return '';
+    }
+    $out = "<ul>\n";
+    foreach ($elements as $e) {
+      $out .= "<li>\n";
+      if (isset($e['name']) && $e['name']) {
+        $out .= $e->render($this->xhtml /*, $this->getError($e['name']) */);
+      } else {
+        $out .= $e->render($this->xhtml);
+      }
+      $out .= "</li>\n";
+    }
+    $out .= "</ul>\n";
+
+    return $out;
+  }
+
+  public function render() {
+    $out = '<fieldset';
+    foreach ($this as $k=>$v) {
+      if ($k != 'label' && $k != 'type') {
+        $out .= ' '.$k.'="'.htmlentities($v).'"';
+      }
+    }
+    $out .= ">\n";
+    if (isset($this['label']) && $this['label']) {
+      $out .= '<legend>'.htmlentities($this['label'])."</legend>\n";
+    }
+
+    // render elements
+    $out .= $this->renderElementList($this->fields);
+
+    $out .= "</fieldset>\n";
+
+    return $out;
   }
 }
 
