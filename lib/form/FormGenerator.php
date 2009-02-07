@@ -31,8 +31,10 @@ class FormGenerator {
     $this->xhtml = $xhtml;
   }
 
-  protected function addElement($name, $label, $type, array $extra = null) {
-    $this->fields[] = new FormGenerator_Element($name, $label, $type, $extra);
+  protected function &addElement($name, $label, $type, array $extra = null) {
+    $newObj = new FormGenerator_Element($name, $label, $type, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
   }
 
   public function addInput($name, $label, array $extra = null) {
@@ -60,7 +62,9 @@ class FormGenerator {
   }
 
   public function addFieldset($label, array $extra = null) {
-    return $this->addElement($name, $label, 'reset', $extra);
+    $newObj = new FormGenerator_Fieldset($label, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
   }
 
   public function getError($name) {
@@ -79,51 +83,6 @@ class FormGenerator {
     $this->errors[$name] = $msg;
   }
 
-  /**
-   * Render a form element.
-   *
-   * @param array  $element Array of element properties.
-   * @param string $error   Error message for the element, if applicable.
-   * @return string
-   */
-  public function renderElement(FormGenerator_Element $element, $error=null) {
-    $out = '';
-    if (!isset($element['type'])) {
-      throw new FormGeneratorElementException('Element without type', $element);
-    }
-    switch ($element['type']) {
-      case 'text':
-      case 'password':
-      case 'checkbox':
-      case 'radio':
-      case 'submit':
-      case 'reset':
-        # TODO: add label, and remove from array
-        if (isset($element['label'])) {
-          $out .= '<label for="'.htmlentities($element['id']).'">'.htmlentities($element['label'])."</label>\n";
-          unset($element['label']);
-        }
-        $out .= '<input';
-        foreach ($element as $k=>$v) {
-          $out .= ' '.$k.'="'.htmlentities($v).'"';
-        }
-        $out .= ($this->xhtml) ? " />\n" : ">\n";
-        break;
-      case 'select':
-        break;
-      case 'textarea':
-        break;
-      case 'button':
-        break;
-      case 'fieldset':
-        # render sub-elements
-        break;
-      default:
-        throw new FormGeneratorElementException('Unknown element type', $element);
-    }
-    return $out;
-  }
-
   public function renderElementList($elements) {
     if (!count($elements)) {
       return '';
@@ -132,9 +91,9 @@ class FormGenerator {
     foreach ($elements as $e) {
       $out .= "<li>\n";
       if (isset($e['name']) && $e['name']) {
-        $out .= $this->renderElement($e, $this->getError($e['name']));
+        $out .= $e->render($this->xhtml, $this->getError($e['name']));
       } else {
-        $out .= $this->renderElement($e);
+        $out .= $e->render($this->xhtml);
       }
       $out .= "</li>\n";
     }
@@ -212,9 +171,52 @@ class FormGenerator_Element extends ArrayObject {
   public function getIterator() {
     return new ArrayIterator($this->props);
   }
+
+  /**
+   * Render a form element.
+   *
+   * @param bool   $xhtml Whether to generate XHTML or HTML.
+   * @param string $error An error message to show, if applicable.
+   * @return string
+   */
+  public function render($xhtml=false, $error=null) {
+    $out = '';
+    # add label, and remove from properties array
+    if (isset($this['label'])) {
+      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label'])."</label>\n";
+      unset($this['label']);
+    }
+    $out .= '<input';
+    foreach ($this as $k=>$v) {
+      $out .= ' '.$k.'="'.htmlentities($v).'"';
+    }
+    $out .= $xhtml ? " />\n" : ">\n";
+
+    return $out;
+  }
 }
 
 class FormGenerator_Fieldset extends FormGenerator_Element {
+  protected $subfields = array();
+
+  public function __construct($label, array $extra = null) {
+    $this->props = array(
+      'label' => $label,
+      'type'  => 'fieldset',
+    );
+    if (!is_null($extra)) {
+      $this->props = $this->props + $extra;
+    }
+    if (!isset($this->props['id'])) {
+      $this->props['id'] = 'form-el'.(++$this->uniqueCounter).'-'.$name;
+    }
+    if (!isset($newEl['class'])) {
+      $this->props['class'] = $this->props['type'];
+    } elseif (!preg_match('/(?:^| )'.preg_quote($this->props['type']).'(?:$| )/', $this->props['class'])) {
+      $this->props['class'] .= ' '.$this->props['type'];
+    }
+    ksort($this->props);
+  }
 }
 
 
