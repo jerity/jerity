@@ -197,7 +197,7 @@ class FormGenerator_Element extends ArrayObject {
   public function render($xhtml=false, $error=null) {
     $out = '';
     # add label, and remove from properties array
-    if (isset($this['label'])) {
+    if (isset($this['label']) && !in_array($this['type'], array('checkbox', 'radio'))) {
       $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label']).":</label>\n";
     }
     $out .= '<input';
@@ -207,6 +207,9 @@ class FormGenerator_Element extends ArrayObject {
       }
     }
     $out .= $xhtml ? " />\n" : ">\n";
+    if (isset($this['label']) && in_array($this['type'], array('checkbox', 'radio'))) {
+      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label'])."</label>\n";
+    }
 
     return $out;
   }
@@ -259,6 +262,12 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $this->addElement($name, $label, 'reset', $extra);
   }
 
+  public function addFieldset($label, array $extra = null) {
+    $newObj = new FormGenerator_Fieldset($label, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
+  }
+
   public function renderElementList($elements) {
     if (!count($elements)) {
       return '';
@@ -287,7 +296,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     }
     $out .= ">\n";
     if (isset($this['label']) && $this['label']) {
-      $out .= '<legend>'.htmlentities($this['label'])."</legend>\n";
+      $out .= '<legend><span>'.htmlentities($this['label'])."</span></legend>\n";
     }
 
     // render elements
