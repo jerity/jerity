@@ -213,6 +213,9 @@ $fs->addInput('suburb',   'Suburb/Town');
 $fs->addInput('postcode', 'Postcode');
 $fs->addInput('country',  'Country');
 
+$fs = $fg->addFieldset('Comments');
+$fs->addTextarea('comments', 'Comments');
+
 $fs = $fg->addFieldset(null, array('class'=>'submit'));
 $fs->addSubmit(null,  'Begin download');
 

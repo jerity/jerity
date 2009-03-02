@@ -72,6 +72,12 @@ class FormGenerator {
     return $newObj;
   }
 
+  public function addTextarea($name, $label, array $extra = null) {
+    $newObj = new FormGenerator_Textarea($name, $label, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
+  }
+
   public function getError($name) {
     if (!isset($this->errors[$name])) {
       return null;
@@ -268,6 +274,12 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $newObj;
   }
 
+  public function addTextarea($name, $label, array $extra = null) {
+    $newObj = new FormGenerator_Textarea($name, $label, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
+  }
+
   public function renderElementList($elements) {
     if (!count($elements)) {
       return '';
@@ -303,6 +315,40 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     $out .= $this->renderElementList($this->fields);
 
     $out .= "</fieldset>\n";
+
+    return $out;
+  }
+}
+
+class FormGenerator_Textarea extends FormGenerator_Element {
+  public function __construct($name, $label, array $extra = null) {
+    parent::__construct($name, $label, 'textarea', $extra);
+  }
+
+  /**
+   * Render a form element.
+   *
+   * @param bool   $xhtml Whether to generate XHTML or HTML.
+   * @param string $error An error message to show, if applicable.
+   * @return string
+   */
+  public function render($xhtml=false, $error=null) {
+    $out = '';
+    # add label, and remove from properties array
+    if (isset($this['label']) && !in_array($this['type'], array('checkbox', 'radio'))) {
+      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label']).":</label>\n";
+    }
+    $out .= '<textarea';
+    foreach ($this as $k=>$v) {
+      if ($k != 'label' && $k != 'value') {
+        $out .= ' '.$k.'="'.htmlentities($v).'"';
+      }
+    }
+    $out .= '>';
+    if (isset($this['value'])) {
+      $out .= htmlentities($this['value']);
+    }
+    $out .= "</textarea>\n";
 
     return $out;
   }
