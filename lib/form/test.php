@@ -1,3 +1,8 @@
+<html>
+<head>
+<title>FormGenerator test page</title>
+</head>
+<body>
 <?php
 require_once('FormGenerator.php');
 
@@ -222,4 +227,6 @@ $fs->addSubmit(null,  'Begin download');
 echo $fg->render();
 #echo '<hr>';
 #echo '<pre>'.htmlentities($fg->render()).'</pre>';
-
+?>
+</body>
+</html>
