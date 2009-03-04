@@ -13,6 +13,10 @@ class FormGenerator {
    */
   protected $errors = array();
   /**
+   * List of pre-filled data
+   */
+  protected $data = array();
+  /**
    * Attributes for the form element
    */
   protected $formProperties = array();
@@ -94,6 +98,26 @@ class FormGenerator {
     $this->errors[$name] = $msg;
   }
 
+  public function clearData() {
+    $this->data = array();
+  }
+
+  public function populateData(array $data) {
+    $this->data = $data;
+  }
+
+  public function populateFromGet() {
+    $this->populateData($_GET);
+  }
+
+  public function populateFromPost() {
+    $this->populateData($_POST);
+  }
+
+  public function populateFromRequest() {
+    $this->populateData($_REQUEST);
+  }
+
   public function renderElementList($elements) {
     if (!count($elements)) {
       return '';
@@ -102,8 +126,14 @@ class FormGenerator {
     foreach ($elements as $e) {
       if ($this->topLevelList) $out .= "<li>\n";
       if (isset($e['name']) && $e['name']) {
+        if (isset($this->data[$e['name']])) {
+          $e->populate($this->data[$e['name']]);
+        }
         $out .= $e->render($this->xhtml, $this->getError($e['name']));
       } else {
+        if ($e instanceof FormGenerator_Fieldset) {
+          $e->populate($this->data);
+        }
         $out .= $e->render($this->xhtml);
       }
       if ($this->topLevelList) $out .= "</li>\n";
@@ -148,6 +178,8 @@ class FormGenerator_Element extends ArrayObject {
    */
   protected static $uniqueCounter = 0;
   protected $props = array();
+  protected $data = null;
+  protected $dataOnce = false;
 
   public function __construct($name, $label, $type, array $extra = null) {
     $this->props = array(
@@ -194,6 +226,23 @@ class FormGenerator_Element extends ArrayObject {
   }
 
   /**
+   * Pre-populate this control with data
+   */
+  public function populate($data) {
+    $this->dataOnce = false;
+    $this->data = $data;
+  }
+
+  /**
+   * Pre-populate this control with data, but only for the next render
+   */
+  public function populateOnce($data) {
+    $val = $this->populate($data);
+    $this->dataOnce = true;
+    return $val;
+  }
+
+  /**
    * Render a form element.
    *
    * @param bool   $xhtml Whether to generate XHTML or HTML.
@@ -206,9 +255,31 @@ class FormGenerator_Element extends ArrayObject {
     if (isset($this['label']) && !in_array($this['type'], array('checkbox', 'radio'))) {
       $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label']).":</label>\n";
     }
+
+    if (!is_null($this->data)) {
+      switch ($this['type']) {
+        case 'text':
+          $this->props['value'] = $this->data;
+          break;
+        case 'checkbox':
+        case 'radio':
+          if (!is_null($this->data) && (!isset($this['value']) || $this->data == $this['value'])) {
+            $this->props['checked'] = true;
+          }
+          break;
+      }
+      if ($this->dataOnce) {
+        $this->dataOnce=false;
+        $this->data = null;
+      }
+    }
+
     $out .= '<input';
     foreach ($this as $k=>$v) {
-      if ($k != 'label') {
+      if ($v===true) {
+        $v = $k;
+      }
+      if ($k != 'label' && $v) {
         $out .= ' '.$k.'="'.htmlentities($v).'"';
       }
     }
@@ -288,8 +359,14 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     foreach ($elements as $e) {
       $out .= "<li>\n";
       if (isset($e['name']) && $e['name']) {
+        if (isset($this->data[$e['name']])) {
+          $e->populate($this->data[$e['name']]);
+        }
         $out .= $e->render($this->xhtml /*, $this->getError($e['name']) */);
       } else {
+        if ($e instanceof FormGenerator_Fieldset) {
+          $e->populate($this->data);
+        }
         $out .= $e->render($this->xhtml);
       }
       $out .= "</li>\n";

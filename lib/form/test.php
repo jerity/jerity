@@ -224,6 +224,8 @@ $fs->addTextarea('comments', 'Comments');
 $fs = $fg->addFieldset(null, array('class'=>'submit'));
 $fs->addSubmit(null,  'Begin download');
 
+$fg->populateFromPost();
+
 echo $fg->render();
 #echo '<hr>';
 #echo '<pre>'.htmlentities($fg->render()).'</pre>';
