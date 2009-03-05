@@ -422,7 +422,9 @@ class FormGenerator_Textarea extends FormGenerator_Element {
       }
     }
     $out .= '>';
-    if (isset($this['value'])) {
+    if (!is_null($this->data)) {
+      $out .= htmlentities($this->data);
+    } elseif (isset($this['value'])) {
       $out .= htmlentities($this['value']);
     }
     $out .= "</textarea>\n";
