@@ -215,7 +215,7 @@ class FormGenerator_Element extends ArrayObject {
       $this->props = $this->props + $extra;
     }
     if (!isset($this->props['id'])) {
-      $this->props['id'] = 'form-el'.(++self::$uniqueCounter).'-'.$name;
+      $this->props['id'] = 'form-el'.(++self::$uniqueCounter).($name ? ('-'.$name) : '');
     }
     if (!isset($newEl['class'])) {
       $this->props['class'] = $this->props['type'];
@@ -310,6 +310,7 @@ class FormGenerator_Element extends ArrayObject {
 
 class FormGenerator_Fieldset extends FormGenerator_Element {
   protected $fields = array();
+  protected static $fsUniqueCounter = 0;
 
   public function __construct($label, array $extra = null) {
     $this->props = array(
@@ -320,7 +321,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
       $this->props = $this->props + $extra;
     }
     if (!isset($this->props['id'])) {
-      $this->props['id'] = 'form-fs'.(++self::$uniqueCounter);
+      $this->props['id'] = 'form-fs'.(++self::$fsUniqueCounter);
     }
     ksort($this->props);
   }
