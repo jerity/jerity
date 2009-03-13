@@ -30,42 +30,28 @@ echo '<hr>';
  */
 ?>
 <style type="text/css">
-/* ***** BEGIN: body styles ***** */
-body {
-  font-size: 12px;
-  font-family: sans-serif;
-}
-/* *****  END: body styles  ***** */
-/* ***** BEGIN: core styles ***** */
+/* ***** BEGIN: form styles ***** */
 form fieldset {
-  margin: 1.5em 0 0 0;
-  padding: 0;
+  margin: 0 0 -1em 0;
+  padding: 0 0 1em 0;
+  position: relative;
 }
 form legend {
-  margin-left: 1em;
-  color: #000;
-  font-weight: bold;
+  padding: 0;
+  margin-left: 0;
 }
 form fieldset ul {
-  padding: 1em 1em 0 1em;
   list-style: none;
+  padding: 3em 1em 0 1em;
 }
 form fieldset li {
   padding-bottom: 1em;
 }
-form fieldset.submit {
-  border-style: none;
-}
-/* *****  END: core styles  ***** */
-/* ***** BEGIN: top labels ***** */
 form.toplabels label {
   display: block;
 }
-/* *****  END: top labels  ***** */
-/* ***** BEGIN: left labels ***** */
 form.leftlabels label {
   float: left;
-  width: 10em;
   margin-right: 1em;
 }
 form.leftlabels fieldset li {
@@ -81,72 +67,25 @@ form.leftlabels fieldset {
 form.leftlabels fieldset.submit {
   float: none;
   width: auto;
-  padding-left: 11em;
 }
-/* *****  END: left labels  ***** */
 /* NOTE: right labels do NOT work with nested fieldsets */
-/* ***** BEGIN: right labels ***** */
 form.ralignlabels label {
   text-align: right;
-}
-/* *****  END: right labels  ***** */
-/* ***** BEGIN: fieldset styling part 1 ***** */
-form legend {
-  padding: 0;
-}
-form fieldset {
-  border: 1px solid #bfbab0;
-  background-color: #f2efe9;
-}
-form fieldset.submit {
-  border-style: none;
-  background-color: transparent;
-}
-/* *****  END: fieldset styling part 1  ***** */
-/* ***** BEGIN: fieldset styling part 2 ***** */
-form fieldset {
-  margin: 0 0 -1em 0;
-  padding: 0 0 1em 0;
-  border-style: none;
-  border-top: 1px solid #bfbab0;
 }
 form legend span {
   position: absolute;
   margin-top: 0.5em;
-  font-size: 135%;
-}
-/* *****  END: fieldset styling part 2  ***** */
-/* ***** BEGIN: firefox bugfix ***** */
-form fieldset {
-  position: relative;
-}
-form legend span {
   left: 0.74em;
   top: 0;
-}
-form legend {
-  margin-left: 0;
-}
-form fieldset ul {
-  padding: 3em 1em 0 1em;
-}
-form fieldset.submit {
-  background-color: #fff;
 }
 form fieldset.submit ul {
   padding-top: 0.5em;
 }
-/* *****  END: firefox bugfix  ***** */
-/* ***** BEGIN: nested fieldsets ***** */
 form fieldset fieldset, form.leftlabels fieldset fieldset {
   margin-bottom: -1.5em;
-  border-style: none;
-  background-color: transparent;
-  background-image: none;
 }
 form fieldset fieldset legend {
   margin-left: 0;
-  font-weight: normal;
 }
 form fieldset fieldset legend span {
   font-size: inherit;
@@ -155,7 +94,7 @@ form fieldset fieldset legend span {
 form.leftlabels fieldset fieldset ul {
   position: relative;
   top: 0;
-  margin: 0 0 0 11em;
+  margin: 0;
   padding: 0;
 }
 form.toplabels fieldset fieldset ul {
@@ -167,25 +106,15 @@ form fieldset fieldset label, form.toplabels fieldset fieldset label, form.leftl
   margin-right: auto;
   display: inline;
 }
-/* *****  END: nested fieldsets  ***** */
+/* *****  END: form styles  ***** */
 </style>
 <!--[if lte IE7]>
 <style type="text/css">
-/* ***** BEGIN: IE fix for fieldsets ***** */
 form legend {
   position: relative;
   left: -7px;
   top: -0.75em;
 }
-form fieldset ul {
-  padding-top: 0.25em;
-  zoom: 1;
-}
-form fieldset {
-  position: relative;
-}
-/* *****  END: IE fix for fieldsets  ***** */
-/* ***** BEGIN: firefox bugfix (ie)  ***** */
 form legend span {
   margin-top: 1.25em;
 }
@@ -193,9 +122,56 @@ form fieldset ul {
   padding-top: 3.25em;
   zoom: 1;
 }
-/* *****  END: firefox bugfix (ie)   ***** */
+form fieldset {
+  position: relative;
+}
 </style>
 <![endif]-->
+<style type="text/css">
+/* ***** BEGIN: body styles ***** */
+body {
+  font-size: 12px;
+  font-family: sans-serif;
+}
+/* *****  END: body styles  ***** */
+
+/* ***** BEGIN: form skin ***** */
+form fieldset {
+  background-color: #f2efe9;
+  border-style: none;
+  border-top: 1px solid #bfbab0;
+}
+form legend {
+  color: #000;
+  font-weight: bold;
+}
+form fieldset.submit {
+  border-style: none;
+  background-color: transparent;
+}
+form legend span {
+  font-size: 135%;
+}
+form fieldset fieldset, form.leftlabels fieldset fieldset {
+  border-style: none;
+  background-color: transparent;
+  background-image: none;
+}
+form fieldset fieldset legend {
+  font-weight: normal;
+}
+/* NOTE: label width is 10em, and we have a 1em gap */
+form.leftlabels label {
+  width: 10em;
+}
+form.leftlabels fieldset.submit {
+  padding-left: 11em;
+}
+form.leftlabels fieldset fieldset ul {
+  margin-left: 11em;
+}
+/* *****  END: form skin  ***** */
+</style>
 <?php
 
 $fg = new FormGenerator(false, false);
