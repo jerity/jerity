@@ -2,6 +2,7 @@ form fieldset {
   margin: 0 0 -1em 0;
   padding: 0 0 1em 0;
   position: relative;
+  border-style: none;
 }
 form legend {
   padding: 0;
