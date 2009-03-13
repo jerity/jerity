@@ -1,34 +1,6 @@
 <html>
 <head>
 <title>FormGenerator test page</title>
-</head>
-<body>
-<?php
-require_once('FormGenerator.php');
-
-/*
-$fg = new FormGenerator();
-echo '<pre>'.htmlentities($fg->render()).'</pre>';
-echo '<hr>';
-
-$fg = new FormGenerator();
-$fg->addInput('name', 'Name');
-echo '<pre>'.htmlentities($fg->render()).'</pre>';
-echo '<hr>';
-
-$fg = new FormGenerator();
-$fg->addInput('name', 'Name', array('id'=>'textwoo'));
-$fg->addInput('foo', 'Foo');
-echo '<pre>'.htmlentities($fg->render()).'</pre>';
-echo '<hr>';
-
-$fg = new FormGenerator();
-$fg->addInput('name', 'Name', array('id'=>'textwoo'));
-$fg->addInput('foo', 'Foo');
-echo '<pre>'.htmlentities($fg->render()).'</pre>';
-echo '<hr>';
- */
-?>
 <link rel="stylesheet" type="text/css" href="core.css">
 <!--[if lte IE7]><link rel="stylesheet" type="text/css" href="core.ie.le7.css"><![endif]-->
 <style type="text/css">
@@ -40,7 +12,10 @@ body {
 /* *****  END: body styles  ***** */
 </style>
 <link rel="stylesheet" type="text/css" href="skin.css">
+</head>
+<body>
 <?php
+require_once('FormGenerator.php');
 
 $fg = new FormGenerator(false, false);
 $fg->setAttribute('class', 'leftlabels');
@@ -76,8 +51,6 @@ $fs->addSubmit(null,  'Begin download');
 $fg->populateFromPost();
 
 echo $fg->render();
-#echo '<hr>';
-#echo '<pre>'.htmlentities($fg->render()).'</pre>';
 ?>
 </body>
 </html>
