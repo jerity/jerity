@@ -217,7 +217,7 @@ class FormGenerator_Element extends ArrayObject {
     if (!isset($this->props['id'])) {
       $this->props['id'] = 'form-el'.(++self::$uniqueCounter).($name ? ('-'.$name) : '');
     }
-    if (!isset($newEl['class'])) {
+    if (!isset($this->props['class'])) {
       $this->props['class'] = $this->props['type'];
     } elseif (!preg_match('/(?:^| )'.preg_quote($this->props['type']).'(?:$| )/', $this->props['class'])) {
       $this->props['class'] .= ' '.$this->props['type'];
@@ -368,6 +368,12 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $newObj;
   }
 
+  public function addHint($content, array $extra = null) {
+    $newObj = new FormGenerator_Hint($content, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
+  }
+
   public function renderElementList($elements) {
     if (!count($elements)) {
       return '';
@@ -429,7 +435,7 @@ class FormGenerator_Textarea extends FormGenerator_Element {
   public function render($xhtml=false, $error=null) {
     $out = '';
     # add label, and remove from properties array
-    if (isset($this['label']) && !in_array($this['type'], array('checkbox', 'radio'))) {
+    if (isset($this['label'])) {
       $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label']).":</label>\n";
     }
     $out .= '<textarea';
@@ -445,6 +451,59 @@ class FormGenerator_Textarea extends FormGenerator_Element {
       $out .= htmlentities($this['value']);
     }
     $out .= "</textarea>\n";
+
+    return $out;
+  }
+}
+
+
+class FormGenerator_Hint extends FormGenerator_Element {
+  protected static $hintUniqueCounter = 0;
+
+  public function __construct($content, array $extra = null) {
+    $this->props = array(
+      'content' => $content,
+      'type'    => 'hint',
+    );
+    if (!is_null($extra)) {
+      $this->props = $this->props + $extra;
+    }
+    if (!isset($this->props['id'])) {
+      $this->props['id'] = 'form-hint'.(++self::$hintUniqueCounter);
+    }
+    if (!isset($this->props['class'])) {
+      $this->props['class'] = $this->props['type'];
+    } elseif (!preg_match('/(?:^| )'.preg_quote($this->props['type']).'(?:$| )/', $this->props['class'])) {
+      $this->props['class'] .= ' '.$this->props['type'];
+    }
+    ksort($this->props);
+  }
+
+  /**
+   * Render a form hint.
+   *
+   * @param bool   $xhtml Whether to generate XHTML or HTML.
+   * @param string $error An error message to show, if applicable.
+   * @return string
+   */
+  public function render($xhtml=false, $error=null) {
+    $out = '';
+    # add label, and remove from properties array
+    $out .= '<div';
+    foreach ($this as $k=>$v) {
+      if ($k != 'label' && $k != 'value') {
+        $out .= ' '.$k.'="'.htmlentities($v).'"';
+      }
+    }
+    $out .= '>';
+    if (isset($this['content'])) {
+      if (!isset($this['escape']) || $this['escape']) {
+        $out .= htmlentities($this['content']);
+      } else {
+        $out .= $this['content'];
+      }
+    }
+    $out .= "</div>\n";
 
     return $out;
   }
