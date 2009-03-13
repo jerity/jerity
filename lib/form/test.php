@@ -34,6 +34,7 @@ $cg->addCheckbox('hobby2', 'Programming');
 $cg->addCheckbox('hobby3', 'Martial Arts');
 $cg->addCheckbox('hobby4', 'Ballroom Dancing');
 $fs->addInput('phone', 'Telephone');
+$fs->addHint('Please include your international country code.');
 
 $fs = $fg->addFieldset('Delivery Address');
 $fs->addInput('address1', 'Address 1');

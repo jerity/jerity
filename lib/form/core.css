@@ -74,3 +74,7 @@ form fieldset fieldset label, form.toplabels fieldset fieldset label, form.leftl
   margin-right: auto;
   display: inline;
 }
+form div.hint {
+  margin-top: -0.75em;
+  font-size: 90%;
+}
