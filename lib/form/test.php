@@ -37,155 +37,159 @@ body {
 }
 /* *****  END: body styles  ***** */
 /* ***** BEGIN: core styles ***** */
-fieldset {
+form fieldset {
   margin: 1.5em 0 0 0;
   padding: 0;
 }
-legend {
+form legend {
   margin-left: 1em;
   color: #000;
   font-weight: bold;
 }
-fieldset ul {
+form fieldset ul {
   padding: 1em 1em 0 1em;
   list-style: none;
 }
-fieldset li {
+form fieldset li {
   padding-bottom: 1em;
 }
-fieldset.submit {
+form fieldset.submit {
   border-style: none;
 }
 /* *****  END: core styles  ***** */
-/* ***** BEGIN: top labels ***** *
-label {
+/* ***** BEGIN: top labels ***** */
+form.toplabels label {
   display: block;
 }
- * *****  END: top labels  ***** */
+/* *****  END: top labels  ***** */
 /* ***** BEGIN: left labels ***** */
-label {
+form.leftlabels label {
   float: left;
   width: 10em;
   margin-right: 1em;
 }
-fieldset li {
+form.leftlabels fieldset li {
   float: left;
   clear: left;
   width: 100%;
 }
-fieldset {
+form.leftlabels fieldset {
   float: left;
   clear: left;
   width: 100%;
 }
-fieldset.submit {
+form.leftlabels fieldset.submit {
   float: none;
   width: auto;
   padding-left: 11em;
 }
 /* *****  END: left labels  ***** */
 /* NOTE: right labels do NOT work with nested fieldsets */
-/* ***** BEGIN: right labels ***** *
-label {
+/* ***** BEGIN: right labels ***** */
+form.ralignlabels label {
   text-align: right;
 }
- * *****  END: right labels  ***** */
+/* *****  END: right labels  ***** */
 /* ***** BEGIN: fieldset styling part 1 ***** */
-legend {
+form legend {
   padding: 0;
 }
-fieldset {
+form fieldset {
   border: 1px solid #bfbab0;
   background-color: #f2efe9;
 }
-fieldset.submit {
+form fieldset.submit {
   border-style: none;
   background-color: transparent;
 }
 /* *****  END: fieldset styling part 1  ***** */
 /* ***** BEGIN: fieldset styling part 2 ***** */
-fieldset {
+form fieldset {
   margin: 0 0 -1em 0;
   padding: 0 0 1em 0;
   border-style: none;
   border-top: 1px solid #bfbab0;
 }
-legend span {
+form legend span {
   position: absolute;
   margin-top: 0.5em;
   font-size: 135%;
 }
 /* *****  END: fieldset styling part 2  ***** */
 /* ***** BEGIN: firefox bugfix ***** */
-fieldset {
+form fieldset {
   position: relative;
 }
-legend span {
+form legend span {
   left: 0.74em;
   top: 0;
 }
-legend {
+form legend {
   margin-left: 0;
 }
-fieldset ul {
+form fieldset ul {
   padding: 3em 1em 0 1em;
 }
-fieldset.submit {
+form fieldset.submit {
   background-color: #fff;
 }
-fieldset.submit ul {
+form fieldset.submit ul {
   padding-top: 0.5em;
 }
 /* *****  END: firefox bugfix  ***** */
 /* ***** BEGIN: nested fieldsets ***** */
-fieldset fieldset {
+form fieldset fieldset, form.leftlabels fieldset fieldset {
   margin-bottom: -1.5em;
   border-style: none;
   background-color: transparent;
   background-image: none;
 }
-fieldset fieldset legend {
+form fieldset fieldset legend {
   margin-left: 0;
   font-weight: normal;
 }
-fieldset fieldset legend span {
+form fieldset fieldset legend span {
   font-size: inherit;
   left: 0;
 }
-fieldset fieldset ul {
+form.leftlabels fieldset fieldset ul {
   position: relative;
   top: 0;
   margin: 0 0 0 11em;
   padding: 0;
 }
-fieldset fieldset label {
+form.toplabels fieldset fieldset ul {
+  padding: 2.5em 1em 0 0;
+}
+form fieldset fieldset label, form.toplabels fieldset fieldset label, form.leftlabels fieldset fieldset label {
   float: none;
   width: auto;
   margin-right: auto;
+  display: inline;
 }
 /* *****  END: nested fieldsets  ***** */
 </style>
 <!--[if lte IE7]>
 <style type="text/css">
 /* ***** BEGIN: IE fix for fieldsets ***** */
-legend {
+form legend {
   position: relative;
   left: -7px;
   top: -0.75em;
 }
-fieldset ul {
+form fieldset ul {
   padding-top: 0.25em;
   zoom: 1;
 }
-fieldset {
+form fieldset {
   position: relative;
 }
 /* *****  END: IE fix for fieldsets  ***** */
 /* ***** BEGIN: firefox bugfix (ie)  ***** */
-legend span {
+form legend span {
   margin-top: 1.25em;
 }
-fieldset ul {
+form fieldset ul {
   padding-top: 3.25em;
   zoom: 1;
 }
@@ -195,6 +199,7 @@ fieldset ul {
 <?php
 
 $fg = new FormGenerator(false, false);
+$fg->setAttribute('class', 'leftlabels');
 
 $fs = $fg->addFieldset('Contact Details');
 $fs->addInput('name',  'Name');
