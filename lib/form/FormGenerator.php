@@ -118,20 +118,24 @@ class FormGenerator {
     $this->data = array();
   }
 
-  public function populateData(array $data) {
-    $this->data = $data;
+  public function populateData(array $data, $replace = true) {
+    if ($replace) {
+      $this->data = $data;
+    } else { // merge and overwrite
+      $this->data += $data;
+    }
   }
 
-  public function populateFromGet() {
-    $this->populateData($_GET);
+  public function populateFromGet($replace = true) {
+    $this->populateData($_GET, $replace);
   }
 
-  public function populateFromPost() {
-    $this->populateData($_POST);
+  public function populateFromPost($replace = true) {
+    $this->populateData($_POST, $replace);
   }
 
-  public function populateFromRequest() {
-    $this->populateData($_REQUEST);
+  public function populateFromRequest($replace = true) {
+    $this->populateData($_REQUEST, $replace);
   }
 
   public function renderElementList($elements) {
