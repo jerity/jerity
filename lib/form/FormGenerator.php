@@ -40,6 +40,22 @@ class FormGenerator {
     $this->topLevelList = $topLevelList;
   }
 
+  public function setAttribute($name, $value) {
+    $this->formProperties[$name] = $value;
+  }
+
+  public function getAttribute($name) {
+    return isset($this->formProperties[$name]) ? $this->formProperties[$name] : null;
+  }
+
+  public function hasAttribute($name) {
+    return isset($this->formProperties[$name]);
+  }
+
+  public function delAttribute($name) {
+    unset($this->formProperties[$name]);
+  }
+
   protected function &addElement($name, $label, $type, array $extra = null) {
     $newObj = new FormGenerator_Element($name, $label, $type, $extra);
     $this->fields[] = $newObj;
