@@ -92,6 +92,12 @@ class FormGenerator {
     return $newObj;
   }
 
+  public function addSelect($name, $label, $options, array $extra = null) {
+    $newObj = new FormGenerator_Select($name, $label, $options, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
+  }
+
   public function addTextarea($name, $label, array $extra = null) {
     $newObj = new FormGenerator_Textarea($name, $label, $extra);
     $this->fields[] = $newObj;
@@ -366,6 +372,12 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $newObj;
   }
 
+  public function addSelect($name, $label, $options, array $extra = null) {
+    $newObj = new FormGenerator_Select($name, $label, $options, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
+  }
+
   public function addTextarea($name, $label, array $extra = null) {
     $newObj = new FormGenerator_Textarea($name, $label, $extra);
     $this->fields[] = $newObj;
@@ -444,7 +456,7 @@ class FormGenerator_Textarea extends FormGenerator_Element {
     }
     $out .= '<textarea';
     foreach ($this as $k=>$v) {
-      if ($k != 'label' && $k != 'value') {
+      if ($k != 'label' && $k != 'value' && $k != 'type') {
         $out .= ' '.$k.'="'.htmlentities($v).'"';
       }
     }
@@ -455,6 +467,84 @@ class FormGenerator_Textarea extends FormGenerator_Element {
       $out .= htmlentities($this['value']);
     }
     $out .= "</textarea>\n";
+
+    return $out;
+  }
+}
+
+class FormGenerator_Select extends FormGenerator_Element {
+  protected $options = array();
+  const OPTIONS_KEY_VALUE  = 0;
+  const OPTIONS_VALUE_ONLY = 1;
+  const OPTIONS_FULL       = 2;
+
+  public function __construct($name, $label, array $options = null, array $extra = null) {
+    parent::__construct($name, $label, 'select', $extra);
+    if (!is_null($options)) {
+      $this->setOptions($options, self::OPTIONS_KEY_VALUE);
+    }
+  }
+
+  public function setOptions(array $options, $arraytype = self::OPTIONS_KEY_VALUE) {
+    switch ($arraytype) {
+      case self::OPTIONS_FULL:
+        $this->options = $options;
+        return; # NOTE: this is a return
+      case self::OPTIONS_KEY_VALUE:
+        $this->options = array_map($val_creator, $options);
+        break;
+      case self::OPTIONS_VALUE_ONLY:
+        $this->options = array_combine($options, array_map($val_creator, $options));
+        break;
+      default:
+        throw new InvalidArgumentException('Invalid argument types');
+    }
+    foreach ($this->options as $k => $v) {
+      $this->options[$k] = array('value'=>$k, 'label'=>$v);
+    }
+  }
+
+  /**
+   * Render a form element.
+   *
+   * @param bool   $xhtml Whether to generate XHTML or HTML.
+   * @param string $error An error message to show, if applicable.
+   * @return string
+   */
+  public function render($xhtml=false, $error=null) {
+    $out = '';
+    # add label, and remove from properties array
+    if (isset($this['label'])) {
+      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label']).":</label>\n";
+    }
+    $out .= '<select';
+    foreach ($this as $k=>$v) {
+      if ($k != 'label' && $k != 'value' && $k != 'type') {
+        $out .= ' '.$k.'="'.htmlentities($v).'"';
+      }
+    }
+    $out .= ">\n";
+    if (!is_null($this->data)) {
+      if (isset($this->options[$this->data])) {
+        $this->options[$this->data]['selected'] = 'selected';
+      }
+    } elseif (isset($this['value'])) {
+      if (isset($this->options[$this['value']])) {
+        $this->options[$this['value']]['selected'] = 'selected';
+      }
+    }
+    foreach ($this->options as $option) {
+      $out .= '<option';
+      foreach ($option as $k=>$v) {
+        if ($k != 'label') {
+          $out .= ' '.$k.'="'.htmlentities($v).'"';
+        }
+      }
+      $out .= '>';
+      $out .= htmlentities($option['label']);
+      $out .= "</option>\n";
+    }
+    $out .= "</select>\n";
 
     return $out;
   }
@@ -492,10 +582,9 @@ class FormGenerator_Hint extends FormGenerator_Element {
    */
   public function render($xhtml=false, $error=null) {
     $out = '';
-    # add label, and remove from properties array
     $out .= '<div';
     foreach ($this as $k=>$v) {
-      if ($k != 'label' && $k != 'value') {
+      if ($k != 'content' && $k != 'type') {
         $out .= ' '.$k.'="'.htmlentities($v).'"';
       }
     }
