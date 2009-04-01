@@ -148,7 +148,7 @@ class FormGenerator {
     if (!count($elements)) {
       return '';
     }
-    if ($this->topLevelList) $out = "<ul>\n";
+    $out = ($this->topLevelList) ? "<ul>\n" : '';
     foreach ($elements as $e) {
       if ($this->topLevelList) $out .= "<li>\n";
       if (isset($e['name']) && $e['name']) {
@@ -390,7 +390,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $newObj;
   }
 
-  public function renderElementList($elements) {
+  public function renderElementList($elements, $xhtml=false) {
     if (!count($elements)) {
       return '';
     }
@@ -401,12 +401,12 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
         if (isset($this->data[$e['name']])) {
           $e->populate($this->data[$e['name']]);
         }
-        $out .= $e->render($this->xhtml /*, $this->getError($e['name']) */);
+        $out .= $e->render($xhtml /*, $this->getError($e['name']) */);
       } else {
         if ($e instanceof FormGenerator_Fieldset) {
           $e->populate($this->data);
         }
-        $out .= $e->render($this->xhtml);
+        $out .= $e->render($xhtml);
       }
       $out .= "</li>\n";
     }
@@ -415,7 +415,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $out;
   }
 
-  public function render() {
+  public function render($xhtml=false, $error=null) {
     $out = '<fieldset';
     foreach ($this as $k=>$v) {
       if ($k != 'label' && $k != 'type') {
@@ -428,7 +428,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     }
 
     // render elements
-    $out .= $this->renderElementList($this->fields);
+    $out .= $this->renderElementList($this->fields, $xhtml);
 
     $out .= "</fieldset>\n";
 
@@ -491,16 +491,18 @@ class FormGenerator_Select extends FormGenerator_Element {
         $this->options = $options;
         return; # NOTE: this is a return
       case self::OPTIONS_KEY_VALUE:
-        $this->options = array_map($val_creator, $options);
+        foreach ($options as $k => $v) {
+          $this->options[$k] = array('value'=>$k, 'label'=>$v);
+        }
         break;
       case self::OPTIONS_VALUE_ONLY:
         $this->options = array_combine($options, array_map($val_creator, $options));
+        foreach ($this->options as $k => $v) {
+          $this->options[$k] = array('value'=>$k, 'label'=>$v);
+        }
         break;
       default:
         throw new InvalidArgumentException('Invalid argument types');
-    }
-    foreach ($this->options as $k => $v) {
-      $this->options[$k] = array('value'=>$k, 'label'=>$v);
     }
   }
 
