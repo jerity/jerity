@@ -269,6 +269,44 @@ class FormGenerator_Element extends ArrayObject {
   }
 
   /**
+   * Render an HTML tag.
+   *
+   * Note that \a $content is \b not escaped, but is output verbatim.
+   *
+   * @param string $tag         The name of the tag to render
+   * @param array  $attrs       Associative array of attributes for the tag
+   * @param mixed  $content     Tag content; false to force an empty tag in XHTML mode (single tag in HTML mode), null to force open tag.
+   * @param bool   $xhtml       Whether to generate XHTML or HMTL
+   * @param array  $ignoreAttrs Array of keys to ignore from \a $attrs
+   */
+  protected static function renderTag($tag, array $attrs = null, $content = null, $xhtml = false, array $ignoreAttrs = null) {
+    if (is_null($attrs)) {
+      $attrs = array();
+    }
+    if (!is_null($ignoreAttrs) && count($ignoreAttrs)) {
+      $attrs = array_diff_key($attrs, array_flip($ignoreAttrs));
+    }
+
+    $out = '<'.$tag;
+    foreach ($attrs as $k=>$v) {
+      if ($v === false) {
+        continue;
+      }
+      if ($v===true) {
+        $v = $k;
+      }
+      $out .= ' '.htmlentities($k).'="'.htmlentities($v).'"';
+    }
+    $out .= ($xhtml && $content===false) ? " />" : ">";
+    if (!is_null($content) && $content !== false) {
+      $out .= $content;
+      $out .= '</'.$tag.'>';
+    }
+
+    return $out;
+  }
+
+  /**
    * Render a form element.
    *
    * @param bool   $xhtml Whether to generate XHTML or HTML.
@@ -279,7 +317,7 @@ class FormGenerator_Element extends ArrayObject {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label']) && !in_array($this['type'], array('checkbox', 'radio'))) {
-      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label']).":</label>\n";
+      $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']).':')."\n";
     }
 
     if (!is_null($this->data)) {
@@ -300,18 +338,10 @@ class FormGenerator_Element extends ArrayObject {
       }
     }
 
-    $out .= '<input';
-    foreach ($this as $k=>$v) {
-      if ($v===true) {
-        $v = $k;
-      }
-      if ($k != 'label' && $v) {
-        $out .= ' '.$k.'="'.htmlentities($v).'"';
-      }
-    }
-    $out .= $xhtml ? " />\n" : ">\n";
+    $out .= self::renderTag('input', $this->props, false, $xhtml, array('label', 'required'))."\n";
+
     if (isset($this['label']) && in_array($this['type'], array('checkbox', 'radio'))) {
-      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label'])."</label>\n";
+      $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']))."\n";
     }
 
     return $out;
@@ -416,13 +446,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
   }
 
   public function render($xhtml=false, $error=null) {
-    $out = '<fieldset';
-    foreach ($this as $k=>$v) {
-      if ($k != 'label' && $k != 'type') {
-        $out .= ' '.$k.'="'.htmlentities($v).'"';
-      }
-    }
-    $out .= ">\n";
+    $out = self::renderTag('fieldset', $this->props, null, false, array('label', 'type'))."\n";
     if (isset($this['label']) && $this['label']) {
       $out .= '<legend><span>'.htmlentities($this['label'])."</span></legend>\n";
     }
@@ -452,21 +476,16 @@ class FormGenerator_Textarea extends FormGenerator_Element {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
-      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label']).":</label>\n";
+      $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']).':')."\n";
     }
-    $out .= '<textarea';
-    foreach ($this as $k=>$v) {
-      if ($k != 'label' && $k != 'value' && $k != 'type') {
-        $out .= ' '.$k.'="'.htmlentities($v).'"';
-      }
-    }
-    $out .= '>';
     if (!is_null($this->data)) {
-      $out .= htmlentities($this->data);
+      $data = $this->data;
     } elseif (isset($this['value'])) {
-      $out .= htmlentities($this['value']);
+      $data = $this['value'];
+    } else {
+      $data = '';
     }
-    $out .= "</textarea>\n";
+    $out .= self::renderTag('textarea', $this->props, htmlentities($data), false, array('label', 'value', 'type'))."\n";
 
     return $out;
   }
@@ -517,15 +536,9 @@ class FormGenerator_Select extends FormGenerator_Element {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
-      $out .= '<label for="'.htmlentities($this['id']).'">'.htmlentities($this['label']).":</label>\n";
+      $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']).':')."\n";
     }
-    $out .= '<select';
-    foreach ($this as $k=>$v) {
-      if ($k != 'label' && $k != 'value' && $k != 'type') {
-        $out .= ' '.$k.'="'.htmlentities($v).'"';
-      }
-    }
-    $out .= ">\n";
+    $out .= self::renderTag('select', $this->props, null, false, array('label', 'value', 'type'))."\n";
     if (!is_null($this->data)) {
       if (isset($this->options[$this->data])) {
         $this->options[$this->data]['selected'] = 'selected';
@@ -536,15 +549,7 @@ class FormGenerator_Select extends FormGenerator_Element {
       }
     }
     foreach ($this->options as $option) {
-      $out .= '<option';
-      foreach ($option as $k=>$v) {
-        if ($k != 'label') {
-          $out .= ' '.$k.'="'.htmlentities($v).'"';
-        }
-      }
-      $out .= '>';
-      $out .= htmlentities($option['label']);
-      $out .= "</option>\n";
+      $out .= self::renderTag('option', $option, htmlentities($option['label']), false, array('label'))."\n";
     }
     $out .= "</select>\n";
 
@@ -584,21 +589,17 @@ class FormGenerator_Hint extends FormGenerator_Element {
    */
   public function render($xhtml=false, $error=null) {
     $out = '';
-    $out .= '<div';
-    foreach ($this as $k=>$v) {
-      if ($k != 'content' && $k != 'type') {
-        $out .= ' '.$k.'="'.htmlentities($v).'"';
-      }
-    }
-    $out .= '>';
     if (isset($this['content'])) {
       if (!isset($this['escape']) || $this['escape']) {
-        $out .= htmlentities($this['content']);
+        $content = htmlentities($this['content']);
       } else {
-        $out .= $this['content'];
+        $content = $this['content'];
       }
+    } else {
+      $content = '';
     }
-    $out .= "</div>\n";
+
+    $out .= self::renderTag('div', $this->props, $content, false, array('content', 'escape', 'type'))."\n";
 
     return $out;
   }
