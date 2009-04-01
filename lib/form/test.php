@@ -1,3 +1,6 @@
+<?php
+error_reporting(E_ALL | E_NOTICE | E_STRICT);
+?>
 <html>
 <head>
 <title>FormGenerator test page</title>
