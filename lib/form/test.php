@@ -24,8 +24,8 @@ $fg = new FormGenerator(false, false);
 $fg->setAttribute('class', 'leftlabels');
 
 $fs = $fg->addFieldset('Contact Details');
-$fs->addInput('name',  'Name');
-$fs->addInput('email', 'Email address');
+$fs->addInput('name',  'Name', array('required'=>true));
+$fs->addInput('email', 'Email address', array('required'=>true));
 $fs->addSelect('units', 'Units', array('metric'=>'Metric', 'imperial'=>'Imperial'));
 $cg = $fs->addFieldset('Occupation:');
 $cg->addRadio('occupation', 'Butcher', 'butcher');
@@ -41,11 +41,11 @@ $fs->addInput('phone', 'Telephone');
 $fs->addHint('Please include your international country code.');
 
 $fs = $fg->addFieldset('Delivery Address');
-$fs->addInput('address1', 'Address 1');
+$fs->addInput('address1', 'Address 1', array('required'=>true));
 $fs->addInput('address2', 'Address 2');
-$fs->addInput('suburb',   'Suburb/Town');
-$fs->addInput('postcode', 'Postcode');
-$fs->addInput('country',  'Country');
+$fs->addInput('suburb',   'Suburb/Town', array('required'=>true));
+$fs->addInput('postcode', 'Postcode', array('required'=>true));
+$fs->addInput('country',  'Country', array('required'=>true));
 
 $fs = $fg->addFieldset('Comments');
 $fs->addTextarea('comments', 'Comments');

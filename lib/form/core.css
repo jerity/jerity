@@ -78,3 +78,7 @@ form div.hint {
   margin-top: -0.75em;
   font-size: 90%;
 }
+form label em {
+  display: block;
+  font-size: 75%;
+}

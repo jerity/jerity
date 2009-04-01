@@ -317,7 +317,11 @@ class FormGenerator_Element extends ArrayObject {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label']) && !in_array($this['type'], array('checkbox', 'radio'))) {
-      $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']).':')."\n";
+      $labelcontent = htmlentities($this['label']).':';
+      if (isset($this['required']) && $this['required']) {
+        $labelcontent .= ' <em>Required</em>';
+      }
+      $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
     }
 
     if (!is_null($this->data)) {
@@ -448,6 +452,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
   public function render($xhtml=false, $error=null) {
     $out = self::renderTag('fieldset', $this->props, null, false, array('label', 'type'))."\n";
     if (isset($this['label']) && $this['label']) {
+      # TODO: required flag
       $out .= '<legend><span>'.htmlentities($this['label'])."</span></legend>\n";
     }
 
@@ -476,7 +481,11 @@ class FormGenerator_Textarea extends FormGenerator_Element {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
-      $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']).':')."\n";
+      $labelcontent = htmlentities($this['label']).':';
+      if (isset($this['required']) && $this['required']) {
+        $labelcontent .= ' <em>Required</em>';
+      }
+      $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
     }
     if (!is_null($this->data)) {
       $data = $this->data;
@@ -536,7 +545,11 @@ class FormGenerator_Select extends FormGenerator_Element {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
-      $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']).':')."\n";
+      $labelcontent = htmlentities($this['label']).':';
+      if (isset($this['required']) && $this['required']) {
+        $labelcontent .= ' <em>Required</em>';
+      }
+      $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
     }
     $out .= self::renderTag('select', $this->props, null, false, array('label', 'value', 'type'))."\n";
     if (!is_null($this->data)) {

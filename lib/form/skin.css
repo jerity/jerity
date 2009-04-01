@@ -37,3 +37,9 @@ form div.hint {
   color: #666;
   font-size: 90%;
 }
+form label em {
+  color: #cc0000;
+  font-size: 75%;
+  font-style: normal;
+  text-transform: uppercase;
+}
