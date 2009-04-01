@@ -128,7 +128,7 @@ class FormGenerator {
     if ($replace) {
       $this->data = $data;
     } else { // merge and overwrite
-      $this->data += $data;
+      $this->data = $data + $this->data; # array addition is NOT commutative
     }
   }
 
