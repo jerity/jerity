@@ -1,15 +1,28 @@
 <?php
 
 /**
- * Class to be used for storing templating variables.
+ * @package JerityTemplate
+ * @author Dave Ingram <dave@dmi.me.uk>
+ * @copyright Copyright (c) 2009 Dave Ingram
+ */
+/**
+ * Template variable storage class.
  *
  * Example usage:
  * <code>
  * <?php
- * $a = new TemplateVars(array('foo'=>'bar', 'baz'=>'qux'));
- * $a->handleCall('setFoo', array('rab'));
- * $a->setBaz('xuq');
- * // both of these should fail
+ * $a = new TemplateVars(array('foo'=>'bar', 'baz'=>'qux', 'spam'=>'eggs'));
+ * $a['spam'] = 'beans';
+ * $a->setFoo('xuq');
+ * $a->handleCall('setBaz', array('rab'));
+ * unset($a['spam']); // $a['spam'] is now 'eggs'
+ *
+ * // these should fail because 'fooBar' was not specified in the constructor
+ * try {
+ *   $a['fooBar'] = 'rab';
+ * } catch (Exception $e) {
+ *   print $e."\n\n";
+ * }
  * try {
  *   $a->handleCall('setFooBar', array('rab'));
  * } catch (Exception $e) {
@@ -22,13 +35,6 @@
  * }
  * ?>
  * </code>
- *
- * @package JerityTemplate
- * @author Dave Ingram <dave@dmi.me.uk>
- * @copyright Copyright (c) 2009 Dave Ingram
- */
-/**
- * Template variable storage class.
  *
  * @package JerityTemplate
  * @author Dave Ingram <dave@dmi.me.uk>
@@ -126,10 +132,13 @@ class TemplateVars implements ArrayAccess {
   }
 
   /**
-   * Handle __call() semantics for automatic accessor/mutator handling.
+   * Handle automatic accessor/mutator calls.
    *
    * Throws an exception if the number of arguments are wrong, or if the method name is
    * not recognised, or if the desired property does not exist.
+   *
+   * Note: It is suggested that other ways of accessing this data are used, as
+   * this does introduce some overhead.
    *
    * @param string $f Function call name
    * @param array  $a List of arguments
@@ -137,7 +146,7 @@ class TemplateVars implements ArrayAccess {
    *
    * @throws InvalidArgumentException
    * @throws BadMethodCallException
-   * @throws OutoOfBoundsException
+   * @throws OutOfBoundsException
    */
   function handleCall($f, array $a) {
     list($t, $v) = array(substr($f, 0, 3), strtolower($f[3]).substr($f, 4));
@@ -154,7 +163,7 @@ class TemplateVars implements ArrayAccess {
   }
 
   /**
-   * Handle automatic accessor/mutator handling.
+   * Handle automatic accessor/mutator calls.
    *
    * Throws an exception if the number of arguments are wrong, or if the method name is
    * not recognised, or if the desired property does not exist.
@@ -166,7 +175,7 @@ class TemplateVars implements ArrayAccess {
    * @see TemplateVars::handleCall()
    * @throws InvalidArgumentException
    * @throws BadMethodCallException
-   * @throws OutoOfBoundsException
+   * @throws OutOfBoundsException
    */
   function __call($f, array $a) {
     return $this->handleCall($f, $a);
