@@ -165,9 +165,9 @@ class TemplateVars implements ArrayAccess {
         list($t, $v) = array(substr($f, 0, 5), strtolower($f[5]).substr($f, 6));
         if ($t == 'reset') {
           if (count($a)!=1) throw new InvalidArgumentException('Method requires one argument: '.$f.'()');
-          $this->offsetUnset($a[0]);
+          return $this->offsetUnset($a[0]);
         }
-        // fall through
+        // otherwise fall through
       default:
         throw new BadMethodCallException('Unrecognised method: '.$f.'()');
     }
