@@ -16,6 +16,7 @@
  * $a->setFoo('xuq');
  * $a->handleCall('setBaz', array('rab'));
  * unset($a['spam']); // $a['spam'] is now 'eggs'
+ * $a->resetFoo();    // $a['foo'] is now 'bar'
  *
  * // these should fail because 'fooBar' was not specified in the constructor
  * try {
@@ -157,6 +158,16 @@ class TemplateVars implements ArrayAccess {
       case 'set':
         if (count($a)!=1) throw new InvalidArgumentException('Method requires one argument: '.$f.'()');
         return $this->offsetSet($v, $a[0]);
+      case 'has':
+        if (count($a)!=1) throw new InvalidArgumentException('Method requires one argument: '.$f.'()');
+        return $this->offsetExists($a[0]);
+      case 'res':
+        list($t, $v) = array(substr($f, 0, 5), strtolower($f[5]).substr($f, 6));
+        if ($t == 'reset') {
+          if (count($a)!=1) throw new InvalidArgumentException('Method requires one argument: '.$f.'()');
+          $this->offsetUnset($a[0]);
+        }
+        // fall through
       default:
         throw new BadMethodCallException('Unrecognised method: '.$f.'()');
     }
