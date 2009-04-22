@@ -148,7 +148,7 @@ class TemplateVars implements ArrayAccess {
    * @throws BadMethodCallException
    * @throws OutOfBoundsException
    */
-  function handleCall($f, array $a) {
+  function __call($f, array $a) {
     list($t, $v) = array(substr($f, 0, 3), strtolower($f[3]).substr($f, 4));
     switch ($t) {
       case 'get':
@@ -160,24 +160,5 @@ class TemplateVars implements ArrayAccess {
       default:
         throw new BadMethodCallException('Unrecognised method: '.$f.'()');
     }
-  }
-
-  /**
-   * Handle automatic accessor/mutator calls.
-   *
-   * Throws an exception if the number of arguments are wrong, or if the method name is
-   * not recognised, or if the desired property does not exist.
-   *
-   * @param string $f Function call name
-   * @param array  $a List of arguments
-   * @return void|mixed
-   *
-   * @see TemplateVars::handleCall()
-   * @throws InvalidArgumentException
-   * @throws BadMethodCallException
-   * @throws OutOfBoundsException
-   */
-  function __call($f, array $a) {
-    return $this->handleCall($f, $a);
   }
 }
