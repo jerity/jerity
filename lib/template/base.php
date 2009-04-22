@@ -14,18 +14,12 @@
  * $a = new TemplateVars(array('foo'=>'bar', 'baz'=>'qux', 'spam'=>'eggs'));
  * $a['spam'] = 'beans';
  * $a->setFoo('xuq');
- * $a->handleCall('setBaz', array('rab'));
  * unset($a['spam']); // $a['spam'] is now 'eggs'
  * $a->resetFoo();    // $a['foo'] is now 'bar'
  *
  * // these should fail because 'fooBar' was not specified in the constructor
  * try {
  *   $a['fooBar'] = 'rab';
- * } catch (Exception $e) {
- *   print $e."\n\n";
- * }
- * try {
- *   $a->handleCall('setFooBar', array('rab'));
  * } catch (Exception $e) {
  *   print $e."\n\n";
  * }
