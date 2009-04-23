@@ -5,6 +5,7 @@
  * @author Dave Ingram <dave@dmi.me.uk>
  * @copyright Copyright (c) 2009 Dave Ingram
  */
+
 /**
  * Template variable storage class.
  *
@@ -59,7 +60,7 @@ class TemplateVars implements ArrayAccess {
    *
    * @param array $defaults Default property values.
    */
-  function __construct(array $defaults) {
+  public function __construct(array $defaults) {
     $this->defaults = $defaults;
     $this->vals = $defaults;
   }
@@ -72,7 +73,7 @@ class TemplateVars implements ArrayAccess {
    *
    * @see ArrayAccess
    */
-  function offsetExists($k) {
+  public function offsetExists($k) {
     return isset($this->defaults[$k]);
   }
 
@@ -85,7 +86,7 @@ class TemplateVars implements ArrayAccess {
    * @see ArrayAccess
    * @throws OutOfBoundsException
    */
-  function offsetGet($k) {
+  public function offsetGet($k) {
     if (!isset($this->vals[$k])) {
       throw new OutOfBoundsException('"'.$k.'" is not a valid template variable');
     }
@@ -102,7 +103,7 @@ class TemplateVars implements ArrayAccess {
    * @see ArrayAccess
    * @throws OutOfBoundsException
    */
-  function offsetSet($k, $v) {
+  public function offsetSet($k, $v) {
     if (!isset($this->vals[$k])) {
       throw new OutOfBoundsException('"'.$k.'" is not a valid template variable');
     }
@@ -119,7 +120,7 @@ class TemplateVars implements ArrayAccess {
    * @see ArrayAccess
    * @throws OutOfBoundsException
    */
-  function offsetUnset($k) {
+  public function offsetUnset($k) {
     if (!isset($this->vals[$k])) {
       throw new OutOfBoundsException('"'.$k.'" is not a valid template variable');
     }
@@ -143,7 +144,7 @@ class TemplateVars implements ArrayAccess {
    * @throws BadMethodCallException
    * @throws OutOfBoundsException
    */
-  function __call($f, array $a) {
+  public function __call($f, array $a) {
     list($t, $v) = array(substr($f, 0, 3), strtolower($f[3]).substr($f, 4));
     switch ($t) {
       case 'get':
