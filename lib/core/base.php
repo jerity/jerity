@@ -272,5 +272,8 @@ class RenderContext {
   }
 }
 
+// default global render context: HTML 4.01 strict
+RenderContext::setGlobalContext(RenderContext::makeContext(RenderContext::TYPE_HTML4_STRICT));
+
 // reset error reporting
 error_reporting($__er);
