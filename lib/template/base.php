@@ -1,5 +1,6 @@
 <?php
-
+// ensure we get all errors
+$__er = error_reporting(E_ALL | E_STRICT | E_NOTICE);
 /**
  * @package JerityTemplate
  * @author Dave Ingram <dave@dmi.me.uk>
@@ -168,3 +169,6 @@ class TemplateVars implements ArrayAccess {
     }
   }
 }
+
+// reset error reporting
+error_reporting($__er);
