@@ -8,6 +8,22 @@
 
 
 /**
+ * Represents a renderable item.
+ *
+ * @package JerityCore
+ */
+interface Renderable {
+  /**
+   * Render the item and return it as a string. This may take an optional {@see RenderContext},
+   * but will otherwise the global rendering context.
+   *
+   * @param RenderContext $ctx The rendering context to use, if different from the global one
+   * @return string
+   */
+  public function render(RenderContext $ctx = null);
+}
+
+/**
  * Rendering context information.
  *
  * @package JerityCore
