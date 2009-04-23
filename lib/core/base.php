@@ -94,7 +94,7 @@ class RenderContext {
    * @return RenderContext
    */
   public static function getGlobalContext() {
-    return $globalContext;
+    return self::$globalContext;
   }
 
   /**
@@ -119,43 +119,43 @@ class RenderContext {
     // standard context factory
     $ctx = new RenderContext();
     switch ($type) {
-      case TYPE_HTML4_STRICT:
-        $ctx->setLanguage(LANG_HTML);
+      case self::TYPE_HTML4_STRICT:
+        $ctx->setLanguage(self::LANG_HTML);
         $ctx->setVersion(4.01);
-        $ctx->setDialect(DIALECT_STRICT);
+        $ctx->setDialect(self::DIALECT_STRICT);
         break;
-      case TYPE_HTML4_TRANSITIONAL:
-        $ctx->setLanguage(LANG_HTML);
+      case self::TYPE_HTML4_TRANSITIONAL:
+        $ctx->setLanguage(self::LANG_HTML);
         $ctx->setVersion(4.01);
-        $ctx->setDialect(DIALECT_TRANSITIONAL);
+        $ctx->setDialect(self::DIALECT_TRANSITIONAL);
         break;
-      case TYPE_HTML4_FRAMESET:
-        $ctx->setLanguage(LANG_HTML);
+      case self::TYPE_HTML4_FRAMESET:
+        $ctx->setLanguage(self::LANG_HTML);
         $ctx->setVersion(4.01);
-        $ctx->setDialect(DIALECT_FRAMESET);
+        $ctx->setDialect(self::DIALECT_FRAMESET);
         break;
-      case TYPE_XHTML1_STRICT:
-        $ctx->setLanguage(LANG_XHTML);
+      case self::TYPE_XHTML1_STRICT:
+        $ctx->setLanguage(self::LANG_XHTML);
         $ctx->setVersion(1.0);
-        $ctx->setDialect(DIALECT_STRICT);
+        $ctx->setDialect(self::DIALECT_STRICT);
         break;
-      case TYPE_XHTML1_TRANSITIONAL:
-        $ctx->setLanguage(LANG_XHTML);
+      case self::TYPE_XHTML1_TRANSITIONAL:
+        $ctx->setLanguage(self::LANG_XHTML);
         $ctx->setVersion(1.0);
-        $ctx->setDialect(DIALECT_TRANSITIONAL);
+        $ctx->setDialect(self::DIALECT_TRANSITIONAL);
         break;
-      case TYPE_XHTML1_FRAMESET:
-        $ctx->setLanguage(LANG_XHTML);
+      case self::TYPE_XHTML1_FRAMESET:
+        $ctx->setLanguage(self::LANG_XHTML);
         $ctx->setVersion(1.0);
-        $ctx->setDialect(DIALECT_FRAMESET);
+        $ctx->setDialect(self::DIALECT_FRAMESET);
         break;
-      case TYPE_HTML5:
-        $ctx->setLanguage(LANG_HTML);
+      case self::TYPE_HTML5:
+        $ctx->setLanguage(self::LANG_HTML);
         $ctx->setVersion(5);
         $ctx->setDialect('');
         break;
-      case TYPE_XHTML1_1:
-        $ctx->setLanguage(LANG_XHTML);
+      case self::TYPE_XHTML1_1:
+        $ctx->setLanguage(self::LANG_XHTML);
         $ctx->setVersion(1.1);
         $ctx->setDialect('');
         break;
@@ -178,7 +178,7 @@ class RenderContext {
    * @throws InvalidArgumentException
    */
   public function getDoctype() {
-    if ($this->language == LANG_HTML) {
+    if ($this->language == self::LANG_HTML) {
       switch ($this->version) {
         case 2:
           return '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">';
@@ -186,11 +186,11 @@ class RenderContext {
           return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">';
         case 4.01:
           switch ($this->dialect) {
-            case DIALECT_STRICT:
+            case self::DIALECT_STRICT:
               return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
-            case DIALECT_TRANSITIONAL:
+            case self::DIALECT_TRANSITIONAL:
               return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-            case DIALECT_FRAMESET:
+            case self::DIALECT_FRAMESET:
               return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">';
             default:
               throw new InvalidArgumentException('Unrecognised HTML 4.01 dialect '.$this->dialect.'; cannot build doctype');
@@ -200,7 +200,7 @@ class RenderContext {
         default:
           throw new InvalidArgumentException('Unrecognised HTML version '.$this->version.'; cannot build doctype');
       }
-    } elseif ($this->language == LANG_XHTML) {
+    } elseif ($this->language == self::LANG_XHTML) {
       switch ($this->version) {
         case 1.0:
           return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 '.ucfirst($this->dialect).'//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-'.$this->dialect.'.dtd">';
