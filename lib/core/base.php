@@ -8,7 +8,9 @@
 
 
 /**
- * Rendering context information
+ * Rendering context information.
+ *
+ * @package JerityCore
  */
 class RenderContext {
   const LANG_JSON  = 'json';
@@ -38,23 +40,64 @@ class RenderContext {
   const TYPE_HTML5               = 'html-5';
   const TYPE_XHTML1_1            = 'xhtml-1.1';
 
+  /**
+   * The shared global rendering context.
+   *
+   * @var RenderContext
+   */
   static protected $globalContext = null;
 
+  /**
+   * The language that should be used for rendering.
+   *
+   * @var string
+   */
   protected $language = self::LANG_HTML;
+
+  /**
+   * The version of the language that should be used for rendering.
+   *
+   * @var mixed
+   */
   protected $version  = 4.01;
+
+  /**
+   * The dialect of the language that should be used for rendering, for example "strict" or "transitional".
+   *
+   * @var string
+   */
   protected $dialect  = self::DIALECT_STRICT;
 
   public function __construct() {
   }
 
+  /**
+   * Return the global shared rendering context.
+   *
+   * @return RenderContext
+   */
   public static function getGlobalContext() {
     return $globalContext;
   }
 
+  /**
+   * Set the global shared rendering context.
+   *
+   * @param RenderContext $context The new global rendering context.
+   * @return RenderContext
+   */
   public static function setGlobalContext(RenderContext $context) {
     return (self::$globalContext = $context);
   }
 
+  /**
+   * Generate one of a number of common rendering contexts.
+   *
+   * @param string $type One of the TYPE_* class constants.
+   * @return RenderContext
+   *
+   * @throws InvalidArgumentException
+   */
   public static function makeContext($type) {
     // standard context factory
     $ctx = new RenderContext();
@@ -106,6 +149,17 @@ class RenderContext {
     return $ctx;
   }
 
+  /**
+   * Generate the doctype for the current rendering context, if applicable.
+   *
+   * If there is no known doctype for the language, then an empty string will
+   * be returned. If the version is not recognised, or the version supports
+   * dialects and the dialect is not recognised, an exception will be thrown.
+   *
+   * @return string
+   *
+   * @throws InvalidArgumentException
+   */
   public function getDoctype() {
     if ($this->language == LANG_HTML) {
       switch ($this->version) {
@@ -143,26 +197,59 @@ class RenderContext {
     }
   }
 
+  /**
+   * Return the language for this context.
+   *
+   * @return string
+   */
   public function getLanguage() {
     return $this->language;
   }
 
+  /**
+   * Set the language for this context.
+   *
+   * @param string $language The new language
+   * @return string
+   */
   public function setLanguage($language) {
     return ($this->language = $language);
   }
 
+  /**
+   * Return the version of the language for this context.
+   *
+   * @return mixed
+   */
   public function getVersion() {
     return $this->version;
   }
 
+  /**
+   * Set the version of the language for this context.
+   *
+   * @param mixed $version The new language version
+   * @return mixed
+   */
   public function setVersion($version) {
     return ($this->version = $version);
   }
 
+  /**
+   * Return the language dialect for this context (such as "transitional" or "strict").
+   *
+   * @return string
+   */
   public function getDialect() {
     return $this->dialect;
   }
 
+  /**
+   * Set the language dialect for this context (such as "transitional" or "strict").
+   *
+   * @param string $dialect The new language dialect
+   * @return string
+   */
   public function setDialect($dialect) {
     return ($this->dialect = $dialect);
   }
