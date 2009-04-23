@@ -214,6 +214,15 @@ class RenderContext {
     }
   }
 
+  public function renderPreContent() {
+    $output = '';
+    if ($this->language == self::LANG_XML || $this->language == self::LANG_XHTML) {
+      $output .= '<'.'?xml version="1.0" encoding="utf-8" ?'.'>'."\n";
+    }
+    $output .= $this->getDoctype()."\n";
+    return $output;
+  }
+
   /**
    * Return the language for this context.
    *
@@ -271,6 +280,9 @@ class RenderContext {
     return ($this->dialect = $dialect);
   }
 }
+
+
+/* ******************** START: defaults and end-of-file ******************* */
 
 // default global render context: HTML 4.01 strict
 RenderContext::setGlobalContext(RenderContext::makeContext(RenderContext::TYPE_HTML4_STRICT));
