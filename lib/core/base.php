@@ -1,5 +1,6 @@
 <?php
-
+// ensure we get all errors
+$__er = error_reporting(E_ALL | E_STRICT | E_NOTICE);
 /**
  * @package JerityCore
  * @author Dave Ingram <dave@dmi.me.uk>
@@ -270,3 +271,6 @@ class RenderContext {
     return ($this->dialect = $dialect);
   }
 }
+
+// reset error reporting
+error_reporting($__er);
