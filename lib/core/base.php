@@ -15,13 +15,12 @@ $__er = error_reporting(E_ALL | E_STRICT | E_NOTICE);
  */
 interface Renderable {
   /**
-   * Render the item and return it as a string. This may take an optional {@see RenderContext},
-   * but will otherwise the global rendering context.
+   * Render the item using the current global rendering context, and return it
+   * as a string.
    *
-   * @param RenderContext $ctx The rendering context to use, if different from the global one
    * @return string
    */
-  public function render(RenderContext $ctx = null);
+  public function render();
 }
 
 /**
@@ -62,7 +61,7 @@ class RenderContext {
    *
    * @var RenderContext
    */
-  static protected $globalContext = null;
+  static protected $globalContext = array();
 
   /**
    * The language that should be used for rendering.
@@ -94,7 +93,11 @@ class RenderContext {
    * @return RenderContext
    */
   public static function getGlobalContext() {
-    return self::$globalContext;
+    if (count(self::$globalContext)) {
+      return self::$globalContext[0];
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -104,7 +107,29 @@ class RenderContext {
    * @return RenderContext
    */
   public static function setGlobalContext(RenderContext $context) {
-    return (self::$globalContext = $context);
+    return (self::$globalContext = array($context));
+  }
+
+  /**
+   * Push a new rendering context onto the  global shared rendering context
+   * stack.
+   *
+   * @param RenderContext $context The new global rendering context.
+   * @return RenderContext
+   */
+  public static function pushGlobalContext(RenderContext $context) {
+    array_unshift(self::$globalContext, $context);
+    return $context;
+  }
+
+  /**
+   * Pop a rendering context from the global shared rendering context stack and
+   * return it.
+   *
+   * @return RenderContext
+   */
+  public static function popGlobalContext(RenderContext $context) {
+    return array_shift(self::$globalContext);
   }
 
   /**
