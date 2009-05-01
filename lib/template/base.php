@@ -37,7 +37,7 @@ $__er = error_reporting(E_ALL | E_STRICT | E_NOTICE);
  * @author Dave Ingram <dave@dmi.me.uk>
  * @copyright Copyright (c) 2009 Dave Ingram
  */
-class TemplateVars implements ArrayAccess {
+class TemplateVars implements ArrayAccess, IteratorAggregate {
   /**
    * List of default values for variables.
    *
@@ -126,6 +126,10 @@ class TemplateVars implements ArrayAccess {
       throw new OutOfBoundsException('"'.$k.'" is not a valid template variable');
     }
     $this->vals[$k] = $this->defaults[$k];
+  }
+
+  public function getIterator() {
+    return new ArrayIterator($this->vals);
   }
 
   /**
