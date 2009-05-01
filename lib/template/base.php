@@ -63,7 +63,18 @@ class TemplateVars implements ArrayAccess, IteratorAggregate {
    */
   public function __construct(array $defaults) {
     $this->defaults = $defaults;
-    $this->vals = $defaults;
+    $this->resetToDefaults();
+  }
+
+  /**
+   * Reset all variables to their defaults.
+   *
+   * @return void
+   */
+  public function resetToDefaults() {
+    foreach ($this->defaults as $k=>$v) {
+      $this->vals[$k] = $v;
+    }
   }
 
   /**
