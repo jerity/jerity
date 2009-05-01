@@ -185,5 +185,148 @@ class TemplateVars implements ArrayAccess, IteratorAggregate {
   }
 }
 
+
+abstract class Template implements Renderable {
+  protected $templateRender = null;
+  protected $templateVars   = null;
+  protected static $templateDir = '';
+  protected static $siteTemplateDir = '';
+  protected static $pageTemplateDir = '';
+  protected static $componentDir    = '';
+
+  public function __construct($f) {
+    $this->loadTemplate($f);
+  }
+
+  protected function loadTemplate($f) {
+    // prevent attempted misuse
+    $f = preg_replace('!^(?:\.*/)+!', '', $f);
+    $f .= '.php';
+    if (substr($f, 0, 1)!='/') {
+      $f = $this->getTemplateDir().$f;
+    }
+    if (!file_exists($f) || !is_file($f) || !is_readable($f)) {
+      throw new Exception('Template file not found');
+    }
+    $_PARAMS = array();
+    $_RENDER = null;
+    include($f);
+    $this->templateRender = $_RENDER;
+    $this->templateParams = new TemplateVars($_PARAMS);
+  }
+
+  public static function getTemplateDir() {
+    return self::getTopTemplateDir();
+  }
+
+  public static final function getTopTemplateDir() {
+    if (!self::$templateDir) {
+      self::setTopTemplateDir(dirname(dirname(__FILE__)).'/_templates');
+    }
+    return self::$templateDir;
+  }
+
+  public static final function setTopTemplateDir($d) {
+    if (!file_exists($d) || !is_dir($d) || !is_readable($d)) {
+      throw new InvalidArgumentException('Template directory could not be read');
+    }
+    self::$templateDir = rtrim($d, '/').'/';
+  }
+
+  public static final function getSiteTemplateDir() {
+    if (!self::$siteTemplateDir) {
+      self::setSiteTemplateDir(self::getTopTemplateDir().'/site');
+    }
+    return self::$siteTemplateDir;
+  }
+
+  public static final function setSiteTemplateDir($d) {
+    if (!file_exists($d) || !is_dir($d) || !is_readable($d)) {
+      throw new InvalidArgumentException('Template directory could not be read');
+    }
+    self::$siteTemplateDir = rtrim($d, '/').'/';
+  }
+
+  public static final function getPageTemplateDir() {
+    if (!self::$pageTemplateDir) {
+      self::setPageTemplateDir(self::getTopTemplateDir().'/pages');
+    }
+    return self::$pageTemplateDir;
+  }
+
+  public static final function setPageTemplateDir($d) {
+    if (!file_exists($d) || !is_dir($d) || !is_readable($d)) {
+      throw new InvalidArgumentException('Template directory could not be read');
+    }
+    self::$pageTemplateDir = rtrim($d, '/').'/';
+  }
+
+  public static final function getComponentDir() {
+    if (!self::$componentDir) {
+      self::setComponentDir(self::getTopTemplateDir().'/components');
+    }
+    return self::$componentDir;
+  }
+
+  public static final function setComponentDir($d) {
+    if (!file_exists($d) || !is_dir($d) || !is_readable($d)) {
+      throw new InvalidArgumentException('Template directory could not be read');
+    }
+    self::$componentDir = rtrim($d, '/').'/';
+  }
+
+  public function setParams($params) {
+    foreach ($params as $k => $v) {
+      $this->templateParams[$k] = $v;
+    }
+  }
+
+  public abstract function useTemplate($file, array $params = array());
+}
+
+class SiteTemplate extends Template {
+  protected $content = null;
+
+  public static function getTemplateDir() {
+    return self::getSiteTemplateDir();
+  }
+
+  public function getContent() {
+    return $this->content;
+  }
+
+  public function setContent($content) {
+    $this->content = $content;
+  }
+
+  public function useTemplate($file, array $params = array()) {
+    $tpl = new self($file);
+    $tpl->setParams($params);
+    return $tpl->render();
+  }
+
+  public function render() {
+    return '';
+  }
+}
+
+class PageTemplate extends Template {
+  public static function getTemplateDir() {
+    return self::getPageTemplateDir();
+  }
+
+  public function useTemplate($file, array $params = array()) {
+    $tpl = new self($file);
+    $tpl->setParams($params);
+    return $tpl->render();
+  }
+
+  public function render() {
+    return '';
+  }
+}
+
+/* ******************** START: defaults and end-of-file ******************* */
+
 // reset error reporting
 error_reporting($__er);
