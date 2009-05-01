@@ -12,6 +12,8 @@ $__er = error_reporting(E_ALL | E_STRICT | E_NOTICE);
  * Represents a renderable item.
  *
  * @package JerityCore
+ * @author Dave Ingram <dave@dmi.me.uk>
+ * @copyright Copyright (c) 2009 Dave Ingram
  */
 interface Renderable {
   /**
@@ -27,6 +29,8 @@ interface Renderable {
  * Rendering context information.
  *
  * @package JerityCore
+ * @author Dave Ingram <dave@dmi.me.uk>
+ * @copyright Copyright (c) 2009 Dave Ingram
  */
 class RenderContext {
   const LANG_JSON  = 'json';
@@ -78,7 +82,8 @@ class RenderContext {
   protected $version  = 4.01;
 
   /**
-   * The dialect of the language that should be used for rendering, for example "strict" or "transitional".
+   * The dialect of the language that should be used for rendering, for example
+   * "strict" or "transitional".
    *
    * @var string
    */
@@ -111,7 +116,7 @@ class RenderContext {
   }
 
   /**
-   * Push a new rendering context onto the  global shared rendering context
+   * Push a new rendering context onto the global shared rendering context
    * stack.
    *
    * @param RenderContext $context The new global rendering context.
@@ -239,6 +244,12 @@ class RenderContext {
     }
   }
 
+  /**
+   * Render any content that should come before the document (such as doctype,
+   * XML declaration, etc) as appropriate to the context.
+   *
+   * @return string
+   */
   public function renderPreContent() {
     $output = '';
     if ($this->language == self::LANG_XML || $this->language == self::LANG_XHTML) {
@@ -287,7 +298,8 @@ class RenderContext {
   }
 
   /**
-   * Return the language dialect for this context (such as "transitional" or "strict").
+   * Return the language dialect for this context (such as "transitional" or
+   * "strict").
    *
    * @return string
    */
