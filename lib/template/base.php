@@ -146,8 +146,8 @@ class TemplateVars implements ArrayAccess, IteratorAggregate {
   /**
    * Handle automatic accessor/mutator calls.
    *
-   * Throws an exception if the number of arguments are wrong, or if the method name is
-   * not recognised, or if the desired property does not exist.
+   * Throws an exception if the number of arguments are wrong, or if the method
+   * name is not recognised, or if the desired property does not exist.
    *
    * Note: It is suggested that other ways of accessing this data are used, as
    * this does introduce some overhead.
@@ -186,6 +186,13 @@ class TemplateVars implements ArrayAccess, IteratorAggregate {
 }
 
 
+/**
+ * Top-level template class.
+ *
+ * @package JerityTemplate
+ * @author Dave Ingram <dave@dmi.me.uk>
+ * @copyright Copyright (c) 2009 Dave Ingram
+ */
 abstract class Template implements Renderable {
   protected $templateRender = null;
   protected $templateVars   = null;
@@ -215,10 +222,22 @@ abstract class Template implements Renderable {
     $this->templateParams = new TemplateVars($_PARAMS);
   }
 
+  /**
+   * Return the template directory appropriate to this template class.
+   *
+   * @return string
+   */
   public static function getTemplateDir() {
     return self::getTopTemplateDir();
   }
 
+  /**
+   * Return the top-level template directory. If it has not been set, then this
+   * script will assume that the templates are stored in
+   * <tt>../_templates/</tt>, relative to this script.
+   *
+   * @return string
+   */
   public static final function getTopTemplateDir() {
     if (!self::$templateDir) {
       self::setTopTemplateDir(dirname(dirname(__FILE__)).'/_templates');
@@ -226,6 +245,12 @@ abstract class Template implements Renderable {
     return self::$templateDir;
   }
 
+  /**
+   * Set the top-level template directory. This must be an absolute path.
+   *
+   * @param string $d Top-level template directory.
+   * @return void
+   */
   public static final function setTopTemplateDir($d) {
     if (!file_exists($d) || !is_dir($d) || !is_readable($d)) {
       throw new InvalidArgumentException('Template directory could not be read');
@@ -233,6 +258,13 @@ abstract class Template implements Renderable {
     self::$templateDir = rtrim($d, '/').'/';
   }
 
+  /**
+   * Return the site template directory. If it has not been set, then this
+   * script will assume that the templates are stored in the <tt>site</tt>
+   * subdirectory of the top-level template directory.
+   *
+   * @return string
+   */
   public static final function getSiteTemplateDir() {
     if (!self::$siteTemplateDir) {
       self::setSiteTemplateDir(self::getTopTemplateDir().'/site');
@@ -240,6 +272,12 @@ abstract class Template implements Renderable {
     return self::$siteTemplateDir;
   }
 
+  /**
+   * Set the site template directory. This must be an absolute path.
+   *
+   * @param string $d New site template directory.
+   * @return void
+   */
   public static final function setSiteTemplateDir($d) {
     if (!file_exists($d) || !is_dir($d) || !is_readable($d)) {
       throw new InvalidArgumentException('Template directory could not be read');
@@ -247,6 +285,13 @@ abstract class Template implements Renderable {
     self::$siteTemplateDir = rtrim($d, '/').'/';
   }
 
+  /**
+   * Return the page template directory. If it has not been set, then this
+   * script will assume that the templates are stored in the <tt>pages</tt>
+   * subdirectory of the top-level template directory.
+   *
+   * @return string
+   */
   public static final function getPageTemplateDir() {
     if (!self::$pageTemplateDir) {
       self::setPageTemplateDir(self::getTopTemplateDir().'/pages');
@@ -254,6 +299,12 @@ abstract class Template implements Renderable {
     return self::$pageTemplateDir;
   }
 
+  /**
+   * Set the page template directory. This must be an absolute path.
+   *
+   * @param string $d New page template directory.
+   * @return void
+   */
   public static final function setPageTemplateDir($d) {
     if (!file_exists($d) || !is_dir($d) || !is_readable($d)) {
       throw new InvalidArgumentException('Template directory could not be read');
@@ -261,6 +312,13 @@ abstract class Template implements Renderable {
     self::$pageTemplateDir = rtrim($d, '/').'/';
   }
 
+  /**
+   * Return the components directory. If it has not been set, then this script
+   * will assume that the components are stored in the <tt>components</tt>
+   * subdirectory of the top-level template directory.
+   *
+   * @return string
+   */
   public static final function getComponentDir() {
     if (!self::$componentDir) {
       self::setComponentDir(self::getTopTemplateDir().'/components');
@@ -268,6 +326,12 @@ abstract class Template implements Renderable {
     return self::$componentDir;
   }
 
+  /**
+   * Set the component directory. This must be an absolute path.
+   *
+   * @param string $d New component template directory.
+   * @return void
+   */
   public static final function setComponentDir($d) {
     if (!file_exists($d) || !is_dir($d) || !is_readable($d)) {
       throw new InvalidArgumentException('Template directory could not be read');
@@ -275,12 +339,27 @@ abstract class Template implements Renderable {
     self::$componentDir = rtrim($d, '/').'/';
   }
 
-  public function setParams($params) {
+  /**
+   * Set template parameters from an associative array.
+   *
+   * @param array $params Template parameters to set.
+   * @return void
+   */
+  public function setParams(array $params) {
     foreach ($params as $k => $v) {
       $this->templateParams[$k] = $v;
     }
   }
 
+  /**
+   * Include a template with the given parameters.
+   *
+   * @param string $file  Path to the template.
+   * @param array $params Template parameters, if any.
+   * @return string
+   *
+   * @see Template::__construct()
+   */
   public abstract function useTemplate($file, array $params = array());
 }
 
