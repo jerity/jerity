@@ -193,7 +193,7 @@ class TemplateVars implements ArrayAccess, IteratorAggregate {
  * @author Dave Ingram <dave@dmi.me.uk>
  * @copyright Copyright (c) 2009 Dave Ingram
  */
-abstract class Template implements Renderable {
+abstract class Template implements Renderable, ArrayAccess {
   protected $templateRender = null;
   protected $templateVars   = null;
   protected static $templateDir = '';
@@ -203,6 +203,22 @@ abstract class Template implements Renderable {
 
   public function __construct($f) {
     $this->loadTemplate($f);
+  }
+
+  public function offsetExists($k) {
+    return $this->templateParams->offsetExists($k);
+  }
+
+  public function offsetSet($k, $v) {
+    return $this->templateParams->offsetSet($k, $v);
+  }
+
+  public function offsetGet($k) {
+    return $this->templateParams->offsetGet($k);
+  }
+
+  public function offsetUnset($k) {
+    return $this->templateParams->offsetUnset($k);
   }
 
   protected function loadTemplate($f) {
