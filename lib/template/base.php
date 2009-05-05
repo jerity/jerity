@@ -379,6 +379,41 @@ abstract class Template implements Renderable, ArrayAccess {
   public abstract function useTemplate($file, array $params = array());
 }
 
+/**
+ * A wrapper class for rendering simple content.
+ *
+ * @package JerityTemplate
+ * @author Dave Ingram <dave@dmi.me.uk>
+ * @copyright Copyright (c) 2009 Dave Ingram
+ */
+class SimpleContent implements Renderable {
+  /**
+   * The content to be rendered.
+   *
+   * @var mixed
+   */
+  protected $content='';
+
+  /**
+   * Create the wrapper around some content.
+   *
+   * @param mixed $content Content to be output when render() is called; should
+   * ideally be a string.
+   */
+  public function __construct($content) {
+    $this->content = $content;
+  }
+
+  /**
+   * Return the content passed to the class.
+   *
+   * @return string
+   */
+  public function render() {
+    echo $this->content;
+  }
+}
+
 class SiteTemplate extends Template {
   protected $content = null;
 
@@ -387,10 +422,16 @@ class SiteTemplate extends Template {
   }
 
   public function getContent() {
+    if (!$this->content) {
+      $this->setContent('');
+    }
     return $this->content;
   }
 
   public function setContent($content) {
+    if (!is_object($content)) {
+      $content = new SimpleContent($content);
+    }
     $this->content = $content;
   }
 
@@ -401,7 +442,7 @@ class SiteTemplate extends Template {
   }
 
   public function render() {
-    return '';
+    return call_user_func_array($this->templateRender, array($this->templateParams, $this->getContent()));
   }
 }
 
