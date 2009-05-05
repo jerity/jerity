@@ -226,6 +226,8 @@ abstract class Template implements Renderable, ArrayAccess {
     $f = preg_replace('!^(?:\.*/)+!', '', $f);
     $f .= '.php';
     if (substr($f, 0, 1)!='/') {
+      # XXX: this is dodgy; should be static but can't be because of early
+      # static binding. Roll on PHP 5.3!
       $f = $this->getTemplateDir().$f;
     }
     if (!file_exists($f) || !is_file($f) || !is_readable($f)) {
@@ -236,6 +238,17 @@ abstract class Template implements Renderable, ArrayAccess {
     include($f);
     $this->templateRender = $_RENDER;
     $this->templateParams = new TemplateVars($_PARAMS);
+  }
+
+  public static function includeComponent($c) {
+    $orig_c = $c;
+    $c = preg_replace('!^(?:\.*/)+!', '', $c);
+    $c .= '.php';
+    $c = self::getComponentDir().$c;
+    if (!file_exists($c) || !is_file($c) || !is_readable($c)) {
+      throw new Exception('Component `'.$orig_c.'\' not found');
+    }
+    require_once($c);
   }
 
   /**
