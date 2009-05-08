@@ -221,18 +221,20 @@ abstract class Template implements Renderable, ArrayAccess {
     return $this->templateParams->offsetUnset($k);
   }
 
-  protected function loadTemplate($f) {
+  protected function preLoadChecks($f) {
     // prevent attempted misuse
     $f = preg_replace('!^(?:\.*/)+!', '', $f);
-    $f .= '.php';
-    if (substr($f, 0, 1)!='/') {
-      # XXX: this is dodgy; should be static but can't be because of early
-      # static binding. Roll on PHP 5.3!
-      $f = $this->getTemplateDir().$f;
-    }
-    if (!file_exists($f) || !is_file($f) || !is_readable($f)) {
+    # XXX: this is dodgy; should be static but can't be because of early
+    # static binding. Roll on PHP 5.3!
+    $f = $this->getTemplateDir().$f.'.php';
+    if (!file_exists($f) || (!is_file($f) && !is_link($f)) || !is_readable($f)) {
       throw new Exception('Template file not found');
     }
+    return $f;
+  }
+
+  protected function loadTemplate($f) {
+    $f = $this->preLoadChecks($f);
     $_PARAMS = array();
     $_RENDER = null;
     include($f);
