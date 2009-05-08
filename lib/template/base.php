@@ -462,8 +462,24 @@ class SiteTemplate extends Template {
 }
 
 class PageTemplate extends Template {
+  protected $siteTemplate = null;
+
   public static function getTemplateDir() {
     return self::getPageTemplateDir();
+  }
+
+  protected function loadTemplate($f) {
+    $f = $this->preLoadChecks($f);
+    $_SITE_TEMPLATE = false;
+    $_SITE = array();
+    $_PARAMS = array();
+    $_RENDER = null;
+    include($f);
+    $this->templateRender = $_RENDER;
+    $this->templateParams = new TemplateVars($_PARAMS);
+    if ($_SITE_TEMPLATE === false) $_SITE_TEMPLATE = 'default';
+    $this->siteTemplate = new SiteTemplate($_SITE_TEMPLATE);
+    $this->siteTemplate->setParams($_SITE);
   }
 
   public function useTemplate($file, array $params = array()) {
@@ -473,7 +489,17 @@ class PageTemplate extends Template {
   }
 
   public function render() {
-    return '';
+    $content = '';
+    ob_start();
+    $content = call_user_func_array($this->templateRender, array($this->templateParams));
+    if (!$content) {
+      $this->siteTemplate->setContent(ob_get_clean());
+    } else {
+      ob_end_clean();
+      $this->siteTemplate->setContent($content);
+    }
+    unset($content);
+    return $this->siteTemplate->render();
   }
 }
 
