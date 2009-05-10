@@ -35,7 +35,7 @@ class FormGenerator {
    *
    * @param bool $xhtml Whether to generate XHTML or just HTML.
    */
-  public function __construct($xhtml = false, $topLevelList=true) {
+  public function __construct($xhtml = false, $topLevelList=false) {
     $this->xhtml = $xhtml;
     $this->topLevelList = $topLevelList;
   }
