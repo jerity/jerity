@@ -32,7 +32,8 @@ form.leftlabels fieldset.submit {
 form.leftlabels fieldset fieldset ul {
   margin-left: 11em;
 }
-form div.error {
+form strong {
+  left: 11.5em;
   color: #f00;
   font-size: 95%;
 }
