@@ -126,6 +126,14 @@ class FormGenerator {
     $this->errors[$name] = $msg;
   }
 
+  public function setErrors(array $errors, $replace=false) {
+    if ($replace) {
+      $this->errors = $errors;
+    } else { // merge and overwrite
+      $this->errors = $errors + $this->errors;
+    }
+  }
+
   public function hasErrors() {
     return count($this->errors);
   }
@@ -304,9 +312,8 @@ class FormGenerator_Element extends ArrayObject {
    */
   protected static function renderError(array $attrs = null, $error, $xhtml) {
     $attrs['id'] .= '-error';
-    $attrs['class'] = 'error';
-    $attrs = array_intersect_key($attrs, array_flip(array('id', 'class')));
-    return self::renderTag('div', $attrs, $error, $xhtml)."\n";
+    $attrs = array_intersect_key($attrs, array_flip(array('id')));
+    return self::renderTag('strong', $attrs, $error, $xhtml)."\n";
   }
 
   /**
