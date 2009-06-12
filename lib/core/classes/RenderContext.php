@@ -1,30 +1,10 @@
 <?php
-// ensure we get all errors
-$__er = error_reporting(E_ALL | E_STRICT | E_NOTICE);
 
 /**
  * @package JerityCore
  * @author Dave Ingram <dave@dmi.me.uk>
  * @copyright Copyright (c) 2009 Dave Ingram
  */
-
-
-/**
- * Represents a renderable item.
- *
- * @package JerityCore
- * @author Dave Ingram <dave@dmi.me.uk>
- * @copyright Copyright (c) 2009 Dave Ingram
- */
-interface Renderable {
-  /**
-   * Render the item using the current global rendering context, and return it
-   * as a string.
-   *
-   * @return string
-   */
-  public function render();
-}
 
 /**
  * Rendering context information.
@@ -338,12 +318,3 @@ class RenderContext {
     return ($this->dialect = $dialect);
   }
 }
-
-
-/* ******************** START: defaults and end-of-file ******************* */
-
-// default global render context: HTML 4.01 strict
-RenderContext::setGlobalContext(RenderContext::makeContext(RenderContext::TYPE_HTML4_STRICT));
-
-// reset error reporting
-error_reporting($__er);
