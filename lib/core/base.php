@@ -1,6 +1,7 @@
 <?php
 // ensure we get all errors
 $__er = error_reporting(E_ALL | E_STRICT | E_NOTICE);
+
 /**
  * @package JerityCore
  * @author Dave Ingram <dave@dmi.me.uk>
@@ -33,32 +34,44 @@ interface Renderable {
  * @copyright Copyright (c) 2009 Dave Ingram
  */
 class RenderContext {
-  const LANG_JSON  = 'json';
-  const LANG_XML   = 'xml';
+  const LANG_FBJS  = 'fbjs';
+  const LANG_FBML  = 'fbml';
   const LANG_HTML  = 'html';
+  const LANG_JSON  = 'json';
+  const LANG_MHTML = 'mhtml';
+  const LANG_TEXT  = 'text';
+  const LANG_WML   = 'wml';
   const LANG_XHTML = 'xhtml';
+  const LANG_XML   = 'xml';
 
+  const DIALECT_FRAMESET     = 'frameset';
+  const DIALECT_MOBILE       = 'mobile';
   const DIALECT_STRICT       = 'strict';
   const DIALECT_TRANSITIONAL = 'transitional';
-  const DIALECT_FRAMESET     = 'frameset';
 
-  const CONTENT_HTML  = 'text/html';
-  const CONTENT_CSS   = 'text/css';
-  const CONTENT_JS    = 'application/javascript';
-  const CONTENT_JSON  = 'application/json';
-  const CONTENT_XML   = 'application/xml';
-  const CONTENT_RSS   = 'application/rss+xml';
-  const CONTENT_ATOM  = 'application/atom+xml';
-  const CONTENT_XHTML = 'application/xhtml+xml';
+  const CONTENT_ATOM     = 'application/atom+xml';
+  const CONTENT_CSS      = 'text/css';
+  const CONTENT_HTML     = 'text/html';
+  const CONTENT_JS       = 'application/javascript';
+  const CONTENT_JSON     = 'application/json';
+  const CONTENT_RSS      = 'application/rss+xml';
+  const CONTENT_TEXT     = 'text/plain';
+  const CONTENT_WML      = 'application/vnd.wap.wml';
+  const CONTENT_XHTML    = 'application/xhtml+xml';
+  const CONTENT_XHTML_MP = 'application/vnd.wap.xhtml+xml';
+  const CONTENT_XML      = 'application/xml';
 
+  const TYPE_HTML4_FRAMESET      = 'html-4.01-frameset';
   const TYPE_HTML4_STRICT        = 'html-4.01-strict';
   const TYPE_HTML4_TRANSITIONAL  = 'html-4.01-transitional';
-  const TYPE_HTML4_FRAMESET      = 'html-4.01-frameset';
+  const TYPE_HTML5               = 'html-5';
+  const TYPE_XHTML1_FRAMESET     = 'xhtml-1.0-frameset';
+  const TYPE_XHTML1_MOBILE       = 'xhtml-1.0-mobile';
   const TYPE_XHTML1_STRICT       = 'xhtml-1.0-strict';
   const TYPE_XHTML1_TRANSITIONAL = 'xhtml-1.0-transitional';
-  const TYPE_XHTML1_FRAMESET     = 'xhtml-1.0-frameset';
-  const TYPE_HTML5               = 'html-5';
   const TYPE_XHTML1_1            = 'xhtml-1.1';
+  const TYPE_XHTML1_1_MOBILE     = 'xhtml-1.1-mobile';
+  const TYPE_XHTML1_2_MOBILE     = 'xhtml-1.2-mobile';
 
   /**
    * The shared global rendering context.
@@ -231,13 +244,21 @@ class RenderContext {
           throw new InvalidArgumentException('Unrecognised HTML version '.$this->version.'; cannot build doctype');
       }
     } elseif ($this->language == self::LANG_XHTML) {
-      switch ($this->version) {
-        case 1.0:
-          return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 '.ucfirst($this->dialect).'//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-'.$this->dialect.'.dtd">';
-        case 1.1:
-          return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
-        default:
-          throw new InvalidArgumentException('Unrecognised XHTML version '.$this->version.'; cannot build doctype');
+      if ($this->dialect === self::DIALECT_MOBILE) {
+        if ($this->version==1.0) {
+          return '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">';
+        } else {
+          return '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile '.$this->version.'//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile'.(10*$this->version).'.dtd">';
+        }
+      } else {
+        switch ($this->version) {
+          case 1.0:
+            return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 '.ucfirst($this->dialect).'//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-'.$this->dialect.'.dtd">';
+          case 1.1:
+            return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+          default:
+            throw new InvalidArgumentException('Unrecognised XHTML version '.$this->version.'; cannot build doctype');
+        }
       }
     } else {
       return '';
