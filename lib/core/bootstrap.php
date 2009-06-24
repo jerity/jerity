@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package JerityCore
  * @author Dave Ingram <dave@dmi.me.uk>

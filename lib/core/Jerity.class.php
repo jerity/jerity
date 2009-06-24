@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package JerityCore
  * @author Dave Ingram <dave@dmi.me.uk>
@@ -95,6 +94,16 @@ class Jerity {
     return false;
   }
 
+  /**
+   * Adds a directory to search when autoloading classes.  Also includes
+   * classes/interfaces found under 'classes' and 'interfaces' directories
+   * beneath the specified directory.
+   *
+   * Returns true on success; false if the directory is not found.
+   *
+   * @param string $dir The name of the directory to add
+   * @return boolean
+   */
   public static function addAutoloadDir($dir) {
     if (!is_array(spl_autoload_functions()) || !in_array(array('Jerity', 'autoload'), spl_autoload_functions(), true)) {
       spl_autoload_register(array('Jerity', 'autoload'));
