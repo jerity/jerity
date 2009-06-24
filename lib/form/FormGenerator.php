@@ -21,10 +21,6 @@ class FormGenerator {
    */
   protected $formProperties = array();
   /**
-   * Whether to generate XHTML or just HTML
-   */
-  protected $xhtml = false;
-  /**
    * Whether we need a top-level list
    */
   protected $topLevelList = true;
@@ -33,10 +29,9 @@ class FormGenerator {
   /**
    * Initialise the form generator.
    *
-   * @param bool $xhtml Whether to generate XHTML or just HTML.
+   * @param bool $topLevelList Whether to create the top-level UL. You almost always want this off.
    */
-  public function __construct($xhtml = false, $topLevelList=false) {
-    $this->xhtml = $xhtml;
+  public function __construct($topLevelList=false) {
     $this->topLevelList = $topLevelList;
   }
 
@@ -173,13 +168,13 @@ class FormGenerator {
         if (isset($this->data[$e['name']])) {
           $e->populate($this->data[$e['name']]);
         }
-        $out .= $e->render($this->xhtml, $this->getError($e['name']));
+        $out .= $e->render($this->getError($e['name']));
       } else {
         if ($e instanceof FormGenerator_Fieldset) {
           $e->populate($this->data);
           $e->propagateErrors($this->errors);
         }
-        $out .= $e->render($this->xhtml);
+        $out .= $e->render();
       }
       if ($this->topLevelList) $out .= "</li>\n";
     }
@@ -308,12 +303,11 @@ class FormGenerator_Element extends ArrayObject {
    *
    * @param array  $attrs Associative array of attributes for the errored element.
    * @param string $error The error string to display for the errored element.
-   * @param bool   $xhtml Whether to generate XHTML or HTML
    */
-  protected static function renderError(array $attrs = null, $error, $xhtml) {
+  protected static function renderError(array $attrs = null, $error = null) {
     $attrs['id'] .= '-error';
     $attrs = array_intersect_key($attrs, array_flip(array('id')));
-    return self::renderTag('strong', $attrs, $error, $xhtml)."\n";
+    return self::renderTag('strong', $attrs, $error)."\n";
   }
 
   /**
@@ -324,10 +318,9 @@ class FormGenerator_Element extends ArrayObject {
    * @param string $tag         The name of the tag to render
    * @param array  $attrs       Associative array of attributes for the tag
    * @param mixed  $content     Tag content; false to force an empty tag in XHTML mode (single tag in HTML mode), null to force open tag.
-   * @param bool   $xhtml       Whether to generate XHTML or HTML
    * @param array  $ignoreAttrs Array of keys to ignore from \a $attrs
    */
-  protected static function renderTag($tag, array $attrs = null, $content = null, $xhtml = false, array $ignoreAttrs = null) {
+  protected static function renderTag($tag, array $attrs = null, $content = null, array $ignoreAttrs = null) {
     if (is_null($attrs)) {
       $attrs = array();
     }
@@ -345,7 +338,7 @@ class FormGenerator_Element extends ArrayObject {
       }
       $out .= ' '.htmlentities($k).'="'.htmlentities($v).'"';
     }
-    $out .= ($xhtml && $content===false) ? " />" : ">";
+    $out .= (RenderContext::getGlobalContext()->getLanguage() == RenderContext::LANG_XHTML && $content===false) ? " />" : ">";
     if (!is_null($content) && $content !== false) {
       $out .= $content;
       $out .= '</'.$tag.'>';
@@ -357,11 +350,10 @@ class FormGenerator_Element extends ArrayObject {
   /**
    * Render a form element.
    *
-   * @param bool   $xhtml Whether to generate XHTML or HTML.
    * @param string $error An error message to show, if applicable.
    * @return string
    */
-  public function render($xhtml=false, $error=null) {
+  public function render($error=null) {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label']) && !in_array($this['type'], array('checkbox', 'radio'))) {
@@ -391,9 +383,9 @@ class FormGenerator_Element extends ArrayObject {
     }
 
     if ($error) {
-      $out .= self::renderError($this->props, $error, $xhtml);
+      $out .= self::renderError($this->props, $error);
     }
-    $out .= self::renderTag('input', $this->props, false, $xhtml, array('label', 'required'))."\n";
+    $out .= self::renderTag('input', $this->props, false, array('label', 'required'))."\n";
 
     if (isset($this['label']) && in_array($this['type'], array('checkbox', 'radio'))) {
       $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']))."\n";
@@ -475,7 +467,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $newObj;
   }
 
-  public function renderElementList($elements, $xhtml=false) {
+  public function renderElementList($elements) {
     if (!count($elements)) {
       return '';
     }
@@ -486,13 +478,13 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
         if (isset($this->data[$e['name']])) {
           $e->populate($this->data[$e['name']]);
         }
-        $out .= $e->render($xhtml , $this->getError($e['name']));
+        $out .= $e->render($this->getError($e['name']));
       } else {
         if ($e instanceof FormGenerator_Fieldset) {
           $e->populate($this->data);
           $e->propagateErrors($this->errors);
         }
-        $out .= $e->render($xhtml);
+        $out .= $e->render();
       }
       $out .= "</li>\n";
     }
@@ -501,7 +493,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $out;
   }
 
-  public function render($xhtml=false, $error=null) {
+  public function render($error=null) {
     $out = self::renderTag('fieldset', $this->props, null, false, array('label', 'type'))."\n";
     if (isset($this['label']) && $this['label']) {
       # TODO: required flag
@@ -509,7 +501,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     }
 
     // render elements
-    $out .= $this->renderElementList($this->fields, $xhtml);
+    $out .= $this->renderElementList($this->fields);
 
     $out .= "</fieldset>\n";
 
@@ -525,11 +517,10 @@ class FormGenerator_Textarea extends FormGenerator_Element {
   /**
    * Render a form element.
    *
-   * @param bool   $xhtml Whether to generate XHTML or HTML.
    * @param string $error An error message to show, if applicable.
    * @return string
    */
-  public function render($xhtml=false, $error=null) {
+  public function render($error=null) {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
@@ -547,7 +538,7 @@ class FormGenerator_Textarea extends FormGenerator_Element {
       $data = '';
     }
     if ($error) {
-      $out .= self::renderError($this->props, $error, $xhtml);
+      $out .= self::renderError($this->props, $error);
     }
     $out .= self::renderTag('textarea', $this->props, htmlentities($data), false, array('label', 'value', 'type'))."\n";
 
@@ -592,11 +583,10 @@ class FormGenerator_Select extends FormGenerator_Element {
   /**
    * Render a form element.
    *
-   * @param bool   $xhtml Whether to generate XHTML or HTML.
    * @param string $error An error message to show, if applicable.
    * @return string
    */
-  public function render($xhtml=false, $error=null) {
+  public function render($error=null) {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
@@ -607,7 +597,7 @@ class FormGenerator_Select extends FormGenerator_Element {
       $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
     }
     if ($error) {
-      $out .= self::renderError($this->props, $error, $xhtml);
+      $out .= self::renderError($this->props, $error);
     }
     $out .= self::renderTag('select', $this->props, null, false, array('label', 'value', 'type'))."\n";
     if (!is_null($this->data)) {
@@ -654,11 +644,10 @@ class FormGenerator_Hint extends FormGenerator_Element {
   /**
    * Render a form hint.
    *
-   * @param bool   $xhtml Whether to generate XHTML or HTML.
    * @param string $error An error message to show, if applicable.
    * @return string
    */
-  public function render($xhtml=false, $error=null) {
+  public function render($error=null) {
     $out = '';
     if (isset($this['content'])) {
       if (!isset($this['escape']) || $this['escape']) {
