@@ -385,7 +385,7 @@ class FormGenerator_Element extends ArrayObject {
     if ($error) {
       $out .= self::renderError($this->props, $error);
     }
-    $out .= self::renderTag('input', $this->props, false, array('label', 'required'))."\n";
+    $out .= self::renderTag('input', $this->props, null, array('label', 'required'))."\n";
 
     if (isset($this['label']) && in_array($this['type'], array('checkbox', 'radio'))) {
       $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']))."\n";
@@ -494,7 +494,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
   }
 
   public function render($error=null) {
-    $out = self::renderTag('fieldset', $this->props, null, false, array('label', 'type'))."\n";
+    $out = self::renderTag('fieldset', $this->props, null, array('label', 'type'))."\n";
     if (isset($this['label']) && $this['label']) {
       # TODO: required flag
       $out .= '<legend><span>'.htmlentities($this['label'])."</span></legend>\n";
@@ -540,7 +540,7 @@ class FormGenerator_Textarea extends FormGenerator_Element {
     if ($error) {
       $out .= self::renderError($this->props, $error);
     }
-    $out .= self::renderTag('textarea', $this->props, htmlentities($data), false, array('label', 'value', 'type'))."\n";
+    $out .= self::renderTag('textarea', $this->props, htmlentities($data), array('label', 'value', 'type'))."\n";
 
     return $out;
   }
@@ -599,7 +599,7 @@ class FormGenerator_Select extends FormGenerator_Element {
     if ($error) {
       $out .= self::renderError($this->props, $error);
     }
-    $out .= self::renderTag('select', $this->props, null, false, array('label', 'value', 'type'))."\n";
+    $out .= self::renderTag('select', $this->props, null, array('label', 'value', 'type'))."\n";
     if (!is_null($this->data)) {
       if (isset($this->options[$this->data])) {
         $this->options[$this->data]['selected'] = 'selected';
@@ -610,7 +610,7 @@ class FormGenerator_Select extends FormGenerator_Element {
       }
     }
     foreach ($this->options as $option) {
-      $out .= self::renderTag('option', $option, htmlentities($option['label']), false, array('label'))."\n";
+      $out .= self::renderTag('option', $option, htmlentities($option['label']), array('label'))."\n";
     }
     $out .= "</select>\n";
 
@@ -659,7 +659,7 @@ class FormGenerator_Hint extends FormGenerator_Element {
       $content = '';
     }
 
-    $out .= self::renderTag('div', $this->props, $content, false, array('content', 'escape', 'type'))."\n";
+    $out .= self::renderTag('div', $this->props, $content, array('content', 'escape', 'type'))."\n";
 
     return $out;
   }
