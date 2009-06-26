@@ -52,7 +52,7 @@ class SiteTemplate extends Template {
    *
    * @see Template::__construct()
    */
-  public function useTemplate($file, array $params = array()) {
+  public static function useTemplate($file, array $params = array()) {
     $tpl = new self($file);
     $tpl->setParams($params);
     return $tpl->render();

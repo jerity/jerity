@@ -277,13 +277,18 @@ abstract class Template implements Renderable, ArrayAccess {
   /**
    * Include a template with the given parameters.
    *
+   * Note: This method should be static abstract. Unfortunately this is
+   *       deprecated by E_STRICT - likely due to the absence of late
+   *       static binding which will be possible in PHP 5.3
+   *
    * @param string $file  Path to the template.
    * @param array $params Template parameters, if any.
    * @return string
    *
    * @see Template::__construct()
    */
-  public abstract function useTemplate($file, array $params = array());
+  public static function useTemplate($file, array $params = array()) {
+  }
 }
 
 ?>
