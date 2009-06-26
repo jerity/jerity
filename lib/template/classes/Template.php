@@ -24,20 +24,93 @@ abstract class Template implements Renderable, ArrayAccess {
     $this->loadTemplate($f);
   }
 
+  /**
+   * Check whether a certain property exists.
+   *
+   * This passes through to the TemplateVars class which will attempt to handle
+   * the storage of any specific parameters for the template.
+   *
+   * @param string $k Template variable name to check
+   * @return bool     Whether the variable exists
+   *
+   * @see ArrayAccess
+   */
   public function offsetExists($k) {
     return $this->templateParams->offsetExists($k);
   }
 
-  public function offsetSet($k, $v) {
-    return $this->templateParams->offsetSet($k, $v);
-  }
-
+  /**
+   * Retrieve a property, or throw an exception if it does not exist.
+   *
+   * This passes through to the TemplateVars class which will attempt to handle
+   * the storage of any specific parameters for the template.
+   *
+   * @param string $k Template variable name to retrieve
+   * @return mixed    Value of the variable
+   *
+   * @see ArrayAccess
+   * @throws OutOfBoundsException
+   */
   public function offsetGet($k) {
     return $this->templateParams->offsetGet($k);
   }
 
+  /**
+   * Set a property, or throw an exception if it does not exist.
+   *
+   * This passes through to the TemplateVars class which will attempt to handle
+   * the storage of any specific parameters for the template.
+   *
+   * @param string $k Template variable name to set
+   * @param mixed  $v Value to set
+   * @return void
+   *
+   * @see ArrayAccess
+   * @throws OutOfBoundsException
+   */
+  public function offsetSet($k, $v) {
+    return $this->templateParams->offsetSet($k, $v);
+  }
+
+  /**
+   * Return a property to its default value, or throw an exception if it does
+   * not exist.
+   *
+   * This passes through to the TemplateVars class which will attempt to handle
+   * the storage of any specific parameters for the template.
+   *
+   * @param string $k Template variable name to reset
+   * @return void
+   *
+   * @see ArrayAccess
+   * @throws OutOfBoundsException
+   */
   public function offsetUnset($k) {
     return $this->templateParams->offsetUnset($k);
+  }
+
+  /**
+   * Handle automatic accessor/mutator calls.
+   *
+   * Throws an exception if the number of arguments are wrong, or if the method
+   * name is not recognised, or if the desired property does not exist.
+   *
+   * Note: It is suggested that other ways of accessing this data are used, as
+   * this does introduce some overhead.
+   *
+   * This passes through to the TemplateVars class which will attempt to handle
+   * the storage of any specific parameters for the template.
+   *
+   * @param string $f Function call name
+   * @param array  $a List of arguments
+   * @return void|mixed
+   *
+   * @throws InvalidArgumentException
+   * @throws BadMethodCallException
+   * @throws OutOfBoundsException
+   */
+  public function __call($f, array $a) {
+    return $this->templateParams->__call($f, $a);
   }
 
   protected function preLoadChecks($f) {
