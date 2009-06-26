@@ -72,6 +72,16 @@ class PageTemplate extends Template {
     unset($content);
     return $this->siteTemplate->render();
   }
+
+  /**
+   * Gets the site template used with this page template.
+   *
+   * @return SiteTemplate
+   */
+  public function getSiteTemplate() {
+    return $this->siteTemplate;
+  }
+
 }
 
 ?>
