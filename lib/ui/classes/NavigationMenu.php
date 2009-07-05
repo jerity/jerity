@@ -1,14 +1,14 @@
 <?php
 
 class NavigationMenu implements Renderable {
-  protected $exactUrlClass  = null;
-  protected $bestMatchClass = null;
+  protected $exact_url_class  = null;
+  protected $best_match_class = null;
   protected $besturl = null;
   protected $urls = array();
   protected $url_cache = array();
   protected $attrs = array();
-  protected $ourUrl = '';
-  protected $levelHints = false;
+  protected $our_url = '';
+  protected $level_hints = false;
 
   public function __construct($urls = array()) {
     $this->urls = $urls;
@@ -16,22 +16,26 @@ class NavigationMenu implements Renderable {
   }
 
   public function setBestUrlClass($c) {
-    $this->bestMatchClass = $c;
+    $this->best_match_class = $c;
+  }
+
+  public function setExactUrlClass($c) {
+    $this->exact_url_class = $c;
   }
 
   public function setOurUrl($url) {
-    $this->ourUrl = $url;
+    $this->our_url = $url;
   }
 
   public function getOurUrl() {
-    if ($this->ourUrl) {
-      return $this->ourUrl;
+    if ($this->our_url) {
+      return $this->our_url;
     }
     return $_SERVER['REQUEST_URI'];
   }
 
   public function setLevelHints($hint) {
-    $this->levelHints = $hint;
+    $this->level_hints = $hint;
   }
 
   protected function refreshUrlCache($urls = null, $level = 0) {
@@ -65,12 +69,12 @@ class NavigationMenu implements Renderable {
     return $this->besturl[$level];
   }
 
-  protected static function renderTag($tag, array $attrs = null, $content = null, array $ignoreAttrs = null) {
+  protected static function renderTag($tag, array $attrs = null, $content = null, array $ignore_attrs = null) {
     if (is_null($attrs)) {
       $attrs = array();
     }
-    if (!is_null($ignoreAttrs) && count($ignoreAttrs)) {
-      $attrs = array_diff_key($attrs, array_flip($ignoreAttrs));
+    if (!is_null($ignore_attrs) && count($ignore_attrs)) {
+      $attrs = array_diff_key($attrs, array_flip($ignore_attrs));
     }
 
     $out = '<'.$tag;
@@ -94,7 +98,7 @@ class NavigationMenu implements Renderable {
 
   protected function renderURLs($urls, $top_attrs, $level=0) {
     $out = '';
-    if ($this->levelHints) {
+    if ($this->level_hints) {
       if (isset($top_attrs['class'])) {
         $top_attrs['class'] .= ' level'.$level;
       } else {
@@ -102,6 +106,7 @@ class NavigationMenu implements Renderable {
       }
     }
     $out .= self::renderTag('ul', $top_attrs)."\n";
+    $cururl = $this->getOurUrl();
     $besturl = $this->getBestUrl($level);
     foreach ($urls as $url) {
       $a_text = htmlentities($url[0], ENT_QUOTES, 'UTF-8');
@@ -110,12 +115,15 @@ class NavigationMenu implements Renderable {
 
       $i_class = isset($i_attrs['class']) ? array($i_attrs['class']) : array();
 
-      if (!is_null($this->bestMatchClass)) {
+      if (!is_null($this->exact_url_class) && $url[1] == $cururl) {
+        $i_class[] = $this->exact_url_class;
+
+      } elseif (!is_null($this->best_match_class)) {
         if (
           ($besturl == false && isset($i_attrs['_default']) && $i_attrs['_default']) ||
           ($url[1] == $besturl)
         ) {
-          $i_class[] = $this->bestMatchClass;
+          $i_class[] = $this->best_match_class;
         }
       }
 
