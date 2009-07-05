@@ -1,5 +1,21 @@
 <?php
+/**
+ * @package JerityUI
+ * @author Dave Ingram <dave@dmi.me.uk>
+ * @copyright Copyright (c) 2009 Dave Ingram
+ */
 
+/**
+ * Navigation menu component.
+ *
+ * This class will create a navigation menu as (nested) unordered lists. It
+ * has the capability to automatically highlight the current or "best match"
+ * item.
+ *
+ * @package JerityUI
+ * @author Dave Ingram <dave@dmi.me.uk>
+ * @copyright Copyright (c) 2009 Dave Ingram
+ */
 class NavigationMenu implements Renderable {
   protected $exact_url_class  = null;
   protected $best_match_class = null;
@@ -10,21 +26,41 @@ class NavigationMenu implements Renderable {
   protected $our_url = '';
   protected $level_hints = false;
 
-  public function __construct($urls = array()) {
+  /**
+   * Create a navigation menu from an array of URLs.
+   *
+   * Each array element should be an array of the form:
+   *  - Title
+   *  - URL (or \t null)
+   *  - Optional associative array of attributes to apply to the \t <li>
+   *  element.
+   *
+   * There are (currently) two special attributes. The \t _default attribute
+   * specifies a default item to be highlighted if no others match. The \t
+   * _children attribute can contain a further array of URLs with each item in
+   * the same form.
+   *
+   * @param array $urls The URLs that should be part of this navigation menu.
+   */
+  public function __construct(array $urls = array()) {
     $this->urls = $urls;
     $this->refreshUrlCache();
+  }
+
+  public function getBestUrlClass() {
+    return $this->best_match_class;
   }
 
   public function setBestUrlClass($c) {
     $this->best_match_class = $c;
   }
 
-  public function setExactUrlClass($c) {
-    $this->exact_url_class = $c;
+  public function getExactUrlClass() {
+    return $this->exact_url_class;
   }
 
-  public function setOurUrl($url) {
-    $this->our_url = $url;
+  public function setExactUrlClass($c) {
+    $this->exact_url_class = $c;
   }
 
   public function getOurUrl() {
@@ -32,6 +68,14 @@ class NavigationMenu implements Renderable {
       return $this->our_url;
     }
     return $_SERVER['REQUEST_URI'];
+  }
+
+  public function setOurUrl($url) {
+    $this->our_url = $url;
+  }
+
+  public function getLevelHints() {
+    return $this->level_hints;
   }
 
   public function setLevelHints($hint) {
@@ -143,10 +187,21 @@ class NavigationMenu implements Renderable {
     return $out;
   }
 
+  /**
+   * Render this navigation menu using the current render context and return it as a string.
+   *
+   * @return string
+   */
   public function render() {
     return $this->renderURLs($this->urls, $this->attrs);
   }
 
+  /**
+   * Render this navigation menu using the current render context and return it as a string.
+   *
+   * @return string
+   * @see NavigationMenu::render()
+   */
   public function __toString() {
     return $this->render();
   }
