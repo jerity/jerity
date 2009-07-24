@@ -116,6 +116,11 @@ class Jerity {
 
     self::$autoload_dirs[$dir] = 1;
 
+    $dir = "$base_dir/exceptions";
+    if (is_dir($dir)) {
+      self::$autoload_dirs[$dir] = 1;
+    }
+
     $dir = "$base_dir/interfaces";
     if (is_dir($dir)) {
       self::$autoload_dirs[$dir] = 1;
@@ -128,4 +133,5 @@ class Jerity {
 
     return true;
   }
+
 }
