@@ -1,7 +1,7 @@
 <?php
 /**
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 
@@ -11,8 +11,8 @@
  * @todo  Add support for multidimensional query arrays 'key[0]..[n]=value'
  * @todo  Add support for named query arrays 'key[name]=value'
  *
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 class URL {

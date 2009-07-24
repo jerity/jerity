@@ -1,26 +1,32 @@
 <?php
 /**
- * @package JerityCore
- * @author Dave Ingram <dave@dmi.me.uk>
- * @copyright Copyright (c) 2009 Dave Ingram
+ * @package    JerityCore
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2009 Dave Ingram
  */
 
 /**
  * Jerity utility class
  *
- * @package JerityCore
- * @author Dave Ingram <dave@dmi.me.uk>
- * @copyright Copyright (c) 2009 Dave Ingram
+ * @todo  Implement harder autoloading...
+ *
+ * @package    JerityCore
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2009 Dave Ingram
  */
-
 class Jerity {
+
   /**
    * List of directories to search for autoloading classes.
+   *
+   * @var  array
    */
   private static $autoload_dirs = array();
 
   /**
    * Whether to really try hard to autoload a class.
+   *
+   * @var  boolean
    */
   private static $autoload_harder = false;
 
@@ -38,8 +44,9 @@ class Jerity {
    * also cause "renderAsHTML" to be split into ('render', 'As', 'H', 'T',
    * 'M', 'L').
    *
-   * @param string $str The camel-cased string to be split.
-   * @return array The set of components, in order.
+   * @param   string  $str  The camel-cased string to be split.
+   *
+   * @return  array   The set of components, in order.
    */
   public static function splitCamelCase($str) {
     $output[] = '';
@@ -60,8 +67,8 @@ class Jerity {
    * For example, splits "this_split_string" into ('this', 'split', 'string')
    * and "A_SPLIT_STRING" into ('A', 'SPLIT', 'STRING').
    *
-   * @param string $str The split-cased string to be split.
-   * @return array The set of components, in order.
+   * @param   string  $str  The split-cased string to be split.
+   * @return  array         The set of components, in order.
    */
   public static function splitSplitCase($str) {
     $output = preg_split('/_+/', $str);
@@ -72,15 +79,20 @@ class Jerity {
   /**
    * Autoload a class by name. This function should not be called directly.
    *
-   * @param string $name The name of the class to load
-   * @return bool
+   * @todo  Implement harder autoloading...
+   *
+   * @param   string  $name  The name of the class to load
+   *
+   * @return  bool
    */
   public static function autoload($name) {
     $names = array($name);
     if (self::$autoload_harder) {
-      // break the class name up, so IterableRenderable will search for Iterable and Renderable too
-      // and MyFooClass will search for My, MyFoo, FooClass and Class
-      // additional complexity: 2 * (nComponents - 1)
+      # TODO: Implement harder autoloading...
+      #       Break the class name up, so IterableRenderable will search for
+      #       Iterable and Renderable and MyFooClass will search for My, MyFoo,
+      #       FooClass and Class.
+      #       Additional complexity: 2 * (nComponents - 1)
     }
     foreach ($names as $name) {
       foreach (array_keys(self::$autoload_dirs) as $dir) {
@@ -96,13 +108,14 @@ class Jerity {
 
   /**
    * Adds a directory to search when autoloading classes.  Also includes
-   * classes/interfaces found under 'classes' and 'interfaces' directories
-   * beneath the specified directory.
+   * classes/interfaces found under the following directories beneath the
+   * specified directory: classes, exceptions, interfaces.
    *
    * Returns true on success; false if the directory is not found.
    *
-   * @param string $dir The name of the directory to add
-   * @return boolean
+   * @param   string  $dir  The name of the directory to add
+   *
+   * @return  boolean
    */
   public static function addAutoloadDir($dir) {
     if (!is_array(spl_autoload_functions()) || !in_array(array('Jerity', 'autoload'), spl_autoload_functions(), true)) {
@@ -116,19 +129,12 @@ class Jerity {
 
     self::$autoload_dirs[$dir] = 1;
 
-    $dir = "$base_dir/exceptions";
-    if (is_dir($dir)) {
-      self::$autoload_dirs[$dir] = 1;
-    }
-
-    $dir = "$base_dir/interfaces";
-    if (is_dir($dir)) {
-      self::$autoload_dirs[$dir] = 1;
-    }
-
-    $dir = "$base_dir/classes";
-    if (is_dir($dir)) {
-      self::$autoload_dirs[$dir] = 1;
+    $auto_subdirs = array('interfaces', 'classes', 'exceptions');
+    foreach ($auto_subdirs as $subdir) {
+      $dir = "$base_dir/$subdir";
+      if (is_dir($dir)) {
+        self::$autoload_dirs[$dir] = 1;
+      }
     }
 
     return true;

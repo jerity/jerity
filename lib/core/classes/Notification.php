@@ -1,7 +1,7 @@
 <?php
 /**
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 
@@ -10,8 +10,8 @@
  *
  * @todo  Remove?  Used with Redirector.  Perhaps more suitable for UI package.
  *
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 class Notification implements Renderable {
@@ -56,7 +56,7 @@ class Notification implements Renderable {
    * Render the item using the current global rendering context, and return it
    * as a string.
    *
-   * @return string
+   * @return  string
    */
   public function render() {
     if (empty($this->message)) return '';

@@ -1,7 +1,7 @@
 <?php
 /**
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 
@@ -11,8 +11,8 @@
  * @todo  Split escape() into individual functions and make escape() use those
  *        based on the render context.
  *
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 class String {
@@ -152,11 +152,11 @@ class String {
    *
    * @todo  Preserve HTML tags and entities.
    *
-   * @param string   $text       The text to truncate.
-   * @param integer  $length     The amount of text to show.
-   * @param boolean  $boundary   Truncate at word boundary
-   * @param boolean  $ellipsis   Whether to show an ellipsis.
-   * @param boolean  $extension  If a file, do we want to keep the extension.
+   * @param  string   $text       The text to truncate.
+   * @param  integer  $length     The amount of text to show.
+   * @param  boolean  $boundary   Truncate at word boundary
+   * @param  boolean  $ellipsis   Whether to show an ellipsis.
+   * @param  boolean  $extension  If a file, do we want to keep the extension.
    *
    * @return  string
    */

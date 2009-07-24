@@ -1,7 +1,7 @@
 <?php
 /**
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 
@@ -9,8 +9,8 @@
  * Redirector class to handle redirection in a tidy and safe manner while
  * providing useful information and allowing messages on redirect.
  *
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 class Redirector {
@@ -63,7 +63,7 @@ class Redirector {
    * Retrieves the text for the current message.
    * Also performs garbage collection.
    *
-   * @param  boolean  $format  Whether to format the output.
+   * @param   boolean  $format  Whether to format the output.
    *
    * @return  string
    */
@@ -170,16 +170,16 @@ class Redirector {
    * The message type should be one of the provided constants in the
    * Notification class.
    *
-   * @see  Notification
+   * @see     Notification
    *
-   * @todo  Make URL absolute
-   * @todo  Specific exception for redirect error?
-   * @todo  Ensure that we handle standard redirects correctly.
-   * @todo  Check RFC 2616
+   * @todo    Make URL absolute
+   * @todo    Specific exception for redirect error?
+   * @todo    Ensure that we handle standard redirects correctly.
+   * @todo    Check RFC 2616
    *
-   * @param  string  $url           Where to redirect to.
-   * @param  string  $message       The message to display after redirect.
-   * @param  string  $message_type  The type of message.
+   * @param   string  $url           Where to redirect to.
+   * @param   string  $message       The message to display after redirect.
+   * @param   string  $message_type  The type of message.
    *
    * @throws  Exception
    */
