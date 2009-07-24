@@ -12,6 +12,8 @@
  * Note that the attribute hints in the comments for each method largely
  * adhere to the strict dialect.
  *
+ * @todo  Support IE conditional comments for various items.
+ *
  * @package  JerityCore
  * @author  Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
@@ -199,8 +201,7 @@ class Tag {
    * @return  string
    */
   public static function link($href, $type, array $attrs = array()) {
-    $attrs['href'] = $href;
-    $attrs['type'] = $type;
+    $attrs = array_merge(array('type' => $type), $attrs, array('href' => $href));
     return self::renderTag('link', $attrs);
   }
 
@@ -223,11 +224,11 @@ class Tag {
    * @return  string
    */
   public static function meta($name, $content, $http = false, array $attrs = array()) {
-    if ($http) {
-      $attrs['http-equiv'] = $name;
-    } else {
-      $attrs['name'] = $name;
-    }
+    $key = ($http ? 'http-equiv' : 'name');
+    $attrs = array_merge(array(
+      $key      => $name,
+      'content' => $content,
+    ), $attrs);
     if (!isset($attrs['name'])) {
       unset($attrs['scheme']);
     }
@@ -252,27 +253,8 @@ class Tag {
   public static function param($name, array $attrs = array()) {
     $allowed = array('id', 'type', 'value', 'valuetype');
     $attrs = array_intersect_key($attrs, array_flip($allowed));
-    $attrs['name'] = $name;
+    $attrs = array_merge(array('name' => $name), $attrs);
     return self::renderTag('param', $attrs);
-  }
-
-  /**
-   * Renders a SCRIPT tag according to the current render context.
-   *
-   * This script tag is provided for including scripts in the BODY of the page
-   * and not the head.  Thus it can take in content for an inline script or a
-   * source attribute.  The source attribute will take precedence.
-   *
-   * @param  string  $src      The source of the content.
-   * @param  string  $type     The MIME type of the script.
-   * @param  string  $content  The inline content.
-   * @param  array   $attrs    An associative array of addional attributes.
-   *
-   * @return  string
-   */
-  public static function script($type, $content = null, array $attrs = array()) {
-    $attrs['type'] = $type;
-    return self::renderTag('script', $attrs, $content);
   }
 
   /**
@@ -292,6 +274,67 @@ class Tag {
   }
 
   /**
+   * Renders a SCRIPT tag according to the current render context.
+   *
+   * This script tag is provided for including scripts in the BODY of the page
+   * and not the head.  Thus it can take in content for an inline script or a
+   * source attribute.  The source attribute will take precedence.
+   *
+   * @param  string  $type     The MIME type of the script.
+   * @param  string  $content  The inline content.
+   * @param  array   $attrs    An associative array of addional attributes.
+   *
+   * @return  string
+   */
+  public static function script($type, $content = null, array $attrs = array()) {
+    $attrs = array_merge(array('type' => $type), $attrs);
+    return self::renderTag('script', $attrs, $content);
+  }
+
+  /**
+   * Renders a STYLE tag according to the current render context.
+   *
+   * This is provided for inline stylesheets.
+   * source attribute.  The source attribute will take precedence.
+   *
+   * @param  string  $content  The inline content.
+   * @param  array   $attrs    An associative array of addional attributes.
+   *
+   * @return  string
+   */
+  public static function style($content = null, array $attrs = array()) {
+    if (!isset($attrs['type'])) {
+      $attrs = array_merge(array('type' => RenderContext::CONTENT_CSS), $attrs);
+    }
+    return self::renderTag('style', $attrs, $content);
+  }
+
+  /**
+   * Renders content wrapped by an Internet Explorer conditional comment with
+   * a provided expression.
+   *
+   * For more information on expression syntax, see:
+   *   http://msdn.microsoft.com/en-us/library/ms537512%28VS.85%29.aspx#syntax
+   *
+   * @param  string   $expression  The condition to check for.
+   * @param  string   $content     The content to wrap inside the comment.
+   * @param  boolean  $newline     Put conditional comment tags on new lines.
+   * @param  boolean  $revealed    Use a revealed comment
+   *                                 - default = hidden comment (false).
+   *
+   * @return  HTML
+   */
+  public static function ieConditionalComment($expression, $content, $newline = false, $revealed = false) {
+    $c = '';
+    $c .= '<!'.($revealed ? '' : '--').'[if '.$expression.']>';
+    if ($newline) $c .= PHP_EOL;
+    $c .= $content;
+    if ($newline) $c .= PHP_EOL;
+    $c .= '<![endif]'.($revealed ? '' : '--').'>'.PHP_EOL;
+    return $c;
+  }
+
+  /**
    * Renders a tag according the the current render context.
    *
    * @param  string  $tag      The tag to render.
@@ -302,37 +345,29 @@ class Tag {
    *
    * @throws UnexpectedValueException
    */
-  protected static function renderTag($tag, array $attrs = array(), $content = null) {
+  public static function renderTag($tag, array $attrs = array(), $content = null) {
     $tag = strtolower($tag);
-    ksort($attrs);
+
+    # Check whether we need to account for XML.
+    $ctx = RenderContext::getGlobalContext();
+    $is_xml = $ctx->isXMLSyntax();
 
     $r = '<'.$tag;
     foreach ($attrs as $k => $v) {
       $r .= ' '.strtolower($k).'="'.String::escape($v).'"';
     }
-    if ($tag === 'script') {
+    if ($tag === 'script' || $tag === 'style') {
       $r .= '>';
-      if (!is_null($content) && !isset($attrs['src'])) {
-        $r .= $content;
+      if (!is_null($content)) {
+        if ($is_xml) $r .= '//<![CDATA[';
+        if ($tag === 'script' && !isset($attrs['src']) || $tag === 'style') {
+          $r .= $content;
+        }
+        if ($is_xml) $r .= '//]]>';
       }
       $r .= '</'.$tag.'>';
     } else {
-      $ctx = RenderContext::getGlobalContext();
-      switch ($ctx->getLanguage()) {
-        case RenderContext::LANG_HTML:
-        case RenderContext::LANG_MHTML:
-        case RenderContext::LANG_TEXT:
-          $r .= '>';
-          break;
-        case RenderContext::LANG_FBML:
-        case RenderContext::LANG_XHTML:
-        case RenderContext::LANG_WML:
-        case RenderContext::LANG_XML:
-          $r .= ' />';
-          break;
-        default:
-          throw new UnexpectedValueException('Cannot generate tag for render context language: \''.$ctx->getLanguage().'\'');
-      }
+      $r .= ($is_xml ? ' />' : '>');
     }
     return $r;
   }

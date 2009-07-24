@@ -31,7 +31,7 @@ class RenderContext {
   const CONTENT_ATOM     = 'application/atom+xml';
   const CONTENT_CSS      = 'text/css';
   const CONTENT_HTML     = 'text/html';
-  const CONTENT_JS       = 'application/javascript';
+  const CONTENT_JS       = 'text/javascript'; # application/javascript
   const CONTENT_JSON     = 'application/json';
   const CONTENT_RSS      = 'application/rss+xml';
   const CONTENT_TEXT     = 'text/plain';
@@ -315,5 +315,23 @@ class RenderContext {
    */
   public function setDialect($dialect) {
     return ($this->dialect = $dialect);
+  }
+
+  /**
+   * Determines whether the current render context is a language with XML
+   * syntax.
+   *
+   * @return boolean
+   */
+  public function isXMLSyntax() {
+    switch ($this->getLanguage()) {
+      case RenderContext::LANG_FBML:
+      case RenderContext::LANG_WML:
+      case RenderContext::LANG_XHTML:
+      case RenderContext::LANG_XML:
+        return true;
+      default:
+        return false;
+    }
   }
 }
