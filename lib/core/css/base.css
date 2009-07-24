@@ -1,0 +1,374 @@
+/******************************************************************************
+ * Description: Base CSS [HTML 4] [XHTML 1]
+ * Package:     JerityCore
+ * Author:      Nick Pope <nick [at] nickpope [dot] me [dot] uk>
+ * Copyright:   Copyright (c) 2009 Nick Pope
+ ******************************************************************************/
+
+/********** Base Dimensions **********/
+
+html, body {
+  font-size: 10px;
+}
+
+body {
+  margin: 10px;
+}
+
+/********** Base Font **********/
+
+body {
+  background-color: #fff;
+  color: #444;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 1.1em;
+  letter-spacing: 0;
+  line-height: 1.4;
+  text-align: justify;
+  text-decoration: none;
+  word-spacing: 0.1em;
+}
+
+/********** Heading Elements **********/
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  margin: 0.5em 0 0.3em;
+}
+
+h1 {
+  font-size: 1.7em;
+}
+
+h2 {
+  font-size: 1.6em;
+}
+
+h3 {
+  font-size: 1.6em;
+  font-weight: normal;
+}
+
+h4 {
+  font-size: 1.4em;
+}
+
+h5 {
+  font-size: 1.3em;
+}
+
+h6 {
+  font-size: 1.3em;
+  font-weight: normal;
+}
+
+/********** List Elements **********/
+
+ol {
+  list-style-type: decimal;
+  margin: 0 3em 0.5em 4em;
+}
+
+ul {
+  list-style-type: disc;
+  margin: 0 3em 0.5em 4em;
+}
+
+li {
+  padding: 2px 0;
+}
+
+dl {
+  margin: 0 3em 0.5em 3em;
+}
+
+dl dd:last-child {
+  margin-bottom: 0;
+}
+
+dt {
+  font-weight: bold;
+  margin-bottom: 0.1em;
+}
+
+dd {
+  margin-bottom: 0.5em;
+  margin-left: 1em;
+}
+
+/********** Table Elements **********/
+
+table {
+  border: solid 1px #ccc;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+}
+
+thead {
+  border-bottom: solid 1px #ccc;
+}
+
+tbody {
+}
+
+tfoot {
+  border-top: solid 1px #ccc;
+  color: #999;
+}
+
+tr {
+}
+
+th {
+  font-weight: bold;
+  padding: 0.3em;
+}
+
+td {
+  padding: 0.3em;
+}
+
+caption {
+  caption-side: bottom;
+  font-weight: bold;
+  margin: 0.5em 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+colgroup {
+}
+
+col {
+}
+
+/********** Form Elements **********/
+
+form {
+}
+
+fieldset {
+  border: solid 1px #ccc;
+  /*display: inline;*/
+  padding: 0.5em;
+}
+
+legend {
+  background-color: #fff;
+  font-weight: bold;
+  margin-left: -0.5em;
+  padding: 0 0.5em;
+}
+
+label {
+}
+
+input {
+  font-size: inherit;
+}
+
+input[type=checkbox] {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+input[type=radio] {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+input[type=button], input[type=submit], input[type=reset] {
+  padding: 0 0.2em;
+}
+
+input[type=file] {
+  /* not very flexible... */
+}
+
+select {
+  font-size: inherit;
+}
+
+optgroup {
+  font-style: normal;
+}
+
+option {
+  padding-left: 1em;
+}
+
+textarea {
+  font-size: inherit;
+  min-height: 8em;
+  min-width: 20em;
+  vertical-align: top;
+}
+
+/********** Block Elements **********/
+
+address {
+  font-style: italic;
+}
+
+blockquote {
+  margin: 0.5em 4em;
+  max-width: 60em;
+  padding: 1em 1em;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* for name/signature */
+blockquote p.cite {
+  text-align: right;
+}
+
+hr {
+  border: 0;
+  border-top: solid 1px #ccc;
+  margin: 0.5em 2em;
+}
+
+img {
+  display: block;
+}
+
+iframe, object {
+  border: solid 1px #ccc;
+}
+
+p {
+  margin-bottom: 0.5em;
+}
+
+pre {
+  font-family: monospace;
+}
+
+/********** Inline Elements **********/
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: #00c;
+}
+
+a:visited {
+  color: #36c;
+}
+
+a:hover {
+  border-bottom: solid 1px #00c;
+}
+
+a:focus, a:active {
+  outline: dotted 1px #f00;
+}
+
+abbr, acronym {
+  cursor: help;
+  border-bottom: dotted 1px #666;
+}
+
+bdo[dir=ltr] {
+  direction: ltr;
+}
+
+bdo[dir=rtl] {
+  direction: rtl;
+}
+
+button {
+  font-size: inherit;
+  padding: 0 0.2em;
+}
+
+del {
+  text-decoration: line-through;
+}
+
+ins {
+  text-decoration: underline;
+}
+
+q {
+  /* cannot use 'quotes' property - lack of support. */
+}
+
+q:before {
+  content: "“"; /* &#8220; */
+}
+
+q:after {
+  content: "”"; /* &#8221; */
+}
+
+sub {
+  font-size: 80%;
+  vertical-align: text-bottom;
+}
+
+sup {
+  font-size: 80%;
+  vertical-align: text-top;
+}
+
+/********** Font Elements **********/
+
+b {
+  font-weight: bold;
+}
+
+i {
+  font-style: italic;
+}
+
+tt {
+  font-family: monospace;
+}
+
+big {
+  font-size: larger;
+}
+
+small {
+  font-size: smaller;
+}
+
+/********** Phrase Elements **********/
+
+em {
+  font-style: italic;
+}
+
+strong {
+  font-weight: bold;
+}
+
+dfn {
+  font-style: italic;
+}
+
+code {
+  font-family: monospace;
+}
+
+samp {
+  font-family: monospace;
+}
+
+kbd {
+  font-family: monospace;
+}
+
+var {
+  font-family: monospace;
+}
+
+cite {
+  font-style: italic;
+}
