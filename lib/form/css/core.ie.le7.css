@@ -1,3 +1,9 @@
+/******************************************************************************
+ * Description: Form Core CSS [<=IE7]
+ * Package:     JerityForm
+ * Author:      Dave Ingram <dave [at] dmi [dot] me [dot] uk>
+ * Copyright:   Copyright (c) 2009 Dave Ingram
+ ******************************************************************************/
 form legend {
   position: relative;
   left: -7px;
