@@ -1,7 +1,7 @@
 <?php
 /**
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 
@@ -11,8 +11,8 @@
  *
  * @todo  Implement this class.
  *
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 class Error {

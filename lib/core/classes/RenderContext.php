@@ -1,16 +1,16 @@
 <?php
 /**
- * @package JerityCore
- * @author Dave Ingram <dave@dmi.me.uk>
- * @copyright Copyright (c) 2009 Dave Ingram
+ * @package    JerityCore
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2009 Dave Ingram
  */
 
 /**
  * Rendering context information.
  *
- * @package JerityCore
- * @author Dave Ingram <dave@dmi.me.uk>
- * @copyright Copyright (c) 2009 Dave Ingram
+ * @package    JerityCore
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2009 Dave Ingram
  */
 class RenderContext {
   const LANG_FBJS  = 'fbjs';
@@ -55,21 +55,21 @@ class RenderContext {
   /**
    * The shared global rendering context.
    *
-   * @var RenderContext
+   * @var  RenderContext
    */
   static protected $globalContext = array();
 
   /**
    * The language that should be used for rendering.
    *
-   * @var string
+   * @var  string
    */
   protected $language = self::LANG_HTML;
 
   /**
    * The version of the language that should be used for rendering.
    *
-   * @var mixed
+   * @var  mixed
    */
   protected $version  = 4.01;
 
@@ -77,7 +77,7 @@ class RenderContext {
    * The dialect of the language that should be used for rendering, for example
    * "strict" or "transitional".
    *
-   * @var string
+   * @var  string
    */
   protected $dialect  = self::DIALECT_STRICT;
 
@@ -87,7 +87,7 @@ class RenderContext {
   /**
    * Return the global shared rendering context.
    *
-   * @return RenderContext
+   * @return  RenderContext
    */
   public static function getGlobalContext() {
     if (count(self::$globalContext)) {
@@ -100,8 +100,8 @@ class RenderContext {
   /**
    * Set the global shared rendering context.
    *
-   * @param RenderContext $context The new global rendering context.
-   * @return RenderContext
+   * @param   RenderContext  $context  The new global rendering context.
+   * @return  RenderContext
    */
   public static function setGlobalContext(RenderContext $context) {
     return (self::$globalContext = array($context));
@@ -111,8 +111,8 @@ class RenderContext {
    * Push a new rendering context onto the global shared rendering context
    * stack.
    *
-   * @param RenderContext $context The new global rendering context.
-   * @return RenderContext
+   * @param   RenderContext  $context  The new global rendering context.
+   * @return  RenderContext
    */
   public static function pushGlobalContext(RenderContext $context) {
     array_unshift(self::$globalContext, $context);
@@ -123,7 +123,7 @@ class RenderContext {
    * Pop a rendering context from the global shared rendering context stack and
    * return it.
    *
-   * @return RenderContext
+   * @return  RenderContext
    */
   public static function popGlobalContext(RenderContext $context) {
     return array_shift(self::$globalContext);
@@ -132,10 +132,10 @@ class RenderContext {
   /**
    * Generate one of a number of common rendering contexts.
    *
-   * @param string $type One of the TYPE_* class constants.
-   * @return RenderContext
+   * @param   string  $type  One of the TYPE_* class constants.
+   * @return  RenderContext
    *
-   * @throws InvalidArgumentException
+   * @throws  InvalidArgumentException
    */
   public static function makeContext($type) {
     // standard context factory
@@ -195,9 +195,9 @@ class RenderContext {
    * be returned. If the version is not recognised, or the version supports
    * dialects and the dialect is not recognised, an exception will be thrown.
    *
-   * @return string
+   * @return  string
    *
-   * @throws InvalidArgumentException
+   * @throws  InvalidArgumentException
    */
   public function getDoctype() {
     if ($this->language == self::LANG_HTML) {
@@ -248,7 +248,7 @@ class RenderContext {
    * Render any content that should come before the document (such as doctype,
    * XML declaration, etc) as appropriate to the context.
    *
-   * @return string
+   * @return  string
    */
   public function renderPreContent() {
     $output = '';
@@ -262,7 +262,7 @@ class RenderContext {
   /**
    * Return the language for this context.
    *
-   * @return string
+   * @return  string
    */
   public function getLanguage() {
     return $this->language;
@@ -271,8 +271,8 @@ class RenderContext {
   /**
    * Set the language for this context.
    *
-   * @param string $language The new language
-   * @return string
+   * @param   string  $language  The new language
+   * @return  string
    */
   public function setLanguage($language) {
     return ($this->language = $language);
@@ -281,7 +281,7 @@ class RenderContext {
   /**
    * Return the version of the language for this context.
    *
-   * @return mixed
+   * @return  mixed
    */
   public function getVersion() {
     return $this->version;
@@ -290,8 +290,8 @@ class RenderContext {
   /**
    * Set the version of the language for this context.
    *
-   * @param mixed $version The new language version
-   * @return mixed
+   * @param   mixed  $version  The new language version
+   * @return  mixed
    */
   public function setVersion($version) {
     return ($this->version = $version);
@@ -301,7 +301,7 @@ class RenderContext {
    * Return the language dialect for this context (such as "transitional" or
    * "strict").
    *
-   * @return string
+   * @return  string
    */
   public function getDialect() {
     return $this->dialect;
@@ -310,8 +310,8 @@ class RenderContext {
   /**
    * Set the language dialect for this context (such as "transitional" or "strict").
    *
-   * @param string $dialect The new language dialect
-   * @return string
+   * @param   string  $dialect  The new language dialect
+   * @return  string
    */
   public function setDialect($dialect) {
     return ($this->dialect = $dialect);
@@ -321,7 +321,7 @@ class RenderContext {
    * Determines whether the current render context is a language with XML
    * syntax.
    *
-   * @return boolean
+   * @return  boolean
    */
   public function isXMLSyntax() {
     switch ($this->getLanguage()) {

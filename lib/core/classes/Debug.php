@@ -1,7 +1,7 @@
 <?php
 /**
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 
@@ -9,8 +9,8 @@
  * Debugging class providing useful methods for diagnosing problems and
  * performance.
  *
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 class Debug {
@@ -18,7 +18,7 @@ class Debug {
   /**
    * If true, debugging output is enabled.
    *
-   * @var  boolean  $enabled
+   * @var  boolean
    */
   protected static $enabled = false;
 

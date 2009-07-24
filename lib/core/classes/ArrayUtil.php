@@ -2,8 +2,8 @@
 /**
  * @todo  [PHP 5.3] Rename file to Array.php when namespaced.
  *
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 
@@ -12,8 +12,8 @@
  *
  * @todo  [PHP 5.3] Rename class to Array when namespaced.
  *
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 final class ArrayUtil {
@@ -27,7 +27,7 @@ final class ArrayUtil {
   /**
    * Flattens an multi-dimensional array down to a single-dimensional array.
    *
-   * @param  array  $array  The array to flatten.
+   * @param   array  $array  The array to flatten.
    *
    * @return  array  The flattened array.
    */

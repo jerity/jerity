@@ -1,7 +1,7 @@
 <?php
 /**
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 
@@ -14,8 +14,8 @@
  *
  * @todo  Support IE conditional comments for various items.
  *
- * @package  JerityCore
- * @author  Nick Pope <nick@nickpope.me.uk>
+ * @package    JerityCore
+ * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
 class Tag {
@@ -25,6 +25,8 @@ class Tag {
    */
   protected function __construct() {
   }
+
+  # empty tag helpers {{{
 
   /**
    * Renders an AREA tag according to the current render context.
@@ -38,8 +40,8 @@ class Tag {
    * Standard: Yes
    * Event:    Yes
    *
-   * @param  string  $alt    The alternate text.
-   * @param  array   $attrs  An associative array of addional attributes.
+   * @param   string  $alt    The alternate text.
+   * @param   array   $attrs  An associative array of addional attributes.
    *
    * @return  string
    */
@@ -60,7 +62,7 @@ class Tag {
    * Standard: No
    * Event:    No
    *
-   * @param  string  $href    The base href.
+   * @param   string  $href    The base href.
    *
    * @return  string
    */
@@ -79,7 +81,7 @@ class Tag {
    * Standard: Partial (class, id, style, title)
    * Event:    No
    *
-   * @param  array  $attrs  An associative array of addional attributes.
+   * @param   array  $attrs  An associative array of addional attributes.
    *
    * @return  string
    */
@@ -99,7 +101,7 @@ class Tag {
    * Standard: Yes
    * Event:    Yes
    *
-   * @param  array  $attrs  An associative array of addional attributes.
+   * @param   array  $attrs  An associative array of addional attributes.
    *
    * @return  string
    */
@@ -117,7 +119,7 @@ class Tag {
    * Standard: Yes
    * Event:    Yes
    *
-   * @param  array  $attrs  An associative array of addional attributes.
+   * @param   array  $attrs  An associative array of addional attributes.
    *
    * @return  string
    */
@@ -135,9 +137,9 @@ class Tag {
    * Standard: Yes
    * Event:    Yes
    *
-   * @param  string  $src    The URL of an image.
-   * @param  string  $alt    The alternate text.
-   * @param  array   $attrs  An associative array of addional attributes.
+   * @param   string  $src    The URL of an image.
+   * @param   string  $alt    The alternate text.
+   * @param   array   $attrs  An associative array of addional attributes.
    *
    * @return  string
    */
@@ -158,10 +160,10 @@ class Tag {
    * Standard: Yes
    * Event:    Yes
    *
-   * @param  string  $type   The type of the input element.
-   * @param  string  $name   The name of the input element.
-   * @param  string  $value  The initial value of the input element.
-   * @param  array   $attrs  An associative array of addional attributes.
+   * @param   string  $type   The type of the input element.
+   * @param   string  $name   The name of the input element.
+   * @param   string  $value  The initial value of the input element.
+   * @param   array   $attrs  An associative array of addional attributes.
    *
    * @return  string
    */
@@ -194,9 +196,9 @@ class Tag {
    * Standard: Yes
    * Event:    Yes
    *
-   * @param  string  $type   The type of the resource being linked to.
-   * @param  string  $href   The URL of the resource being linked to.
-   * @param  array   $attrs  An associative array of addional attributes.
+   * @param   string  $type   The type of the resource being linked to.
+   * @param   string  $href   The URL of the resource being linked to.
+   * @param   array   $attrs  An associative array of addional attributes.
    *
    * @return  string
    */
@@ -215,11 +217,11 @@ class Tag {
    * Standard: Partial (dir, lang, xml:lang)
    * Event:    No
    *
-   * @param  string   $name     The name of the metadata.
-   * @param  string   $content  The meta content.
-   * @param  boolean  $http     Whether to take $name as 'http-equiv' (true) or
+   * @param   string   $name     The name of the metadata.
+   * @param   string   $content  The meta content.
+   * @param   boolean  $http     Whether to take $name as 'http-equiv' (true) or
    *                            'name' (false).
-   * @param  array    $attrs    An associative array of addional attributes.
+   * @param   array    $attrs    An associative array of additional attributes.
    *
    * @return  string
    */
@@ -245,8 +247,8 @@ class Tag {
    * Standard: Partial (id)
    * Event:    No
    *
-   * @param  string   $name     The name of the parameter.
-   * @param  array    $attrs    An associative array of addional attributes.
+   * @param   string   $name     The name of the parameter.
+   * @param   array    $attrs    An associative array of addional attributes.
    *
    * @return  string
    */
@@ -265,13 +267,17 @@ class Tag {
    *        somewhat flakey.
    *        WBR functions the same as a zero width space (&#8203;)
    *
-   * @param  array  $attrs  An associative array of addional attributes.
+   * @param   array  $attrs  An associative array of addional attributes.
    *
    * @return  string
    */
   public static function wbr(array $attrs = array()) {
     return self::renderTag('wbr', $attrs);
   }
+
+  # }}} empty tag helpers
+
+  # inline content helpers {{{
 
   /**
    * Renders a SCRIPT tag according to the current render context.
@@ -280,9 +286,9 @@ class Tag {
    * and not the head.  Thus it can take in content for an inline script or a
    * source attribute.  The source attribute will take precedence.
    *
-   * @param  string  $type     The MIME type of the script.
-   * @param  string  $content  The inline content.
-   * @param  array   $attrs    An associative array of addional attributes.
+   * @param   string  $type     The MIME type of the script.
+   * @param   string  $content  The inline content.
+   * @param   array   $attrs    An associative array of addional attributes.
    *
    * @return  string
    */
@@ -297,8 +303,8 @@ class Tag {
    * This is provided for inline stylesheets.
    * source attribute.  The source attribute will take precedence.
    *
-   * @param  string  $content  The inline content.
-   * @param  array   $attrs    An associative array of addional attributes.
+   * @param   string  $content  The inline content.
+   * @param   array   $attrs    An associative array of addional attributes.
    *
    * @return  string
    */
@@ -309,6 +315,10 @@ class Tag {
     return self::renderTag('style', $attrs, $content);
   }
 
+  # }}} inline content helpers
+
+  # Internet Explorer conditional comments {{{
+
   /**
    * Renders content wrapped by an Internet Explorer conditional comment with
    * a provided expression.
@@ -316,10 +326,10 @@ class Tag {
    * For more information on expression syntax, see:
    *   http://msdn.microsoft.com/en-us/library/ms537512%28VS.85%29.aspx#syntax
    *
-   * @param  string   $expression  The condition to check for.
-   * @param  string   $content     The content to wrap inside the comment.
-   * @param  boolean  $newline     Put conditional comment tags on new lines.
-   * @param  boolean  $revealed    Use a revealed comment
+   * @param   string   $expression  The condition to check for.
+   * @param   string   $content     The content to wrap inside the comment.
+   * @param   boolean  $newline     Put conditional comment tags on new lines.
+   * @param   boolean  $revealed    Use a revealed comment
    *                                 - default = hidden comment (false).
    *
    * @return  HTML
@@ -334,12 +344,14 @@ class Tag {
     return $c;
   }
 
+  # }}} Internet Explorer conditional comments
+
   /**
    * Renders a tag according the the current render context.
    *
-   * @param  string  $tag      The tag to render.
-   * @param  array   $attrs    An associative array of additional attributes.
-   * @param  string  $content  The inline content.
+   * @param   string  $tag      The tag to render.
+   * @param   array   $attrs    An associative array of additional attributes.
+   * @param   string  $content  The inline content.
    *
    * @return  string
    *
