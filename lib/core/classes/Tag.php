@@ -308,7 +308,7 @@ class Tag {
 
     $r = '<'.$tag;
     foreach ($attrs as $k => $v) {
-      $r .= ' '.strtolower($k).'="'.$v.'"';
+      $r .= ' '.strtolower($k).'="'.String::escape($v).'"';
     }
     if ($tag === 'script') {
       $r .= '>';
