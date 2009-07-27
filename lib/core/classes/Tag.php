@@ -294,6 +294,7 @@ class Tag {
    */
   public static function script($type, $content = null, array $attrs = array()) {
     $attrs = array_merge(array('type' => $type), $attrs);
+    if (isset($attrs['src']) $content = null;
     return self::renderTag('script', $attrs, $content);
   }
 
@@ -349,6 +350,10 @@ class Tag {
   /**
    * Renders a tag according the the current render context.
    *
+   * Note that content is <b>never</b> escaped. Specifying <tt>false</tt> for the content will force
+   * an object tag in XML-based languages. An object tag will also always be generated for XHTML tags
+   * which cannot contain content.
+   *
    * @param   string  $tag      The tag to render.
    * @param   array   $attrs    An associative array of additional attributes.
    * @param   string  $content  The inline content.
@@ -366,22 +371,61 @@ class Tag {
 
     $r = '<'.$tag;
     foreach ($attrs as $k => $v) {
+      if ($v === false || substr($k, 0, 1)=='_') { // attributes which should never be output
+        continue;
+      }
+      if ($v===true) { // handle checked="checked" etc
+        $v = $k;
+      }
       $r .= ' '.strtolower($k).'="'.String::escape($v).'"';
     }
-    if ($tag === 'script' || $tag === 'style') {
-      $r .= '>';
-      if (!is_null($content)) {
-        if ($is_xml) $r .= '//<![CDATA[';
-        if ($tag === 'script' && !isset($attrs['src']) || $tag === 'style') {
-          $r .= $content;
-        }
-        if ($is_xml) $r .= '//]]>';
-      }
-      $r .= '</'.$tag.'>';
+    if ($is_xml && ($content===false || self::isAlwaysEmpty($tag))) {
+      $r .= ' />';
     } else {
-      $r .= ($is_xml ? ' />' : '>');
+      $r .= '>';
+    }
+    if (!is_null($content) && $content !== false) {
+      if ($is_xml && self::isImpliedCData($tag)) $r .= '//<![CDATA[';
+      $r .= $content;
+      if ($is_xml && self::isImpliedCData($tag)) $r .= '//]]>';
+      $r .= '</'.$tag.'>';
     }
     return $r;
+  }
+
+  public static function isAlwaysEmpty($tag) {
+    $tag = strtolower($tag);
+    $is_xhtml = (RenderContext::getGlobalContext()->getLanguage() === RenderContext::LANG_XHTML);
+    // don't know anything about non-XHTML
+    if (!$is_xhtml) return false;
+    switch ($tag) {
+      case 'area':
+      case 'base':
+      case 'br':
+      case 'col':
+      case 'hr':
+      case 'img':
+      case 'input':
+      case 'link':
+      case 'meta':
+      case 'param':
+      case 'wbr':
+        return true;
+    }
+    return false;
+  }
+
+  public static function isImpliedCData($tag) {
+    $tag = strtolower($tag);
+    $is_xhtml = (RenderContext::getGlobalContext()->getLanguage() === RenderContext::LANG_XHTML);
+    // don't know anything about non-XHTML
+    if (!$is_xhtml) return false;
+    switch ($tag) {
+      case 'script':
+      case 'style':
+        return true;
+    }
+    return false;
   }
 
 }
