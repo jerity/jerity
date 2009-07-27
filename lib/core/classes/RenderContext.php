@@ -13,9 +13,11 @@
  * @copyright  Copyright (c) 2009 Dave Ingram
  */
 class RenderContext {
+  const LANG_CSS   = 'css';
   const LANG_FBJS  = 'fbjs';
   const LANG_FBML  = 'fbml';
   const LANG_HTML  = 'html';
+  const LANG_JS    = 'javascript';
   const LANG_JSON  = 'json';
   const LANG_MHTML = 'mhtml';
   const LANG_TEXT  = 'text';
@@ -80,6 +82,13 @@ class RenderContext {
    * @var  string
    */
   protected $dialect  = self::DIALECT_STRICT;
+
+  /**
+   * The MIME content type of the render context.
+   *
+   * @var  string
+   */
+  protected $contentType  = null;
 
   public function __construct() {
   }
@@ -315,6 +324,72 @@ class RenderContext {
    */
   public function setDialect($dialect) {
     return ($this->dialect = $dialect);
+  }
+
+  /**
+   * Return the content type appropriate for this rendering context. If we are
+   * in strict mode, we will return the correct MIME type for XHTML, otherwise
+   * we will use text/html. The default is "application/octet-stream".
+   *
+   * @param   bool  $strict  Whether or not to be strict about content types.
+   * @return  string
+   */
+  public function getContentType($strict = true) {
+    if ($this->contentType) {
+      return $this->contentType;
+    }
+    switch ($this->getLanguage()) {
+      case self::LANG_HTML:
+        $contentType = self::CONTENT_HTML;
+        break;
+      case self::LANG_XHTML:
+        if ($this->getDialect() == self::DIALECT_MOBILE) {
+          $contentType = self::CONTENT_XHTML_MP;
+        } elseif ($strict) {
+          $contentType = self::CONTENT_XHTML;
+        } else {
+          $contentType = self::CONTENT_HTML;
+        }
+        break;
+      case self::LANG_JS:
+      case self::LANG_FBJS:
+        $contentType = self::CONTENT_JS;
+        break;
+      case self::LANG_TEXT:
+        $contentType = self::CONTENT_TEXT;
+        break;
+      case self::LANG_XML:
+      case self::LANG_FBML:
+        $contentType = self::CONTENT_XML;
+        break;
+      case self::LANG_JSON:
+        $contentType = self::CONTENT_JSON;
+        break;
+      case self::LANG_CSS:
+        $contentType = self::CONTENT_CSS;
+        break;
+      case self::LANG_MHTML:
+        $contentType = self::CONTENT_XHTML_MP;
+        break;
+      case self::LANG_WML:
+        $contentType = self::CONTENT_WML;
+        break;
+      default:
+        $contentType = 'application/octet-stream';
+        break;
+    }
+    $this->setContentType($contentType);
+    return $contentType;
+  }
+
+  /**
+   * Set the content type appropriate for this rendering context. Blah.
+   *
+   * @param   bool  $type  The new content type for this rendering context.
+   * @return  string
+   */
+  public function setContentType($type) {
+    $this->contentType = $contentType;
   }
 
   /**

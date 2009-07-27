@@ -8,9 +8,6 @@
 /**
  * String utility class.
  *
- * @todo  Split escape() into individual functions and make escape() use those
- *        based on the render context.
- *
  * @package    JerityCore
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
@@ -24,10 +21,77 @@ class String {
   }
 
   /**
+   * Escapes the provided text for (X)HTML output. If required, a full encoding can be done, which will encode
+   * all entities rather than just the five special ones (< > ' " &).
+   *
+   * @param  string   $text         The string to be made safe.
+   * @param  boolean  $full_encode  Whether to encode all special characters.
+   *
+   * @return  string
+   */
+  public static function escapeHTML($text, $full_encode = false) {
+    if ($full_encode) {
+      return htmlentities($text, ENT_QUOTES, 'UTF-8', false);
+    } else {
+      return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
+    }
+  }
+
+  /**
+   * Escapes the provided text for XML output. If required, a full encoding can
+   * be done, which will encode all entities numerically, rather than just the
+   * five special ones (< > ' " &) to their named counterparts.
+   *
+   * @param  string   $text         The string to be made safe.
+   * @param  boolean  $full_encode  Whether to encode all special characters.
+   *
+   * @return  string
+   */
+  public static function escapeXML($text, $full_encode = false) {
+    if ($full_encode) {
+      # TODO: Need to convert table to return numeric entities.
+      #       For now just output bare minimal, i.e. don't do anything
+      # http://uk.php.net/manual/en/function.get-html-translation-table.php#54927
+      return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
+    } else {
+      return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
+    }
+  }
+
+  /**
+   * Escapes the provided text for JavaScript output. This will make the string
+   * safe for inclusion between double quotes by default.
+   *
+   * @param  string   $text          The string to be made safe.
+   * @param  boolean  $double_quote  Whether to make safe for single or double quotes.
+   *
+   * @return  string
+   */
+  public static function escapeJS($text, $double_quote = true) {
+    if ($double_quote) {
+      return str_replace(
+        array("\n", "\r", '"', "'"),
+        array('\\n', '\\r', '\\"', "\\'"),
+        $text
+      );
+    } else {
+      return str_replace(
+        array("'"),
+        array("\\'"),
+        $text
+      );
+    }
+  }
+
+
+  /**
    * Escapes the provided text according to the type of content being output.
    * The is the option to override to encode for a specific content type.  If
    * required, a full encoding can be done, which in the case of HTML/XHTML
    * will use htmlentities() instead of htmlspecialchars().
+   *
+   * Note that this function will escape JavaScript for double quotes rather
+   * than single.
    *
    * @param  string   $text         The string to be made safe.
    * @param  string   $override     A RenderContext content constant.
@@ -36,66 +100,30 @@ class String {
    * @return  string
    */
   public static function escape($text, $override = null, $full_encode = false) {
-    if (is_null($override)) { # Use global rendering context.
-      $ctx = RenderContext::getGlobalContext();
-      switch ($ctx->getLanguage()) {
-        case RenderContext::LANG_HTML:
-        case RenderContext::LANG_XHTML:
-          if ($full_encode) {
-            $text = htmlentities($text, ENT_QUOTES, 'UTF-8', false);
-          } else {
-            $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
-          }
-          break;
-        case RenderContext::LANG_XML:
-          if ($full_encode) {
-            # XXX: Need to convert table to return numeric entities.
-            #      For now just output bare minimal.
-            # http://uk.php.net/manual/en/function.get-html-translation-table.php#54927
-            $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
-          } else {
-            $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
-          }
-          break;
-        default:
-          # TODO: Throw exception?
-      }
-    } else { # Use specific content type.
-      switch ($override) {
-        case RenderContext::CONTENT_HTML:
-        case RenderContext::CONTENT_XHTML:
-          if ($full_encode) {
-            $text = htmlentities($text, ENT_QUOTES, 'UTF-8', false);
-          } else {
-            $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
-          }
-          break;
-        case RenderContext::CONTENT_XML:
-        case RenderContext::CONTENT_RSS:
-        case RenderContext::CONTENT_ATOM:
-          if ($full_encode) {
-            # XXX: Need to convert table to return numeric entities.
-            #      For now just output bare minimal.
-            # http://uk.php.net/manual/en/function.get-html-translation-table.php#54927
-            $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
-          } else {
-            $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
-          }
-          break;
-        case RenderContext::CONTENT_JS:
-        case RenderContext::CONTENT_JSON:
-          $text = str_replace(
-            array("\n", "\r", "'"),
-            array('\\n', '\\r', "\\'"),
-            $text
-          );
-          break;
-        case RenderContext::CONTENT_CSS:
-          # TODO
-          break;
-        default:
+    if (is_null($override)) {
+      $contentType = RenderContext::getGlobalContext()->getContentType();
+    } else {
+      $contentType = $override;
+    }
+    switch ($contentType) {
+      case RenderContext::CONTENT_HTML:
+      case RenderContext::CONTENT_XHTML:
+        $text = self::escapeHTML($text, $full_encode);
+        break;
+      case RenderContext::CONTENT_XML:
+      case RenderContext::CONTENT_RSS:
+      case RenderContext::CONTENT_ATOM:
+        $text = self::escapeXML($text, $full_encode);
+        break;
+      case RenderContext::CONTENT_JS:
+      case RenderContext::CONTENT_JSON:
+        $text = self::escapeJS($text);
+        break;
+      default:
+        if (!is_null($override)) {
+          // only throw an exception if we have an invalid content type explicitly specified
           throw new InvalidArgumentException('Invalid content type: '.$override);
-      }
+        }
     }
 
     return $text;
