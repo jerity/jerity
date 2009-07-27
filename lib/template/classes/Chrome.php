@@ -12,7 +12,6 @@
  *
  * @todo  Support IE conditional comments for various chrome items.
  * @todo  Allow addition of 'custom' head content.
- * @todo  Content accessor methods w/ iteration.
  *
  * @package    JerityTemplate
  * @author     Nick Pope <nick@nickpope.me.uk>
@@ -27,6 +26,11 @@ class Chrome extends Template {
    * @var  mixed  One or more content items added to this template.
    */
   protected $content = null;
+
+  /**
+   * @var  ArrayIterator  An iterator over this template's content.
+   */
+  protected $contentIterator = null;
 
   # }}} chrome content item management
   ##############################################################################
@@ -213,6 +217,28 @@ class Chrome extends Template {
   }
 
   /**
+   * Returns the next available content item, or null if there are no further
+   * items.
+   *
+   * @return  mixed
+   */
+  public function getNextContent() {
+    if (!$this->contentIterator instanceof Iterator) {
+      if (is_array($this->content)) {
+        $this->contentIterator = new ArrayIterator($this->content);
+      } else {
+        $this->contentIterator = new ArrayIterator(array($this->content));
+      }
+    } else {
+      $this->contentIterator->next();
+    }
+    if (!$this->contentIterator->valid()) {
+      return null;
+    }
+    return $this->contentIterator->current();
+  }
+
+  /**
    * Adds one or more content items to this template.
    * You may add content in the following ways:
    *   $c->setContent($content);
@@ -234,6 +260,7 @@ class Chrome extends Template {
       }
     }
     $this->content = (count($items) > 1 ? $items : $items[0]);
+    $this->contentIterator = null;
   }
 
   /**
