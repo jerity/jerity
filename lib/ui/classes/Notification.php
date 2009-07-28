@@ -52,6 +52,16 @@ class Notification implements Renderable {
     $this->setType($type);
   }
 
+  /*
+   * Overrides the default object to string conversion to force the Renderable
+   * item to be rendered in string context.
+   *
+   * @return  string
+   */
+  public function __toString() {
+    return $this->render();
+  }
+
   /**
    * Render the item using the current global rendering context, and return it
    * as a string.
