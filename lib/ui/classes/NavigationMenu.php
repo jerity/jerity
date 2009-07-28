@@ -210,6 +210,11 @@ class NavigationMenu implements Renderable {
 
       $i_class = isset($i_attrs['class']) ? array($i_attrs['class']) : array();
 
+      if (isset($i_attrs['accesskey'])) {
+        $a_attrs['accesskey'] = &$i_attrs['accesskey'];
+        unset($i_attrs['accesskey']);
+      }
+
       if (!is_null($this->exact_url_class) && $url[1] == $cururl) {
         $i_class[] = $this->exact_url_class;
 
