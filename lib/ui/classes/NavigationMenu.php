@@ -1,8 +1,8 @@
 <?php
 /**
- * @package JerityUI
- * @author Dave Ingram <dave@dmi.me.uk>
- * @copyright Copyright (c) 2009 Dave Ingram
+ * @package    JerityUI
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2009 Dave Ingram
  */
 
 /**
@@ -12,14 +12,14 @@
  * has the capability to automatically highlight the current or "best match"
  * item.
  *
- * @package JerityUI
- * @author Dave Ingram <dave@dmi.me.uk>
- * @copyright Copyright (c) 2009 Dave Ingram
+ * @package    JerityUI
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2009 Dave Ingram
  */
 class NavigationMenu implements Renderable {
   protected $exact_url_class  = null;
   protected $best_match_class = null;
-  protected $besturl = null;
+  protected $besturl = array();
   protected $urls = array();
   protected $url_cache = array();
   protected $attrs = array();
@@ -40,29 +40,56 @@ class NavigationMenu implements Renderable {
    * _children attribute can contain a further array of URLs with each item in
    * the same form.
    *
-   * @param array $urls The URLs that should be part of this navigation menu.
+   * @param  array  $urls  The URLs that should be part of this navigation menu.
    */
   public function __construct(array $urls = array()) {
     $this->urls = $urls;
     $this->refreshUrlCache();
   }
 
+  /**
+   * Return the class(es) added to the "best match" menu item at each level.
+   *
+   * @return  string
+   */
   public function getBestUrlClass() {
     return $this->best_match_class;
   }
 
+  /**
+   * Set the class(es) added to the "best match" menu item at each level.
+   *
+   * @param  string|array  $c  The class or classes to be used.
+   */
   public function setBestUrlClass($c) {
+    if (is_array($c)) $c = implode(' ', $c);
     $this->best_match_class = $c;
   }
 
+  /**
+   * Return the class(es) added to the item that exactly matches the current URL.
+   *
+   * @return  string
+   */
   public function getExactUrlClass() {
     return $this->exact_url_class;
   }
 
+  /**
+   * Set the class(es) added to the item that exactly matches the current URL.
+   *
+   * @param  string|array  $c  The class or classes to be used.
+   */
   public function setExactUrlClass($c) {
+    if (is_array($c)) $c = implode(' ', $c);
     $this->exact_url_class = $c;
   }
 
+  /**
+   * Return the URL used for matching.
+   *
+   * @return  string
+   */
   public function getOurUrl() {
     if ($this->our_url) {
       return $this->our_url;
@@ -70,18 +97,44 @@ class NavigationMenu implements Renderable {
     return $_SERVER['REQUEST_URI'];
   }
 
+  /**
+   * Override the URL used for matching and highlighting. This should only be
+   * overridden for debugging purposes.
+   *
+   * @param  string  $url
+   */
   public function setOurUrl($url) {
     $this->our_url = $url;
   }
 
+  /**
+   * Returns whether or not level hints are enabled. Level hints are
+   * additional classes added to the \t <ul> element in order to distinguish
+   * between multiple levels. They are of the form "level0", "level1", etc.
+   *
+   * @return  bool
+   */
   public function getLevelHints() {
     return $this->level_hints;
   }
 
+  /**
+   * Enable or disable level hints. Level hints are additional classes added
+   * to the \t <ul> element in order to distinguish between multiple levels.
+   * They are of the form "level0", "level1", etc.
+   *
+   * @param  bool  $hint
+   */
   public function setLevelHints($hint) {
     $this->level_hints = $hint;
   }
 
+  /**
+   * Refresh the cache of URLs.
+   *
+   * @param  array  $urls   The list of URLs to process.
+   * @param  int    $level  The level of the tree being processed
+   */
   protected function refreshUrlCache($urls = null, $level = 0) {
     if (is_null($urls) && $level == 0) {
       $this->url_cache = array();
@@ -97,6 +150,13 @@ class NavigationMenu implements Renderable {
     }
   }
 
+  /**
+   * Find the "best match" URL at the given level.
+   *
+   * @param  int $level  The level to be seearched.
+   *
+   * @return  string
+   */
   protected function getBestUrl($level = 0) {
     if (isset($this->besturl[$level]) && !is_null($this->besturl[$level])) {
       return $this->besturl[$level];
@@ -113,6 +173,16 @@ class NavigationMenu implements Renderable {
     return $this->besturl[$level];
   }
 
+  /**
+   * Render a list of URLs and their child lists, applying highlight classes
+   * to the \t <li> items as necessary.
+   *
+   * @param  array  $urls       The list of URLs to be rendered.
+   * @param  array  $top_attrs  The attributes for the \t <ul> parent.
+   * @param  int    $level      The current level in the URL tree.
+   *
+   * @return  string
+   */
   protected function renderURLs($urls, $top_attrs, $level=0) {
     $out = '';
     if ($this->level_hints) {
@@ -163,7 +233,7 @@ class NavigationMenu implements Renderable {
   /**
    * Render this navigation menu using the current render context and return it as a string.
    *
-   * @return string
+   * @return  string
    */
   public function render() {
     return $this->renderURLs($this->urls, $this->attrs);
@@ -172,8 +242,8 @@ class NavigationMenu implements Renderable {
   /**
    * Render this navigation menu using the current render context and return it as a string.
    *
-   * @return string
-   * @see NavigationMenu::render()
+   * @return  string
+   * @see     NavigationMenu::render()
    */
   public function __toString() {
     return $this->render();
