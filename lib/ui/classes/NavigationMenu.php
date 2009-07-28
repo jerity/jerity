@@ -113,33 +113,6 @@ class NavigationMenu implements Renderable {
     return $this->besturl[$level];
   }
 
-  protected static function renderTag($tag, array $attrs = null, $content = null, array $ignore_attrs = null) {
-    if (is_null($attrs)) {
-      $attrs = array();
-    }
-    if (!is_null($ignore_attrs) && count($ignore_attrs)) {
-      $attrs = array_diff_key($attrs, array_flip($ignore_attrs));
-    }
-
-    $out = '<'.$tag;
-    foreach ($attrs as $k=>$v) {
-      if ($v === false || substr($k, 0, 1)=='_') {
-        continue;
-      }
-      if ($v===true) {
-        $v = $k;
-      }
-      $out .= ' '.htmlentities($k, ENT_QUOTES, 'UTF-8').'="'.htmlentities($v, ENT_QUOTES, 'UTF-8').'"';
-    }
-    $out .= (RenderContext::getGlobalContext()->getLanguage() == RenderContext::LANG_XHTML && $content===false) ? " />" : ">";
-    if (!is_null($content) && $content !== false) {
-      $out .= $content;
-      $out .= '</'.$tag.'>';
-    }
-
-    return $out;
-  }
-
   protected function renderURLs($urls, $top_attrs, $level=0) {
     $out = '';
     if ($this->level_hints) {
@@ -149,7 +122,7 @@ class NavigationMenu implements Renderable {
         $top_attrs['class'] = 'level'.$level;
       }
     }
-    $out .= self::renderTag('ul', $top_attrs)."\n";
+    $out .= Tag::renderTag('ul', $top_attrs)."\n";
     $cururl = $this->getOurUrl();
     $besturl = $this->getBestUrl($level);
     foreach ($urls as $url) {
@@ -175,13 +148,13 @@ class NavigationMenu implements Renderable {
         $i_attrs['class'] = implode(' ', $i_class);
       }
 
-      $content = self::renderTag('a', $a_attrs, $a_text);
+      $content = Tag::renderTag('a', $a_attrs, $a_text);
       if (isset($i_attrs['_children']) && count($i_attrs['_children'])) {
         $children = $i_attrs['_children'];
         $child_attrs = isset($i_attrs['_child_attrs']) ? $i_attrs['_child_attrs'] : array();
         $content .= "\n".$this->renderURLs($children, $child_attrs, $level + 1);
       }
-      $out .= self::renderTag('li', $i_attrs, $content)."\n";
+      $out .= Tag::renderTag('li', $i_attrs, $content)."\n";
     }
     $out .= "</ul>\n";
     return $out;
