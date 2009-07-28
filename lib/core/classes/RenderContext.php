@@ -389,7 +389,7 @@ class RenderContext {
    * @return  string
    */
   public function setContentType($type) {
-    $this->contentType = $contentType;
+    $this->contentType = $type;
   }
 
   /**
