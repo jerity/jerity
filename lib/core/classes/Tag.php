@@ -371,15 +371,17 @@ class Tag {
 
     $r = '<'.$tag;
     foreach ($attrs as $k => $v) {
-      if ($v === false || substr($k, 0, 1)=='_') { // attributes which should never be output
+      if ($v === false || $k[0] === '_') {
+        // attributes which should never be output
         continue;
       }
-      if ($v===true) { // handle checked="checked" etc
+      if ($v === true) {
+        // handle checked="checked", etc
         $v = $k;
       }
       $r .= ' '.strtolower($k).'="'.String::escape($v).'"';
     }
-    if ($is_xml && ($content===false || self::isAlwaysEmpty($tag))) {
+    if ($is_xml && ($content === false || self::isAlwaysEmpty($tag))) {
       $r .= ' />';
     } else {
       $r .= '>';
