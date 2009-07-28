@@ -294,7 +294,7 @@ class Tag {
    */
   public static function script($type, $content = null, array $attrs = array()) {
     $attrs = array_merge(array('type' => $type), $attrs);
-    if (isset($attrs['src']) $content = null;
+    if (isset($attrs['src'])) $content = null;
     return self::renderTag('script', $attrs, $content);
   }
 
