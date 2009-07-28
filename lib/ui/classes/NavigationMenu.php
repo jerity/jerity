@@ -129,6 +129,14 @@ class NavigationMenu implements Renderable {
     $this->level_hints = $hint;
   }
 
+  public function getTopAttrs() {
+    return $this->attrs;
+  }
+
+  public function setTopAttrs(array $attrs) {
+    $this->attrs = $attrs;
+  }
+
   /**
    * Refresh the cache of URLs.
    *
