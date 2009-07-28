@@ -328,7 +328,7 @@ class Chrome extends Template {
    */
   public static function addScript($href, $priority = 50, $type = RenderContext::CONTENT_JS, array $attrs = array()) {
     if ($priority < 0 || $priority > 99) {
-      throw new OutOfRangeException('Post render hook priority must be in the range [0-99]');
+      throw new OutOfRangeException('Script priority must be in the range [0-99]');
     }
     $attrs['type'] = $type;
     $attrs['src']  = $href;
@@ -385,7 +385,7 @@ class Chrome extends Template {
    */
   public static function addStylesheet($href, $priority = 50, $type = RenderContext::CONTENT_CSS, array $attrs = array()) {
     if ($priority < 0 || $priority > 99) {
-      throw new OutOfRangeException('Post render hook priority must be in the range [0-99]');
+      throw new OutOfRangeException('Stylesheet priority must be in the range [0-99]');
     }
     $attrs = array_merge(
       array('rel' => 'stylesheet', 'type' => $type),
