@@ -337,8 +337,8 @@ abstract class Template implements Renderable {
    *     'key1' => 'val1',
    *   ));
    *
-   * @params  mixed  $key    The variable name.
-   * @params  mixed  $value  The variable content.
+   * @param   mixed  $key    The variable name.
+   * @param   mixed  $value  The variable content.
    *
    * @throws  InvalidArgumentException
    * @throws  LengthException
