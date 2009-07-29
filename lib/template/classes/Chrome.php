@@ -11,7 +11,6 @@
  * add general styling, scripting and metadata to a page.
  *
  * @todo  Support IE conditional comments for various chrome items.
- * @todo  Allow addition of 'custom' head content.
  *
  * @package    JerityTemplate
  * @author     Nick Pope <nick@nickpope.me.uk>
@@ -679,7 +678,19 @@ class Chrome extends Template {
   }
 
   /**
-   * Renders the head of the page.
+   * Renders the HTML head of the page.
+   *
+   * @return  string
+   * @see     Chrome::outputHead()
+   */
+  public static function renderHead() {
+    ob_start();
+    self::outputHead();
+    return ob_get_clean();
+  }
+
+  /**
+   * Outputs the HTML head of the page.
    */
   public static function outputHead() {
     $ctx = RenderContext::getGlobalContext();
