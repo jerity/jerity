@@ -143,6 +143,13 @@ class Chrome extends Template {
   protected static $title = array();
 
   /**
+   * Store for title separator. Defaults to ' &rqauo; '.
+   *
+   * @var  string
+   */
+  protected static $titleSeparator = ' &raquo; ';
+
+  /**
    * Store for favourites icons (favicon).
    *
    * @var  array
@@ -423,29 +430,56 @@ class Chrome extends Template {
   }
 
   /**
-   * Gets the title for the page and joins parts together with $separator
-   * unless null is passed.
+   * Gets the separator to be used when joining multi-part titles together.
    *
-   * @param  string  $separator  The string to implode() with or null
+   * @return  string
+   */
+  public static function getTitleSeparator() {
+    return self::$titleSeparator;
+  }
+
+  /**
+   * Sets the separator to be used when joining multi-part titles together.
+   * Note that this string is used exactly, and so should probably contain
+   * whitespace at the start and end.
+   *
+   * @param  string  $separator  The string to use.
+   */
+  public static function setTitleSeparator($separator) {
+    self::$titleSeparator = $separator;
+  }
+
+  /**
+   * Gets the title for the page. If <kbd>false</kbd> is passed, the title is
+   * returned as an array. Otherwise, it is joined together with
+   * <var>$separator</var> (or the default separator if <kbd>null</kbd> is
+   * passed).
+   *
+   * @param  string  $separator  The string to implode() with, null, or false
    *
    * @return  mixed
    */
-  public static function getTitle($separator = ' &raquo; ') {
-    if (is_null($separator)) {
+  public static function getTitle($separator = null) {
+    if ($separator === false) {
       return self::$title;
-    }
-    if (!self::$title) {
+    } elseif (!self::$title) {
       return '';
+    } elseif (is_null($separator)) {
+      $separator = self::getTitleSeparator();
     }
     return implode($separator, self::$title);
   }
 
   /**
-   * Sets the title for the page.
+   * Sets the title for the page. This can either be an array of parts, or a
+   * string representing a single part.
    *
-   * @param  array  $title  The parts of the title.
+   * @param  mixed  $title  The page title.
    */
-  public static function setTitle(array $title = array()) {
+  public static function setTitle($title) {
+    if (!is_array($title)) {
+      $title = array($title);
+    }
     self::$title = $title;
   }
 
