@@ -122,6 +122,13 @@ class Chrome extends Template {
   protected static $metadata = array();
 
   /**
+   * Store for links.
+   *
+   * @var  array
+   */
+  protected static $links = array();
+
+  /**
    * Store for scripts.
    *
    * @var  array
@@ -312,6 +319,42 @@ class Chrome extends Template {
   public static function getMetadata() {
     return self::$metadata;
   }
+
+  /**
+   * Adds a link element to the page.
+   *
+   * Note that this should <b>not</b> be used for stylesheets -- see
+   * Chrome::addStylesheet instead. We also do not check for duplicates.
+   *
+   * @param  string  $rel      The relationship of the link (e.g. "alternate").
+   * @param  string  $href     The target of the link.
+   * @param  bool    $reverse  Whether this is a reverse ("rev") link.
+   * @param  array   $attrs    Additional attributes for the link.
+   *
+   * @see Chrome::addStylesheet()
+   */
+  public static function addLink($rel, $href, $reverse = false, array $attrs = array()) {
+    $type = $reverse ? 'rev' : 'rel';
+    $attrs = array_merge(array( $type => $rel, 'href' => $href ), $attrs);
+    self::$links[] = $attrs;
+  }
+
+  /**
+   * Clears all links currently added to the page.
+   */
+  public static function clearLinks() {
+    self::$links = array();
+  }
+
+  /**
+   * Gets the array of links for the page
+   *
+   * @return  array  The links for the current page.
+   */
+  public static function getLinks() {
+    return self::$links;
+  }
+
 
   /**
    * Adds a script to the page.  Will add the script once at most.
@@ -674,6 +717,12 @@ class Chrome extends Template {
     #Debug::mark();
     #Debug::out(self::getTitle(null));
     echo '<title>', self::getTitle(), '</title>', PHP_EOL;
+    #Debug::comment('Links');
+    #Debug::mark();
+    #Debug::out(self::getLinks());
+    foreach (self::getLinks() as $link) {
+      echo Tag::renderTag('link', $link), PHP_EOL;
+    }
     #Debug::comment('Stylesheets');
     #Debug::mark();
     #Debug::out(self::getStylesheets());
