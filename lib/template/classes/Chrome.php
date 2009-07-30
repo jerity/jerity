@@ -290,6 +290,10 @@ class Chrome extends Template {
    * @param  string  $key    The key attribute.
    */
   public static function addMetadata($name, $value, $key = self::META_NAME) {
+    if ($key === self::META_HTTP && strtolower($name) == 'content-type') {
+      # munge "Content-Type" meta header so we can find it later
+      $name = 'Content-Type';
+    }
     self::$metadata[$key][$name] = $value;
   }
 
@@ -678,23 +682,11 @@ class Chrome extends Template {
   }
 
   /**
-   * Renders the HTML head of the page.
-   *
-   * @return  string
-   * @see     Chrome::outputHead()
+   * Render the opening HTML and HEAD tags, with namespaces and profiles as
+   * appropriate.
    */
-  public static function renderHead() {
-    ob_start();
-    self::outputHead();
-    return ob_get_clean();
-  }
-
-  /**
-   * Outputs the HTML head of the page.
-   */
-  public static function outputHead() {
+  public static function outputOpeningTags() {
     $ctx = RenderContext::getGlobalContext();
-    echo $ctx->renderPreContent();
     $languages  = '';
     $namespaces = '';
     $profiles   = '';
@@ -716,44 +708,78 @@ class Chrome extends Template {
     }
     echo '<html', $languages, $namespaces, '>', PHP_EOL;
     echo '<head', $profiles, '>', PHP_EOL;
-    #Debug::comment('Metadata');
-    #Debug::mark();
-    #Debug::out(self::getMetadata());
-    foreach (self::getMetadata() as $type => $a) {
+  }
+
+  /**
+   * Render any metadata tags, ensuring that the "Content-Type" HTTP-equivalent
+   * tag is rendered first if present.
+   */
+  public static function outputMetaTags() {
+    $metadata = self::getMetadata();
+    # ensure content-type is output first, if we have one
+    if (isset($metadata[self::META_HTTP]['Content-Type'])) {
+      # stop ourselves processing it again
+      $content_type = $metadata[self::META_HTTP]['Content-Type'];
+      unset($metadata[self::META_HTTP]['Content-Type']);
+      # output the tag
+      echo Tag::meta('Content-Type', $content_type, true), PHP_EOL;
+    }
+    # render other metadata
+    foreach ($metadata as $type => $a) {
       foreach ($a as $name => $content) {
         echo Tag::meta($name, $content, ($type === self::META_HTTP)), PHP_EOL;
       }
     }
-    #Debug::comment('Title');
-    #Debug::mark();
-    #Debug::out(self::getTitle(null));
+    if (isset($content_type)) {
+      $metadata[self::META_HTTP]['Content-Type'] = $content_type;
+    }
+  }
+
+  /**
+   * Renders the TITLE tag for the page.
+   */
+  public static function outputTitleTag() {
     echo '<title>', self::getTitle(), '</title>', PHP_EOL;
-    #Debug::comment('Links');
-    #Debug::mark();
-    #Debug::out(self::getLinks());
+  }
+
+  /**
+   * Renders any custom LINK tags for the page header.
+   */
+  public static function outputLinkTags() {
     foreach (self::getLinks() as $link) {
       echo Tag::renderTag('link', $link), PHP_EOL;
     }
-    #Debug::comment('Stylesheets');
-    #Debug::mark();
-    #Debug::out(self::getStylesheets());
+  }
+
+  /**
+   * Renders any stylesheets attached to the page, taking their priorities into
+   * account.
+   */
+  public static function outputStylesheetTags() {
     foreach (self::getStylesheets() as $type => $a) {
       foreach ($a as $href => $attrs) {
         echo Tag::link($href, $type, $attrs), PHP_EOL;
       }
     }
-    #Debug::comment('Scripts');
-    #Debug::mark();
-    #Debug::out(self::getScripts());
+  }
+
+  /**
+   * Renders the script tags that reference an external file.
+   */
+  public static function outputExternalScriptTags() {
     foreach (self::getScripts() as $type => $a) {
       foreach ($a as $href => $attrs) {
         $attrs['src'] = $href;
         echo Tag::script($type, null, $attrs), PHP_EOL;
       }
     }
-    #Debug::comment('Other Resources');
-    #Debug::mark();
-    #Debug::out(self::getIcons());
+  }
+
+  /**
+   * Render any favicon tags, including special handling for Internet Explorer
+   * to allow it to properly recognise .ico format icons.
+   */
+  public static function outputFaviconTags() {
     foreach (self::getIcons() as $type => $href) {
       if ($type === self::ICON_X_ICON) {
         $icon = Tag::link($href, $type, array('rel' => 'shortcut icon'));
@@ -762,7 +788,56 @@ class Chrome extends Template {
         echo Tag::link($href, $type, array('rel' => 'icon')), PHP_EOL;
       }
     }
+  }
+
+  /**
+   * Output the closing HEAD tag.
+   */
+  public static function outputEndHead() {
     echo '</head>', PHP_EOL;
+  }
+
+  /**
+   * Renders the HTML head of the page.
+   *
+   * @return  string
+   * @see     Chrome::outputHead()
+   */
+  public static function renderHead() {
+    ob_start();
+    self::outputHead();
+    return ob_get_clean();
+  }
+
+  /**
+   * Outputs the HTML head of the page.
+   */
+  public static function outputHead() {
+    $ctx = RenderContext::getGlobalContext();
+    echo $ctx->renderPreContent();
+
+    # Opening <html> and <head> tags
+    self::outputOpeningTags();
+
+    # Any <meta> tags
+    self::outputMetaTags();
+
+    # page title
+    self::outputTitleTag();
+
+    # links
+    self::outputLinkTags();
+
+    # stylesheets
+    self::outputStylesheetTags();
+
+    # external scripts
+    self::outputExternalScriptTags();
+
+    # favicons
+    self::outputFaviconTags();
+
+    self::outputEndHead();
   }
 
   /**
