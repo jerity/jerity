@@ -25,7 +25,7 @@ class Chrome extends Template {
   /**
    * @var  mixed  One or more content items added to this template.
    */
-  protected $content = null;
+  protected $content = array();
 
   /**
    * @var  ArrayIterator  An iterator over this template's content.
@@ -186,16 +186,12 @@ class Chrome extends Template {
    * @return  string
    */
   public function render() {
-    # Call Renderable::render() for content items as necessary.
-    if (is_array($this->content)) {
-      foreach ($this->content as &$content) {
-        if (!($content instanceof Renderable)) continue;
-        $content = $content->render();
-      }
-      unset($content); # break last element reference.
-    } elseif ($this->content instanceof Renderable) {
-      $this->content = $this->content->render();
+    # Call Renderable::render() for content items as necessary to ensure they are all strings.
+    foreach ($this->content as &$content) {
+      if (!($content instanceof Renderable)) continue;
+      $content = $content->render();
     }
+    unset($content); # break last element reference.
 
     # Call default render method.
     return parent::render();
@@ -224,11 +220,7 @@ class Chrome extends Template {
    */
   public function getNextContent() {
     if (!$this->contentIterator instanceof Iterator) {
-      if (is_array($this->content)) {
-        $this->contentIterator = new ArrayIterator($this->content);
-      } else {
-        $this->contentIterator = new ArrayIterator(array($this->content));
-      }
+      $this->contentIterator = new ArrayIterator($this->content);
     } else {
       $this->contentIterator->next();
     }
@@ -255,11 +247,11 @@ class Chrome extends Template {
     }
     $items = ArrayUtil::flatten(func_get_args());
     foreach ($items as $i) {
-      if (!($i instanceof Renderable) && !is_string($i)) {
+      if (!($i instanceof Renderable) && !is_string($i) && !(is_object($i) && method_exists($i, '__toString'))) {
         throw new TemplateException('Non-renderable or non-string item set as content.');
       }
     }
-    $this->content = (count($items) > 1 ? $items : $items[0]);
+    $this->content = $items;
     $this->contentIterator = null;
   }
 
