@@ -61,4 +61,35 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     Chrome::setTitle($title);
     $this->assertEquals($title, Chrome::getTitle(false));
   }
+
+  public function testModularHead() {
+    Chrome::setTitle('Test title');
+    Chrome::addMetadata('generator', 'Jerity v0.1');
+    Chrome::addMetadata('description', 'Jerity test case page');
+    Chrome::addStylesheet('/css/common.css');
+    Chrome::addStylesheet('/css/common.css');
+    Chrome::addScript('/js/scriptaculous.js', 25);
+    Chrome::addScript('/js/prototype.js', 15);
+    Chrome::addIcon('/favicon.ico');
+    Chrome::addIcon('/img/icons/favicon.png', Chrome::ICON_PNG);
+
+    ob_start();
+    Chrome::outputHead();
+    $a = ob_get_clean();
+
+    ob_start();
+    echo RenderContext::getGlobalContext()->renderPreContent();
+    Chrome::outputOpeningTags();
+    Chrome::outputMetaTags();
+    Chrome::outputTitleTag();
+    Chrome::outputLinkTags();
+    Chrome::outputStylesheetTags();
+    Chrome::outputExternalScriptTags();
+    Chrome::outputFaviconTags();
+    Chrome::outputEndHead();
+    $b = ob_get_clean();
+
+    $this->assertSame($a, $b);
+  }
+
 }
