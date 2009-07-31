@@ -106,4 +106,26 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($a, $b);
   }
 
+  public function testRenderTitle() {
+    $title = array('Jerity', 'test', 'title');
+    Chrome::setTitle($title);
+    Chrome::setTitleSeparator(' :: ');
+
+    ob_start();
+    Chrome::outputTitleTag();
+    $d = ob_get_clean();
+
+    $this->assertContains('<title>Jerity :: test :: title</title>', $d);
+
+    $title = array('Jerity', 'test', 'title');
+    Chrome::setTitle($title);
+    Chrome::setTitleSeparator('::');
+
+    ob_start();
+    Chrome::outputTitleTag();
+    $d = ob_get_clean();
+
+    $this->assertContains('<title>Jerity::test::title</title>', $d);
+  }
+
 }
