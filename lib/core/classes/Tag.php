@@ -294,7 +294,7 @@ class Tag {
    */
   public static function script($type, $content = null, array $attrs = array()) {
     $attrs = array_merge(array('type' => $type), $attrs);
-    if (isset($attrs['src'])) $content = null;
+    if (isset($attrs['src'])) $content = '';
     return self::renderTag('script', $attrs, $content);
   }
 
@@ -387,9 +387,11 @@ class Tag {
       $r .= '>';
     }
     if (!is_null($content) && $content !== false) {
-      if ($is_xml && self::isImpliedCData($tag)) $r .= '//<![CDATA[';
-      $r .= $content;
-      if ($is_xml && self::isImpliedCData($tag)) $r .= '//]]>';
+      if ($content !== '') {
+        if ($is_xml && self::isImpliedCData($tag)) $r .= PHP_EOL.'//<![CDATA['.PHP_EOL;
+        $r .= $content;
+        if ($is_xml && self::isImpliedCData($tag)) $r .= PHP_EOL.'//]]>'.PHP_EOL;
+      }
       $r .= '</'.$tag.'>';
     }
     return $r;
