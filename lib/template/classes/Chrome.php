@@ -770,7 +770,7 @@ class Chrome extends Template {
     foreach (self::getScripts() as $type => $a) {
       foreach ($a as $href => $attrs) {
         $attrs['src'] = $href;
-        echo Tag::script($type, null, $attrs), PHP_EOL;
+        echo Tag::script($type, '', $attrs), PHP_EOL;
       }
     }
   }
