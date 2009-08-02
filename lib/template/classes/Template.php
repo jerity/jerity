@@ -83,8 +83,8 @@ abstract class Template implements Renderable {
    * @param  string  $t  The template to use.
    */
   public function __construct($t) {
-    $t = preg_replace('!^(?:\.*/)+!', '', $t, -1, $count);
-    if ($count) Debug::log('Warning: Attempted misuse of template system.');
+    $count = preg_match('!(?:(?:^|\.{2,})/)+!', $t);
+    if ($count) throw new InvalidArgumentException('Warning: Attempted misuse of template system.');
     $t = self::getPath().$t.'.tpl.php';
     if (!file_exists($t) || (!is_file($t) && !is_link($t)) || !is_readable($t)) {
       throw new RuntimeException('Could not find template: \''.$t.'\'');
