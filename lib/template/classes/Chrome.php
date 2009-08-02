@@ -149,7 +149,7 @@ class Chrome extends Template {
   protected static $title = array();
 
   /**
-   * Store for title separator. Defaults to ' &rqauo; '.
+   * Store for title separator. Defaults to ' &raquo; '.
    *
    * @var  string
    */
