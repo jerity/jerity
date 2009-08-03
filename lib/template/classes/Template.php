@@ -372,7 +372,7 @@ abstract class Template implements Renderable {
       # TODO: Check array keys?  Or don't use extract()?
       $this->variables[$key] = $value;
     } else {
-      throw new InvalidArgumentException('Could not clear a key from the template variables.');
+      throw new InvalidArgumentException('Could not set a template variable.');
     }
   }
 
