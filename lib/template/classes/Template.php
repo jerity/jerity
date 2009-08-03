@@ -10,7 +10,6 @@
  * variables.
  *
  * @todo  Support multiple paths for template lookup.
- * @todo  Output methods for escaping variables where necessary.
  *
  * @package    JerityTemplate
  * @author     Nick Pope <nick@nickpope.me.uk>
@@ -360,16 +359,13 @@ abstract class Template implements Renderable {
         if (!$key || !$value || count($key) !== count($value)) {
           throw new LengthException('Number of keys does not match number of values.');
         }
-        # TODO: Check array keys?  Or don't use extract()?
         $this->variables = array_merge($this->variables, array_combine($key, $value));
       } elseif (is_null($value)) {
-        # TODO: Check array keys?  Or don't use extract()?
         $this->variables = array_merge($this->variables, $key);
       } else {
         throw new InvalidArgumentException('Multiple keys require multiple values.');
       }
     } elseif (is_string($key)) {
-      # TODO: Check array keys?  Or don't use extract()?
       $this->variables[$key] = $value;
     } else {
       throw new InvalidArgumentException('Could not set a template variable.');
