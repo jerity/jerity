@@ -316,12 +316,23 @@ abstract class Template implements Renderable {
   # template variable management {{{
 
   /**
-   * Gets the variables that have been assigned to the template so far.
+   * Gets the value of a variable that has been assigned to the template so
+   * far. If the variable does not exist, <kbd>null</kbd> will be returned.
    *
-   * @return  array
+   * @param  string  $key  The variable name to fetch, or null to fetch all as an array.
+   *
+   * @return  mixed
    */
-  public function get() {
-    return $this->variables;
+  public function get($key = null) {
+    if (is_null($key)) {
+      return $this->variables;
+    } else {
+      if (isset($this->variables[$key])) {
+        return $this->variables[$key];
+      } else {
+        return null;
+      }
+    }
   }
 
   /**
