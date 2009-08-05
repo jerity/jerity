@@ -32,20 +32,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($l[0]['href'], 'mailto:info@jerity.com');
   }
 
-  public function testCustomLinkRender() {
-    Chrome::clearLinks();
-
-    Chrome::addLink('next', 'http://www.jerity.com/next');
-    Chrome::addLink('author', 'mailto:info@jerity.com', true);
-
-    ob_start();
-    Chrome::outputLinkTags();
-    $d = ob_get_clean();
-
-    $this->assertContains('<link rel="next" href="http://www.jerity.com/next">', $d);
-    $this->assertContains('<link rev="author" href="mailto:info@jerity.com">', $d);
-  }
-
   /**
    * @dataProvider  titleSeparatorProvider
    */
@@ -104,28 +90,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $b = ob_get_clean();
 
     $this->assertSame($a, $b);
-  }
-
-  public function testRenderTitle() {
-    $title = array('Jerity', 'test', 'title');
-    Chrome::setTitle($title);
-    Chrome::setTitleSeparator(' :: ');
-
-    ob_start();
-    Chrome::outputTitleTag();
-    $d = ob_get_clean();
-
-    $this->assertContains('<title>Jerity :: test :: title</title>', $d);
-
-    $title = array('Jerity', 'test', 'title');
-    Chrome::setTitle($title);
-    Chrome::setTitleSeparator('::');
-
-    ob_start();
-    Chrome::outputTitleTag();
-    $d = ob_get_clean();
-
-    $this->assertContains('<title>Jerity::test::title</title>', $d);
   }
 
 }
