@@ -7,6 +7,20 @@ if (!class_exists('TemplateT')) {
     public static function nullizePath() {parent::$base_path='';}
   }
 }
+if (!class_exists('StaticPostRenderHookTestClass')) {
+  class StaticPostRenderHookTestClass {
+    public static function hookfunc($a) {
+      return strtoupper($a);
+    }
+  }
+}
+if (!class_exists('DynamicPostRenderHookTestClass')) {
+  class DynamicPostRenderHookTestClass {
+    public static function hookfunc($a) {
+      return strtoupper($a);
+    }
+  }
+}
 
 class TemplateTest extends PHPUnit_Framework_TestCase {
   // preparation step run before each test
@@ -468,6 +482,91 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   # }}} Rendering tests
+  ############################################################################
+
+  ############################################################################
+  # Post-rendering hook tests {{{
+
+  public function testSingleSimplePostRenderHook() {
+    $t = new TemplateT('simple');
+    $t->set('content', 'pass');
+    $t->addPostRenderHook('strtoupper');
+    $this->assertSame(1, count($t->getPostRenderHooks()));
+    $this->assertSame('PASS', $t->render());
+    $t->clearPostRenderHooks();
+    $this->assertSame(0, count($t->getPostRenderHooks()));
+    $this->assertSame('pass', $t->render());
+  }
+
+  public function testSimplePostRenderHookPriority() {
+    $t = new TemplateT('simple');
+    $t->set('content', 'pass');
+    $t->addPostRenderHook('strtolower', 20);
+    $t->addPostRenderHook('strtoupper', 70);
+    $this->assertSame(2, count($t->getPostRenderHooks()));
+    $this->assertSame('PASS', $t->render());
+    $t->clearPostRenderHooks();
+    $this->assertSame(0, count($t->getPostRenderHooks()));
+    $this->assertSame('pass', $t->render());
+  }
+
+  public function testSimplePostRenderHookPriority2() {
+    $t = new TemplateT('simple');
+    $t->set('content', 'pass');
+    $t->addPostRenderHook('strtoupper', 70);
+    $t->addPostRenderHook('strtolower', 20);
+    $this->assertSame(2, count($t->getPostRenderHooks()));
+    $this->assertSame('PASS', $t->render());
+    $t->removePostRenderHook('strtoupper');
+    $this->assertSame(1, count($t->getPostRenderHooks()));
+    $this->assertSame('pass', $t->render());
+    $t->removePostRenderHook('strtolower');
+    $this->assertSame(0, count($t->getPostRenderHooks()));
+    $this->assertSame('pass', $t->render());
+  }
+
+  public function testSingleStaticPostRenderHook() {
+    $t = new TemplateT('simple');
+    $t->set('content', 'pass');
+    $t->addPostRenderHook(array('StaticPostRenderHookTestClass', 'hookfunc'));
+    $this->assertSame('PASS', $t->render());
+  }
+
+  public function testSingleDynamicPostRenderHook() {
+    $t = new TemplateT('simple');
+    $t->set('content', 'pass');
+    $d = new DynamicPostRenderHookTestClass();
+    $t->addPostRenderHook(array($d, 'hookfunc'));
+    $this->assertSame('PASS', $t->render());
+  }
+
+  public function testPostRenderHookFail() {
+    $t = new TemplateT('simple');
+    $t->set('content', 'pass');
+    try {
+      $t->addPostRenderHook('strtoupper', 100);
+      $this->fail();
+    } catch (OutOfRangeException $e) {
+    }
+    try {
+      $t->addPostRenderHook('strtolower', -5);
+      $this->fail();
+    } catch (OutOfRangeException $e) {
+    }
+    try {
+      $t->addPostRenderHook('fee fie fail func');
+      $this->fail();
+    } catch (InvalidArgumentException $e) {
+    }
+    $t->addPostRenderHook(array('StaticPostRenderHookTestClass', 'hookfunc'));
+    try {
+      $t->removePostRenderHook('fee fie fail func');
+      $this->fail();
+    } catch (InvalidArgumentException $e) {
+    }
+  }
+
+  # }}} Post-rendering hook tests
   ############################################################################
 
 }
