@@ -46,28 +46,28 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertContains('<link rev="author" href="mailto:info@jerity.com">', $d);
   }
 
-  public function titleSeparatorTest($sep) {
+  /**
+   * @dataProvider  titleSeparatorProvider
+   */
+  public function testTitleSeparator($sep) {
     if ($sep === null) $sep = Chrome::getTitleSeparator();
     $title = array('Jerity', 'test', 'title');
     Chrome::setTitle($title);
     $this->assertEquals(implode($sep, $title), Chrome::getTitle($sep));
   }
 
-  public function testTitleSeparator() {
-    $tests = array(
-      null,
-      '',
-      ' ',
-      ' & ',
-      '&',
-      '&amp;',
-      ' &amp; ',
-      '&raquo;',
-      ' &raquo; ',
+  public static function titleSeparatorProvider() {
+    return array(
+      array(null),
+      array(''),
+      array(' '),
+      array(' & '),
+      array('&'),
+      array('&amp;'),
+      array(' &amp; '),
+      array('&raquo;'),
+      array(' &raquo; '),
     );
-    foreach ($tests as $test) {
-      $this->titleSeparatorTest($test);
-    }
   }
 
   public function testGetTitleArray() {
