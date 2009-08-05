@@ -414,6 +414,62 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 
   # }}} Template variable tests
   ############################################################################
+
+  ############################################################################
+  # Rendering tests {{{
+
+  public function testSimpleRender() {
+    $t = new TemplateT('simple');
+    $t->set('content', 'Simple string');
+    $this->assertSame('Simple string', $t->render());
+  }
+
+  public function testDumpRender() {
+    $t = new TemplateT('vardump');
+    $t->set('content', 'Simple string');
+    ob_start();
+    $content = 'Simple string';
+    var_dump(array('content'=>&$content));
+    $dump = ob_get_clean();
+    $this->assertSame($dump, $t->render());
+  }
+
+  /**
+   * We shouldn't be able to overwrite $this
+   */
+  public function testDumpRender2() {
+    $t = new TemplateT('thistest');
+    $t->set('this', 'that');
+    $this->assertSame('PASS', $t->render());
+  }
+
+  public function testPrefixRender() {
+    $t = new TemplateT('vardump');
+    $t->set('content', 'Simple string');
+    $t->setVariablePrefix('my');
+    $this->assertSame('my', $t->getVariablePrefix());
+    ob_start();
+    $content = 'Simple string';
+    var_dump(array('my_content'=>&$content));
+    $dump = ob_get_clean();
+    $this->assertSame($dump, $t->render());
+  }
+
+  public function testToString() {
+    $t = new TemplateT('simple');
+    $t->set('content', 'Simple string');
+    $this->assertSame($t->render(), (string)$t);
+    $this->assertSame($t->render(), $t->__toString());
+
+    $t = new TemplateT('vardump');
+    $t->set('content', 'Simple string');
+    $this->assertSame($t->render(), (string)$t);
+    $this->assertSame($t->render(), $t->__toString());
+  }
+
+  # }}} Rendering tests
+  ############################################################################
+
 }
 
 # vim: ts=2 sw=2 et foldmethod=marker
