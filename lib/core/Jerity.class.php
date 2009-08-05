@@ -37,46 +37,6 @@ class Jerity {
   }
 
   /**
-   * Split a camel-cased string into an array of its components.
-   *
-   * For example, splits "ThisCamelString" into ('This', 'Camel', 'String')
-   * and "ACamelString" into ('A', 'Camel', 'String'). Note that this will
-   * also cause "renderAsHTML" to be split into ('render', 'As', 'H', 'T',
-   * 'M', 'L').
-   *
-   * @param   string  $str  The camel-cased string to be split.
-   *
-   * @return  array   The set of components, in order.
-   */
-  public static function splitCamelCase($str) {
-    $output[] = '';
-    $max = 0;
-    foreach (str_split($str) as $c) {
-      if ($c >= 'A' && $c <= 'Z' && $output[$max] !== '') {
-        $output[++$max] = $c;
-      } else {
-        $output[$max] .= $c;
-      }
-    }
-    return $output;
-  }
-
-  /**
-   * Split a split-cased string into an array of its components.
-   *
-   * For example, splits "this_split_string" into ('this', 'split', 'string')
-   * and "A_SPLIT_STRING" into ('A', 'SPLIT', 'STRING').
-   *
-   * @param   string  $str  The split-cased string to be split.
-   * @return  array         The set of components, in order.
-   */
-  public static function splitSplitCase($str) {
-    $output = preg_split('/_+/', $str);
-    $output = array_filter($output, create_function('$a', 'return $a!=="";'));
-    return $output;
-  }
-
-  /**
    * Autoload a class by name. This function should not be called directly.
    *
    * @todo  Implement harder autoloading...
