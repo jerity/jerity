@@ -193,7 +193,8 @@ abstract class Template implements Renderable {
 
   /**
    * Sets the prefix to use when extracting the template variables array when
-   * rendering the template.
+   * rendering the template. Note that an underscore will be used to separate
+   * the prefix from the variable name when it is extracted.
    *
    * @param  string  $prefix  The prefix to set.
    *
@@ -219,7 +220,7 @@ abstract class Template implements Renderable {
    * @param  callback  $callback  The function to execute.
    * @param  integer   $priority  The priority of the function [0-99]
    *
-   * @throws  Exception
+   * @throws  InvalidArgumentException
    * @throws  OutOfRangeException
    */
   public function addPostRenderHook($callback, $priority = 50) {
@@ -227,7 +228,7 @@ abstract class Template implements Renderable {
       throw new OutOfRangeException('Post render hook priority must be in the range [0-99]');
     }
     if (!is_callable($callback)) {
-      throw new Exception('Attempted to register invalid post render hook - not callable');
+      throw new InvalidArgumentException('Attempted to register invalid post render hook - not callable');
     }
     $hash = $this->generateCallbackHash($callback);
     $this->post_render_hooks[$hash] = array(
@@ -241,11 +242,11 @@ abstract class Template implements Renderable {
    *
    * @param  callback  $callback  The hook to remove.
    *
-   * @throws  Exception
+   * @throws  InvalidArgumentException
    */
   public function removePostRenderHook($callback) {
     if (!is_callable($callback)) {
-      throw new Exception('Attempted to deregister invalid post render hook - not callable');
+      throw new InvalidArgumentException('Attempted to deregister invalid post render hook - not callable');
     }
     $hash = $this->generateCallbackHash($callback);
     unset($this->post_render_hooks[$hash]);
@@ -276,8 +277,6 @@ abstract class Template implements Renderable {
    * @param  string  $contents  The contents of the output buffer to modify.
    *
    * @return  string  The modified buffer contents.
-   *
-   * @throws  Exception
    */
   protected function executePostRenderHooks($contents) {
     uasort($this->post_render_hooks, create_function('$a,$b', 'return strcmp($a[\'priority\'], $b[\'priority\']);'));
