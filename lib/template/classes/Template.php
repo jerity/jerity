@@ -161,19 +161,18 @@ abstract class Template implements Renderable {
       if (isset($this->variables['this'])) unset($this);
     }
 
-    # Create a buffer to hold rendered content and pass in post render hooks if
-    # required.
-    if ($this->post_render_hooks) {
-      ob_start(array($this, 'executePostRenderHooks'));
-    } else {
-      ob_start();
-    }
+    # Create a buffer to hold rendered content
+    ob_start();
 
     # Pull in and execute the template code.
     include($this->template);
 
-    # Return the rendered template.
-    return ob_get_clean();
+    # Return the rendered template, applying post-render hooks if necessary
+    if ($this->post_render_hooks) {
+      return $this->executePostRenderHooks(ob_get_clean());
+    } else {
+      return ob_get_clean();
+    }
   }
 
   # }}} default rendering methods
@@ -216,8 +215,6 @@ abstract class Template implements Renderable {
    * to ob_start().  This implies that they should take in the contents of the
    * buffer as a string in the first parameter and return a string of the
    * modified contents.
-   *
-   * @see  ob_start()
    *
    * @param  callback  $callback  The function to execute.
    * @param  integer   $priority  The priority of the function [0-99]
@@ -277,19 +274,15 @@ abstract class Template implements Renderable {
    * @see  ob_start()
    *
    * @param  string  $contents  The contents of the output buffer to modify.
-   * @param  int     $status    The status of the output buffer.
    *
    * @return  string  The modified buffer contents.
    *
    * @throws  Exception
    */
-  protected function executePostRenderHooks($contents, $status) {
+  protected function executePostRenderHooks($contents) {
     uasort($this->post_render_hooks, create_function('$a,$b', 'return strcmp($a[\'priority\'], $b[\'priority\']);'));
     foreach ($this->post_render_hooks as $hash => $hook) {
-      if (!is_callable($hook['callback'])) {
-        throw new Exception('Invalid post render hook - not callable');
-      }
-      $contents = call_user_func($hook['callback'], $contents, $status);
+      $contents = call_user_func($hook['callback'], $contents);
     }
     return $contents;
   }
