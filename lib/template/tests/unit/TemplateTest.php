@@ -2,10 +2,12 @@
 require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/jerity.php');
 
 if (!class_exists('TemplateT')) {
+  // Template is an abstract class, so we need aa simple concrete implementation for testing
   class TemplateT extends Template { }
 }
 
 class TemplateTest extends PHPUnit_Framework_TestCase {
+  // preparation step run before each test
   public function setUp() {
     Template::setPath(dirname(dirname(__FILE__)).'/data/templates');
   }
@@ -13,12 +15,19 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Template validity tests {{{
 
+  /**
+   * Ensure no errors when a valid template is loaded
+   */
   public function testValidTemplate1() {
     $t = new TemplateT('foo-succeed');
   }
 
   /**
-   * @expectedException RuntimeException
+   * Fail if a non-existant template file is given.
+   *
+   * @todo  This behaviour will change when automatic per-context templates are implemented
+   *
+   * @expectedException  RuntimeException
    */
   public function testInvalidTemplate() {
     $t = new TemplateT('foo-fail');
@@ -31,6 +40,8 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   # Jailbreak tests {{{
 
   /**
+   * Attempt to escape the template directory.
+   *
    * @dataProvider       jailbreakProvider
    * @expectedException  InvalidArgumentException
    */
@@ -38,6 +49,10 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $t = new TemplateT($path);
   }
 
+  /**
+   * Provides a set of tests paths for testJailbreak() that attempt to break
+   * out of the template directory.
+   */
   public static function jailbreakProvider() {
     return array(
       array('../foo-fail'),
@@ -66,24 +81,36 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Template variable tests {{{
 
+  /**
+   * Simple assignment/retrieval test.
+   */
   public function testSingleGetSet() {
     $t = new TemplateT('chrome/simple');
     $t->set('foo', 'bar');
     $this->assertSame('bar', $t->get('foo'));
   }
 
+  /**
+    * Simple assignment/retrieval test.
+    */
   public function testMultipleGetSet1() {
     $t = new TemplateT('chrome/simple');
     $t->set(array('foo' => 'bar'));
     $this->assertSame('bar', $t->get('foo'));
   }
 
+  /**
+    * Simple assignment/retrieval test.
+    */
   public function testMultipleGetSet2() {
     $t = new TemplateT('chrome/simple');
     $t->set(array('foo'), array('bar'));
     $this->assertSame('bar', $t->get('foo'));
   }
 
+  /**
+    * Simple assignment/retrieval test.
+    */
   public function testMultipleGetSet3() {
     $t = new TemplateT('chrome/simple');
     $t->set('foo', 'bar');
@@ -92,6 +119,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('qux', $t->get('baz'));
   }
 
+  /**
+    * Simple assignment/retrieval test.
+    */
   public function testMultipleGetSet4() {
     $t = new TemplateT('chrome/simple');
     $t->set(array('foo' => 'bar', 'baz' => 'qux'));
@@ -99,6 +129,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('qux', $t->get('baz'));
   }
 
+  /**
+    * Simple assignment/retrieval test.
+    */
   public function testMultipleGetSet5() {
     $t = new TemplateT('chrome/simple');
     $t->set(array('foo', 'baz'), array('bar', 'qux'));
@@ -106,6 +139,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('qux', $t->get('baz'));
   }
 
+  /**
+    * Simple assignment/retrieval/clear test.
+    */
   public function testGetSetSingleClearSingle() {
     $t = new TemplateT('chrome/simple');
     $t->set('foo', 'bar');
@@ -114,6 +150,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(null, $t->get('foo'));
   }
 
+  /**
+    * Simple assignment/retrieval/clear test.
+    */
   public function testGetSetSingleClearAll() {
     $t = new TemplateT('chrome/simple');
     $t->set('foo', 'bar');
@@ -122,6 +161,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(null, $t->get('foo'));
   }
 
+  /**
+    * Simple assignment/retrieval/clear test.
+    */
   public function testGetSetMultipleClearIndividual() {
     $t = new TemplateT('chrome/simple');
     $t->set('foo', 'bar');
@@ -136,6 +178,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(null, $t->get('baz'));
   }
 
+  /**
+    * Simple assignment/retrieval/clear test.
+    */
   public function testGetSetMultipleClearAll() {
     $t = new TemplateT('chrome/simple');
     $t->set('foo', 'bar');
@@ -147,6 +192,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(null, $t->get('baz'));
   }
 
+  /**
+    * Assignment/retrieval/clear test with non-trivial values.
+    */
   public function testComplexSingleGetSet1() {
     $t = new TemplateT('chrome/simple');
     $t->set('foo', array('bar'));
@@ -155,6 +203,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(array('baz', 'qux'), $t->get('bar'));
   }
 
+  /**
+    * Assignment/retrieval/clear test with non-trivial values.
+    */
   public function testComplexSingleGetSet2() {
     $t = new TemplateT('chrome/simple');
     $obj = new StdClass();
@@ -165,6 +216,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($obj, $t->get('test'));
   }
 
+  /**
+    * Assignment/retrieval/clear test with non-trivial values.
+    *
+    * NOTE: checks that objects are set by reference
+    */
   public function testComplexSingleGetSet3() {
     $t = new TemplateT('chrome/simple');
     $obj = new StdClass();
@@ -176,6 +232,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($obj, $t->get('test'));
   }
 
+  /**
+    * Assignment/retrieval/clear test with non-trivial values.
+    *
+    * NOTE: checks that objects are set by reference, and breaking that reference
+    */
   public function testComplexSingleGetSet4() {
     $t = new TemplateT('chrome/simple');
     $obj = new StdClass();
