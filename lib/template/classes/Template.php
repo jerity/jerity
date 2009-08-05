@@ -155,6 +155,10 @@ abstract class Template implements Renderable {
         EXTR_REFS | (is_null($this->variable_prefix) ? EXTR_SKIP : EXTR_PREFIX_ALL),
         $this->variable_prefix
       );
+      # If overwritten by extract(), $this will work in this method but will be
+      # overwritten in the template. The template will therefore not be able to
+      # access this object. Let's make it magical again.
+      if (isset($this->variables['this'])) unset($this);
     }
 
     # Create a buffer to hold rendered content and pass in post render hooks if
