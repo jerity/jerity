@@ -150,10 +150,11 @@ abstract class Template implements Renderable {
 
     # Extract template variables in preparation for template inclusion.
     if ($this->variables) {
-      $type = EXTR_REFS;
-      $prefix = $this->getVariablePrefix();
-      if (!is_null($prefix)) $type |= EXTR_PREFIX_ALL;
-      extract($this->variables, $type, $prefix);
+      extract(
+        $this->variables,
+        EXTR_REFS | (is_null($this->variable_prefix) ? EXTR_SKIP : EXTR_PREFIX_ALL),
+        $this->variable_prefix
+      );
     }
 
     # Create a buffer to hold rendered content and pass in post render hooks if
