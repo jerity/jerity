@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/jerity.php');
+require_once(dirname(dirname(dirname(__FILE__))).'/setUp.php');
 
 if (!class_exists('TemplateT')) {
   // Template is an abstract class, so we need aa simple concrete implementation for testing
@@ -25,7 +25,7 @@ if (!class_exists('DynamicPostRenderHookTestClass')) {
 class TemplateTest extends PHPUnit_Framework_TestCase {
   // preparation step run before each test
   public function setUp() {
-    Template::setPath(dirname(dirname(__FILE__)).'/data/templates');
+    Template::setPath(DATA_DIR.'templates');
   }
 
   ############################################################################
@@ -53,7 +53,7 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
    * Check a template path with a trailing slash.
    */
   public function testValidPath1() {
-    $path = dirname(dirname(__FILE__)).'/data/templates/';
+    $path = DATA_DIR.'templates/';
     Template::setPath($path);
     $this->assertSame($path, Template::getPath());
   }
@@ -63,7 +63,7 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
    * one.
    */
   public function testValidPath2() {
-    $path = dirname(dirname(__FILE__)).'/data/templates';
+    $path = DATA_DIR.'templates';
     Template::setPath($path);
     $this->assertNotSame($path, Template::getPath());
     $this->assertSame("$path/", Template::getPath());
@@ -75,7 +75,7 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
    * @expectedException  InvalidArgumentException
    */
   public function testInvalidPath() {
-    Template::setPath(dirname(dirname(__FILE__)).'/data/no-templates');
+    Template::setPath(DATA_DIR.'no-templates');
   }
 
   /**
