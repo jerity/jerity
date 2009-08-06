@@ -1,10 +1,10 @@
 <?php
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/jerity.php');
+require_once(dirname(dirname(dirname(__FILE__))).'/setUp.php');
 require_once(dirname(__FILE__).'/ChromeTest.php'); // needed for separator provider
 
 class ChromeTestHTML401 extends PHPUnit_Framework_TestCase {
   public function setUp() {
-    Template::setPath(dirname(dirname(__FILE__)).'/data/templates');
+    Template::setPath(DATA_DIR.'templates');
     RenderContext::setGlobalContext(
       RenderContext::makeContext(RenderContext::TYPE_HTML4_STRICT)
     );
