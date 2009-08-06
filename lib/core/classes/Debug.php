@@ -138,10 +138,12 @@ class Debug {
       # TODO: Formatting and highlighting without xdebug.
     }
     echo '</div>';
+	echo '<pre style="background: none; border: none; margin: none; padding: none;">';
     $style = 'background: none; border: none; margin-top: 0.3em; max-height: 150px; width: 100%;';
     if ($collapsed) $style .= ' display: none;';
     if ($highlight) {
       echo '<div id="'.$id.'_data" style="'.$style.' font-family: monospace; max-height: 150px; overflow: auto; white-space: pre;">';
+	  # TODO: Need to escape data without clobbering highlight/xdebug modifications.
       var_dump($data);
       echo '</div>';
     } else {
@@ -152,6 +154,7 @@ class Debug {
       echo strip_tags($data);
       echo '</textarea>';
     }
+	echo '</pre>';
     echo '</div>';
     echo PHP_EOL, PHP_EOL;
     $count++;
