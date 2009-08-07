@@ -93,6 +93,22 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getMetadata()));
   }
 
+  public function testContent1() {
+    $c = new Chrome('simple');
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+    $c->setContent('PASS');
+    $this->assertEquals(1, count($c->getContent()));
+    $c->setContent('PASS');
+    $this->assertEquals(1, count($c->getContent()));
+    $c->setContent('PASS', 'PASS');
+    $this->assertEquals(2, count($c->getContent()));
+    $c->setContent(array('PASS', 'PASS'));
+    $this->assertEquals(2, count($c->getContent()));
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+  }
+
   public function testModularHead() {
     Chrome::setLanguage('en-gb');
     Chrome::setTitle('Test title');
