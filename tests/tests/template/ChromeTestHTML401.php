@@ -40,4 +40,11 @@ class ChromeTestHTML401 extends PHPUnit_Framework_TestCase {
     $this->assertContains('<title>'.implode($sep, $title).'</title>', $d);
   }
 
+  public function testFullRender() {
+    $c = new Chrome('simple');
+    $c->setContent('PASS');
+    $this->assertSame('PASS', $c->render());
+    $this->assertSame('PASS', (string)$c);
+  }
+
 }
