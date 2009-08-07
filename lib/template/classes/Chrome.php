@@ -206,6 +206,8 @@ class Chrome extends Template {
     }
     unset($content); # break last element reference.
 
+    # restart content iterator
+    if (!is_null($this->contentIterator)) $this->contentIterator = null;
     # Call default render method.
     return parent::render();
   }
