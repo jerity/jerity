@@ -62,6 +62,37 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($title, Chrome::getTitle(false));
   }
 
+  public function testMetaName1() {
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    Chrome::addMetadata('generator', 'Jerity');
+    $this->assertEquals(1, count(Chrome::getMetadata()));
+    Chrome::removeMetadata('generator');
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+  }
+
+  public function testMetaName2() {
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    Chrome::addMetadata('generator', 'Jerity');
+    Chrome::addMetadata('description', 'Jerity Test Page');
+    $this->assertEquals(2, count(Chrome::getMetadata()));
+    Chrome::removeMetadata('generator');
+    $this->assertEquals(1, count(Chrome::getMetadata()));
+    Chrome::removeMetadata('description');
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+  }
+
+  public function testMetaName3() {
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    Chrome::addMetadata('generator', 'Jerity');
+    Chrome::addMetadata('description', 'Jerity Test Page');
+    $this->assertEquals(2, count(Chrome::getMetadata()));
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+  }
+
   public function testModularHead() {
     Chrome::setTitle('Test title');
     Chrome::addMetadata('generator', 'Jerity v0.1');
