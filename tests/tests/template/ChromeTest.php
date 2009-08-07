@@ -94,13 +94,19 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testModularHead() {
+    Chrome::setLanguage('en-gb');
     Chrome::setTitle('Test title');
-    Chrome::addMetadata('generator', 'Jerity v0.1');
+    Chrome::clearMetadata();
+    Chrome::addMetadata('Content-Type', 'text/html; charset=utf-8', Chrome::META_HTTP);
+    Chrome::addMetadata('generator', 'Jerity');
     Chrome::addMetadata('description', 'Jerity test case page');
+    Chrome::clearStylesheets();
     Chrome::addStylesheet('/css/common.css');
-    Chrome::addStylesheet('/css/common.css');
+    Chrome::addStylesheet('/css/blah.css', 75);
+    Chrome::clearScripts();
     Chrome::addScript('/js/scriptaculous.js', 25);
     Chrome::addScript('/js/prototype.js', 15);
+    Chrome::clearIcons();
     Chrome::addIcon('/favicon.ico');
     Chrome::addIcon('/img/icons/favicon.png', Chrome::ICON_PNG);
 
