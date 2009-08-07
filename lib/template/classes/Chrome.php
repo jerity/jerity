@@ -798,18 +798,6 @@ class Chrome extends Template {
   }
 
   /**
-   * Renders the HTML head of the page.
-   *
-   * @return  string
-   * @see     Chrome::outputHead()
-   */
-  public static function renderHead() {
-    ob_start();
-    self::outputHead();
-    return ob_get_clean();
-  }
-
-  /**
    * Outputs the HTML head of the page.
    */
   public static function outputHead() {
