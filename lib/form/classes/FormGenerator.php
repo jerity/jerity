@@ -198,7 +198,7 @@ class FormGenerator {
     elseif (!isset($props['method'])) $props['method'] = 'POST';
     $out = '<form';
     foreach ($props as $k=>$v) {
-      $out .= ' '.$k.'="'.htmlentities($v).'"';
+      $out .= ' '.$k.'="'.String::escape($v, true).'"';
     }
     $out .= ">\n";
 
@@ -336,7 +336,7 @@ class FormGenerator_Element extends ArrayObject {
       if ($v===true) {
         $v = $k;
       }
-      $out .= ' '.htmlentities($k).'="'.htmlentities($v).'"';
+      $out .= ' '.String::escape($k, true).'="'.String::escape($v, true).'"';
     }
     $out .= (RenderContext::getGlobalContext()->getLanguage() == RenderContext::LANG_XHTML && $content===false) ? " />" : ">";
     if (!is_null($content) && $content !== false) {
@@ -357,7 +357,7 @@ class FormGenerator_Element extends ArrayObject {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label']) && !in_array($this['type'], array('checkbox', 'radio'))) {
-      $labelcontent = htmlentities($this['label']).':';
+      $labelcontent = String::escape($this['label']).':';
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
@@ -388,7 +388,7 @@ class FormGenerator_Element extends ArrayObject {
     $out .= self::renderTag('input', $this->props, null, array('label', 'required'))."\n";
 
     if (isset($this['label']) && in_array($this['type'], array('checkbox', 'radio'))) {
-      $out .= self::renderTag('label', array('for'=>$this['id']), htmlentities($this['label']))."\n";
+      $out .= self::renderTag('label', array('for'=>$this['id']), String::escape($this['label']))."\n";
     }
 
     return $out;
@@ -497,7 +497,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     $out = self::renderTag('fieldset', $this->props, null, array('label', 'type'))."\n";
     if (isset($this['label']) && $this['label']) {
       # TODO: required flag
-      $out .= '<legend><span>'.htmlentities($this['label'])."</span></legend>\n";
+      $out .= '<legend><span>'.String::escape($this['label'])."</span></legend>\n";
     }
 
     // render elements
@@ -524,7 +524,7 @@ class FormGenerator_Textarea extends FormGenerator_Element {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
-      $labelcontent = htmlentities($this['label']).':';
+      $labelcontent = String::escape($this['label']).':';
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
@@ -540,7 +540,7 @@ class FormGenerator_Textarea extends FormGenerator_Element {
     if ($error) {
       $out .= self::renderError($this->props, $error);
     }
-    $out .= self::renderTag('textarea', $this->props, htmlentities($data), array('label', 'value', 'type'))."\n";
+    $out .= self::renderTag('textarea', $this->props, String::escape($data), array('label', 'value', 'type'))."\n";
 
     return $out;
   }
@@ -590,7 +590,7 @@ class FormGenerator_Select extends FormGenerator_Element {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
-      $labelcontent = htmlentities($this['label']).':';
+      $labelcontent = String::escape($this['label']).':';
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
@@ -610,7 +610,7 @@ class FormGenerator_Select extends FormGenerator_Element {
       }
     }
     foreach ($this->options as $option) {
-      $out .= self::renderTag('option', $option, htmlentities($option['label']), array('label'))."\n";
+      $out .= self::renderTag('option', $option, String::escape($option['label']), array('label'))."\n";
     }
     $out .= "</select>\n";
 
@@ -651,7 +651,7 @@ class FormGenerator_Hint extends FormGenerator_Element {
     $out = '';
     if (isset($this['content'])) {
       if (!isset($this['escape']) || $this['escape']) {
-        $content = htmlentities($this['content']);
+        $content = String::escape($this['content']);
       } else {
         $content = $this['content'];
       }
