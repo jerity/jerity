@@ -94,7 +94,8 @@ class NavigationMenu implements Renderable {
     if ($this->our_url) {
       return $this->our_url;
     }
-    return $_SERVER['REQUEST_URI'];
+    $url = explode('?', $_SERVER['REQUEST_URI'], 2);
+    return $url[0];
   }
 
   /**
