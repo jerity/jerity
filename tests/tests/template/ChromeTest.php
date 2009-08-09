@@ -32,6 +32,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($l[0]['href'], 'mailto:info@jerity.com');
   }
 
+  public function testEmptyTitle() {
+    Chrome::setTitle(null);
+    $this->assertSame('', Chrome::getTitle());
+  }
+
   /**
    * @dataProvider  titleSeparatorProvider
    */
