@@ -143,7 +143,7 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     Chrome::setLanguage('en-gb');
     Chrome::setTitle('Test title');
     Chrome::clearMetadata();
-    Chrome::addMetadata('Content-Type', 'text/html; charset=utf-8', Chrome::META_HTTP);
+    Chrome::addMetadata('Content-Type', 'text/html; charset=utf-8', true);
     Chrome::addMetadata('generator', 'Jerity');
     Chrome::addMetadata('description', 'Jerity test case page');
     Chrome::clearStylesheets();
