@@ -287,25 +287,34 @@ class Chrome extends Template {
    * Adds some metadata to the page.  HTTP header equivalent metadata is stored
    * separately.
    *
-   * @param  string  $name   The name of the information.
-   * @param  string  $value  The value to assign.
-   * @param  string  $key    The key attribute.
+   * @param  string  $name        The name of the information.
+   * @param  string  $value       The value to assign.
+   * @param  string  $http_equiv  Whether this is HTTP header-equivalent metadata
    */
-  public static function addMetadata($name, $value, $key = self::META_NAME) {
-    if ($key === self::META_HTTP && strtolower($name) == 'content-type') {
+  public static function addMetadata($name, $value, $http_equiv = false) {
+    # transition properties
+    if ($http_equiv === self::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
+    if ($http_equiv === self::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
+    if ($http_equiv && strtolower($name) == 'content-type') {
       # munge "Content-Type" meta header so we can find it later
       $name = 'Content-Type';
     }
-    self::$metadata[$key][$name] = $value;
+    self::$metadata[$http_equiv ? self::META_HTTP : self::META_NAME][$name] = $value;
   }
 
   /**
    * Removes some metadata from the page.
    *
-   * @param  string  $name   The name of the information.
-   * @param  string  $key    The key attribute.
+   * @param  string  $name        The name of the information.
+   * @param  string  $http_equiv  Whether this is HTTP header-equivalent metadata
    */
-  public static function removeMetadata($name, $key = self::META_NAME) {
+  public static function removeMetadata($name, $http_equiv = false) {
+    if ($http_equiv === self::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
+    if ($http_equiv === self::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
+    $key = $http_equiv ? self::META_HTTP : self::META_NAME;
+    if (!isset(self::$metadata[$key])) {
+      throw new InvalidArgumentException('The given metadata key does not exist');
+    }
     unset(self::$metadata[$key][$name]);
   }
 
@@ -313,16 +322,26 @@ class Chrome extends Template {
    * Clears all metadata currently added to the page.
    */
   public static function clearMetadata() {
-    self::$metadata = array();
+    self::$metadata = array(self::META_HTTP=>array(), self::META_NAME=>array());
   }
 
   /**
-   * Gets the array of metadata for the page
+   * Gets the array of metadata for the page.
+   *
+   * @param  boolean  $http_equiv  Whether to retrieve named or HTTP-equivalent metadata.
    *
    * @return  array  The metadata for the current page.
    */
-  public static function getMetadata() {
-    return self::$metadata;
+  public static function getMetadata($http_equiv = false) {
+    if (is_null($http_equiv)) {
+      return self::$metadata;
+    } elseif ($http_equiv) {
+      if (!isset(self::$metadata[self::META_HTTP])) self::$metadata[self::META_HTTP] = array();
+      return self::$metadata[self::META_HTTP];
+    } else {
+      if (!isset(self::$metadata[self::META_NAME])) self::$metadata[self::META_NAME] = array();
+      return self::$metadata[self::META_NAME];
+    }
   }
 
   /**
@@ -717,7 +736,7 @@ class Chrome extends Template {
    * tag is rendered first if present.
    */
   public static function outputMetaTags() {
-    $metadata = self::getMetadata();
+    $metadata = self::getMetadata(null);
     # ensure content-type is output first, if we have one
     if (isset($metadata[self::META_HTTP]['Content-Type'])) {
       # stop ourselves processing it again
