@@ -114,6 +114,31 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count($c->getContent()));
   }
 
+  public function testMultiContent1() {
+    $c = new Chrome('multicontent');
+    $c->clearContent();
+    $c->setContent('PASS', 'PASS');
+    $d = $c->render();
+    $this->assertEquals('PASS|PASS|', $d);
+  }
+
+  public function testMultiContent2() {
+    $c = new Chrome('multicontent');
+    $c->clearContent();
+    $c->setContent('PASS', 'PASS', 'PASS');
+    $d = $c->render();
+    $this->assertEquals('PASS|PASS|PASS|', $d);
+  }
+
+  public function testMultiContent3() {
+    $c = new Chrome('multicontent');
+    $c->clearContent();
+    $c->set('count', 3);
+    $c->setContent('PASS', 'PASS');
+    $d = $c->render();
+    $this->assertEquals('PASS|PASS||', $d);
+  }
+
   public function testModularHead() {
     Chrome::setLanguage('en-gb');
     Chrome::setTitle('Test title');
