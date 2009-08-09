@@ -106,9 +106,9 @@ class FormGenerator {
   }
 
   public function addCustomHTML($content, $label = null, array $extra = null) {
-	$newObj = new FormGenerator_CustomHTML($content, $label, $extra);
-	$this->fields[] = $newObj;
-	return $newObj;
+    $newObj = new FormGenerator_CustomHTML($content, $label, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
   }
 
   public function getError($name) {
@@ -474,9 +474,9 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
   }
 
   public function addCustomHTML($content, $label = null, array $extra = null) {
-	$newObj = new FormGenerator_CustomHTML($content, $label, $extra);
-	$this->fields[] = $newObj;
-	return $newObj;
+    $newObj = new FormGenerator_CustomHTML($content, $label, $extra);
+    $this->fields[] = $newObj;
+    return $newObj;
   }
 
   public function renderElementList($elements) {
@@ -687,7 +687,7 @@ class FormGenerator_CustomHTML extends FormGenerator_Element {
       'type'    => 'custom',
     );
     if (!is_null($label)) {
-	  $this->props['label'] = $label;
+      $this->props['label'] = $label;
     }
     if (!is_null($extra)) {
       $this->props = $this->props + $extra;
@@ -720,7 +720,7 @@ class FormGenerator_CustomHTML extends FormGenerator_Element {
       $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
     }
     if (isset($this['content'])) {
-	  $content = $this['content'];
+      $content = $this['content'];
     } else {
       $content = '';
     }

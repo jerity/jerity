@@ -36,7 +36,7 @@ class FormHelper {
    * @return  integer
    */
   public static function getMethod() {
-	return self::$method;
+    return self::$method;
   }
 
   /**
@@ -45,7 +45,7 @@ class FormHelper {
    * @param  integer  $method
    */
   public static function setMethod($method) {
-	self::$method = $method;
+    self::$method = $method;
   }
 
   /**
@@ -59,17 +59,17 @@ class FormHelper {
    * @throws  InvalidArgumentException
    */
   public static function isEmpty($field, $method = null) {
-	if (is_null($method)) $method = self::$method;
-	switch ($method) {
-	  case self::METHOD_POST:
-		if (!isset($_POST[$field])) return false;
-		return trim($_POST[$field]) === '';
-	  case self::METHOD_GET:
-		if (!isset($_GET[$field])) return false;
-		return trim($_GET[$field]) === '';
-	  default:
-		throw new InvalidArgumentException('Invalid method.');
-	}
+    if (is_null($method)) $method = self::$method;
+    switch ($method) {
+      case self::METHOD_POST:
+        if (!isset($_POST[$field])) return false;
+        return trim($_POST[$field]) === '';
+      case self::METHOD_GET:
+        if (!isset($_GET[$field])) return false;
+        return trim($_GET[$field]) === '';
+      default:
+        throw new InvalidArgumentException('Invalid method.');
+    }
   }
 
 }
