@@ -105,6 +105,12 @@ class FormGenerator {
     return $newObj;
   }
 
+  public function addCustomHTML($content, $label = null, array $extra = null) {
+	$newObj = new FormGenerator_CustomHTML($content, $label, $extra);
+	$this->fields[] = $newObj;
+	return $newObj;
+  }
+
   public function getError($name) {
     if (!isset($this->errors[$name])) {
       return null;
@@ -467,6 +473,12 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     return $newObj;
   }
 
+  public function addCustomHTML($content, $label = null, array $extra = null) {
+	$newObj = new FormGenerator_CustomHTML($content, $label, $extra);
+	$this->fields[] = $newObj;
+	return $newObj;
+  }
+
   public function renderElementList($elements) {
     if (!count($elements)) {
       return '';
@@ -660,6 +672,62 @@ class FormGenerator_Hint extends FormGenerator_Element {
     }
 
     $out .= self::renderTag('div', $this->props, $content, array('content', 'escape', 'type'))."\n";
+
+    return $out;
+  }
+}
+
+
+class FormGenerator_CustomHTML extends FormGenerator_Element {
+  protected static $customUniqueCounter = 0;
+
+  public function __construct($content, $label = null, array $extra = null) {
+    $this->props = array(
+      'content' => $content,
+      'type'    => 'custom',
+    );
+    if (!is_null($label)) {
+	  $this->props['label'] = $label;
+    }
+    if (!is_null($extra)) {
+      $this->props = $this->props + $extra;
+    }
+    if (!isset($this->props['id'])) {
+      $this->props['id'] = 'form-custom'.(++self::$customUniqueCounter);
+    }
+    if (!isset($this->props['class'])) {
+      $this->props['class'] = $this->props['type'];
+    } elseif (!preg_match('/(?:^| )'.preg_quote($this->props['type']).'(?:$| )/', $this->props['class'])) {
+      $this->props['class'] .= ' '.$this->props['type'];
+    }
+    ksort($this->props);
+  }
+
+  /**
+   * Render a custom block of HTML.
+   *
+   * @param  string  $error  An error message to show, if applicable.
+   *
+   * @return  string
+   */
+  public function render($error = null) {
+    $out = '';
+    if (isset($this['label'])) {
+      $labelcontent = String::escape($this['label']).':';
+      if (isset($this['required']) && $this['required']) {
+        $labelcontent .= ' <em>Required</em>';
+      }
+      $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
+    }
+    if (isset($this['content'])) {
+	  $content = $this['content'];
+    } else {
+      $content = '';
+    }
+    if ($error) {
+      $out .= self::renderError($this->props, $error);
+    }
+    $out .= self::renderTag('div', $this->props, $content, array('content', 'escape', 'name', 'type'))."\n";
 
     return $out;
   }
