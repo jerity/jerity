@@ -70,14 +70,14 @@ class String {
   public static function escapeJS($text, $double_quote = true) {
     if ($double_quote) {
       return str_replace(
-        array("\n", "\r", '"', "'"),
-        array('\\n', '\\r', '\\"', "\\'"),
+        array("\n",  "\r",  '"',   "'",   '</' ),
+        array('\\n', '\\r', '\\"', "\\'", '<\/'),
         $text
       );
     } else {
       return str_replace(
-        array("'"),
-        array("\\'"),
+        array("'",   '</' ),
+        array("\\'", '<\/'),
         $text
       );
     }
