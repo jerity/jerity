@@ -390,20 +390,22 @@ class Chrome extends Template {
 
 
   /**
-   * Adds a script to the page.  Will add the script once at most.
+   * Adds a script to the page, at most once. Scripts will be loaded in
+   * order of ascending priority (i.e. priority 5 will be loaded before
+   * priority 15).
    *
    * Note that 'charset' and 'defer' attributes can be passed into $attrs.
    *
    * @param  string  $href      The href of the file.
-   * @param  int     $priority  Defines the order that scripts are loaded [0-99]
+   * @param  int     $priority  Defines the order that scripts are loaded
    * @param  string  $type      The type of script.
    * @param  array   $attrs     An array of additional attributes.
    *
    * @throws  OutOfRangeException
    */
   public static function addScript($href, $priority = 50, $type = RenderContext::CONTENT_JS, array $attrs = array()) {
-    if ($priority < 0 || $priority > 99) {
-      throw new OutOfRangeException('Script priority must be in the range [0-99]');
+    if ($priority < 0) {
+      throw new OutOfRangeException('Script priority must be zero or greater');
     }
     $attrs['type'] = $type;
     $attrs['src']  = $href;
@@ -432,8 +434,9 @@ class Chrome extends Template {
 
   /**
    * Gets the array of scripts for the page.  The scripts are returned in
-   * priority order. If null is given for the $type argument, then all scripts
-   * will be returned, indexed by type and then ordered by priority.
+   * ascending priority order. If null is given for the $type argument, then
+   * all scripts will be returned, indexed by type and then ordered by
+   * priority.
    *
    * @param  string  $type  The type of script, or null for all scripts.
    *
@@ -459,21 +462,24 @@ class Chrome extends Template {
   }
 
   /**
-   * Adds a stylesheet to the page.  The stylesheets are stored by href which
-   * is intended to provide a simple solution to duplicate stylesheets.
+   * Adds a stylesheet to the page, at most once. Stylesheets will be loaded
+   * in order of ascending priority (i.e. priority 5 will be loaded before
+   * priority 15). This means that rules in stylesheets with higher priority
+   * values will override lower-priority stylesheets.
    *
-   * The media parameter should be a comma-separated string of media types.
+   * The media attribute should be a comma-separated string of one or more
+   * media types.
    *
    * @param  string  $href      The href of the file.
-   * @param  int     $priority  Defines the order that scripts are loaded [0-99]
+   * @param  int     $priority  Defines the order that stylesheets are loaded.
    * @param  string  $type      The type of stylesheet.
    * @param  array   $attrs     An array of additional attributes.
    *
    * @throws  OutOfRangeException
    */
   public static function addStylesheet($href, $priority = 50, $type = RenderContext::CONTENT_CSS, array $attrs = array()) {
-    if ($priority < 0 || $priority > 99) {
-      throw new OutOfRangeException('Stylesheet priority must be in the range [0-99]');
+    if ($priority < 0) {
+      throw new OutOfRangeException('Stylesheet priority must be zero or greater');
     }
     $attrs = array_merge(
       array('rel' => 'stylesheet', 'type' => $type),
@@ -505,7 +511,7 @@ class Chrome extends Template {
 
   /**
    * Gets the array of stylesheets for the page.  The stylesheets are returned
-   * in priority order by type.
+   * in ascending priority order by type.
    *
    * @return  array  The stylesheets for the current page.
    */
