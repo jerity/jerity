@@ -432,15 +432,28 @@ class Chrome extends Template {
 
   /**
    * Gets the array of scripts for the page.  The scripts are returned in
-   * priority order by type.
+   * priority order. If null is given for the $type argument, then all scripts
+   * will be returned, indexed by type and then ordered by priority.
+   *
+   * @param  string  $type  The type of script, or null for all scripts.
    *
    * @return  array  The scripts for the current page.
    */
-  public static function getScripts() {
-    $s = self::$scripts;
-    foreach ($s as $t => $a) {
+  public static function getScripts($type = RenderContext::CONTENT_JS) {
+    if (is_null($type)) {
+      $s = self::$scripts;
+      foreach ($s as $t => $a) {
+        uasort($a, create_function('$a,$b', 'return strcmp($a[\'priority\'], $b[\'priority\']);'));
+        $s[$t] = array_values(array_map(create_function('$a', 'return $a[\'attrs\'];'), $a));
+      }
+
+    } elseif (!isset(self::$scripts[$type])) {
+      $s = array();
+
+    } else {
+      $a = self::$scripts[$type];
       uasort($a, create_function('$a,$b', 'return strcmp($a[\'priority\'], $b[\'priority\']);'));
-      $s[$t] = array_map(create_function('$a', 'return $a[\'attrs\'];'), $a);
+      $s = array_values(array_map(create_function('$a', 'return $a[\'attrs\'];'), $a));
     }
     return $s;
   }
@@ -797,9 +810,8 @@ class Chrome extends Template {
    * Renders the script tags that reference an external file.
    */
   public static function outputExternalScriptTags() {
-    foreach (self::getScripts() as $type => $a) {
+    foreach (self::getScripts(null) as $type => $a) {
       foreach ($a as $href => $attrs) {
-        $attrs['src'] = $href;
         echo Tag::script($type, '', $attrs), PHP_EOL;
       }
     }
