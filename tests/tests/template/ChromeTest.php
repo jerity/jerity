@@ -129,8 +129,8 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   public function testMetaName1() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
-    $this->assertEquals(0, count(Chrome::getMetadata(true)));
     Chrome::addMetadata('generator', 'Jerity');
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
     $this->assertEquals(1, count(Chrome::getMetadata()));
     Chrome::removeMetadata('generator');
     $this->assertEquals(0, count(Chrome::getMetadata()));
@@ -139,9 +139,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   public function testMetaName2() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
-    $this->assertEquals(0, count(Chrome::getMetadata(true)));
     Chrome::addMetadata('generator', 'Jerity');
     Chrome::addMetadata('description', 'Jerity Test Page');
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
     $this->assertEquals(2, count(Chrome::getMetadata()));
     Chrome::removeMetadata('generator');
     $this->assertEquals(1, count(Chrome::getMetadata()));
@@ -154,9 +154,88 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getMetadata()));
     Chrome::addMetadata('generator', 'Jerity');
     Chrome::addMetadata('description', 'Jerity Test Page');
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
     $this->assertEquals(2, count(Chrome::getMetadata()));
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
+  }
+
+  public function testMetaHttp1() {
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+    Chrome::addMetadata('refresh', '60', true);
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(1, count(Chrome::getMetadata(true)));
+    Chrome::removeMetadata('refresh', true);
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+  }
+
+  public function testMetaHttp2() {
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+    Chrome::addMetadata('refresh', '60', true);
+    Chrome::addMetadata('content-type', 'text/html; charset=utf-8', true);
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(2, count(Chrome::getMetadata(true)));
+    Chrome::removeMetadata('content-type', true);
+    $this->assertEquals(1, count(Chrome::getMetadata(true)), 'Removing Content-Type');
+    Chrome::removeMetadata('refresh', true);
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+  }
+
+  public function testMetaHttp3() {
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+    Chrome::addMetadata('refresh', '60', true);
+    Chrome::addMetadata('content-type', 'text/html; charset=utf-8', true);
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(2, count(Chrome::getMetadata(true)));
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+  }
+
+  public function testMetaMixed1() {
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+
+    Chrome::addMetadata('refresh', '60', true);
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(1, count(Chrome::getMetadata(true)));
+
+    Chrome::addMetadata('generator', 'Jerity');
+    $this->assertEquals(1, count(Chrome::getMetadata()));
+    $this->assertEquals(1, count(Chrome::getMetadata(true)));
+
+    Chrome::clearMetadata(true);
+    $this->assertEquals(1, count(Chrome::getMetadata()));
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+
+    Chrome::clearMetadata(false);
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+  }
+
+  public function testMetaMixed2() {
+    Chrome::clearMetadata();
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
+
+    Chrome::addMetadata('refresh', '60', true);
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(1, count(Chrome::getMetadata(true)));
+
+    Chrome::addMetadata('generator', 'Jerity');
+    $this->assertEquals(1, count(Chrome::getMetadata()));
+    $this->assertEquals(1, count(Chrome::getMetadata(true)));
+
+    Chrome::clearMetadata(false);
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(1, count(Chrome::getMetadata(true)));
+
+    Chrome::clearMetadata(true);
+    $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
   }
 
   public function testContent1() {
