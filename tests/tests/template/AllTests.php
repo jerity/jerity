@@ -8,6 +8,7 @@ require_once('ChromeTestHTML401.php');
 class Jerity_Template_AllTests {
   public static function suite() {
     $suite = new PHPUnit_Framework_TestSuite();
+    $suite->setName('jerity-template');
 
     $suite->addTestSuite('TemplateTest');
     $suite->addTestSuite('ChromeTest');
