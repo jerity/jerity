@@ -457,6 +457,74 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # }}} Link tests
   ############################################################################
 
+  ############################################################################
+  # Script tests {{{
+
+  function testScript1() {
+    Chrome::clearScripts();
+    $this->assertEquals(0, count(Chrome::getScripts()));
+    Chrome::addScript('/js/prototype.js');
+    $this->assertEquals(1, count(Chrome::getScripts()));
+    $s = Chrome::getScripts(null);
+    $this->assertEquals($s[RenderContext::CONTENT_JS], Chrome::getScripts());
+    Chrome::removeScript('/js/prototype.js');
+    $this->assertEquals(0, count(Chrome::getScripts()));
+    $s = Chrome::getScripts(null);
+    $this->assertEquals($s[RenderContext::CONTENT_JS], Chrome::getScripts());
+  }
+
+  function testDuplicateScript() {
+    Chrome::clearScripts();
+    $this->assertEquals(0, count(Chrome::getScripts()));
+    Chrome::addScript('/js/prototype.js');
+    $this->assertEquals(1, count(Chrome::getScripts()));
+    Chrome::addScript('/js/prototype.js');
+    $this->assertEquals(1, count(Chrome::getScripts()));
+    Chrome::addScript('/js/prototype.js', 10);
+    $this->assertEquals(1, count(Chrome::getScripts()));
+    Chrome::clearScripts();
+    $this->assertEquals(0, count(Chrome::getScripts()));
+  }
+
+  function testScriptPriority1() {
+    Chrome::clearScripts();
+    $this->assertEquals(0, count(Chrome::getScripts()));
+    Chrome::addScript('/js/scriptaculous.js');
+    Chrome::addScript('/js/prototype.js', 5);
+    $this->assertEquals(2, count(Chrome::getScripts()));
+    $s = Chrome::getScripts(null);
+    $this->assertEquals($s[RenderContext::CONTENT_JS], Chrome::getScripts());
+    $scriptArr = array(
+      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/prototype.js'),
+      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/scriptaculous.js'),
+    );
+    $this->assertEquals($scriptArr, Chrome::getScripts());
+    Chrome::clearScripts();
+    $this->assertEquals(0, count(Chrome::getScripts()));
+  }
+
+  function testScriptPriority2() {
+    Chrome::clearScripts();
+    $this->assertEquals(0, count(Chrome::getScripts()));
+    Chrome::addScript('/js/scriptaculous.js');
+    Chrome::addScript('/js/prototype.js', 5);
+    Chrome::addScript('/js/misc.js', 15);
+    $this->assertEquals(3, count(Chrome::getScripts()));
+    $s = Chrome::getScripts(null);
+    $this->assertEquals($s[RenderContext::CONTENT_JS], Chrome::getScripts());
+    $scriptArr = array(
+      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/prototype.js'),
+      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/misc.js'),
+      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/scriptaculous.js'),
+    );
+    $this->assertEquals($scriptArr, Chrome::getScripts(), 'Expected array');
+    Chrome::clearScripts();
+    $this->assertEquals(0, count(Chrome::getScripts()));
+  }
+
+  # }}} Script tests
+  ############################################################################
+
 }
 
 # vim: ts=2 sw=2 et foldmethod=marker
