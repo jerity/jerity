@@ -67,6 +67,65 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($title, Chrome::getTitle(false));
   }
 
+  public function testAddTitleAppend() {
+    $title = array('Jerity', 'test');
+    Chrome::setTitle($title);
+    Chrome::addToTitle('title');
+    $title[] = 'title';
+    $this->assertEquals($title, Chrome::getTitle(false));
+  }
+
+  public function testAddTitleAppend2() {
+    $title = array('Jerity', 'test');
+    Chrome::setTitle($title);
+    Chrome::addToTitle(array('title'));
+    $title[] = 'title';
+    $this->assertEquals($title, Chrome::getTitle(false));
+  }
+
+  public function testAddTitleAppend3() {
+    $title = array('Jerity', 'test');
+    Chrome::setTitle($title);
+    Chrome::addToTitle('title');
+    Chrome::addToTitle('title');
+    $title[] = 'title';
+    $title[] = 'title';
+    $this->assertEquals($title, Chrome::getTitle(false));
+  }
+
+  public function testAddTitleAppend4() {
+    $title = array('Jerity', 'test');
+    Chrome::setTitle($title);
+    Chrome::addToTitle(array('title', 'title2'));
+    $title[] = 'title';
+    $title[] = 'title2';
+    $this->assertEquals($title, Chrome::getTitle(false));
+  }
+
+  public function testAddTitlePrepend() {
+    $title = array('Jerity', 'test');
+    Chrome::setTitle($title);
+    Chrome::addToTitle('title', true);
+    array_unshift($title, 'title');
+    $this->assertEquals($title, Chrome::getTitle(false));
+  }
+
+  public function testAddTitlePrepend2() {
+    $title = array('Jerity', 'test');
+    Chrome::setTitle($title);
+    Chrome::addToTitle(array('title'), true);
+    array_unshift($title, 'title');
+    $this->assertEquals($title, Chrome::getTitle(false));
+  }
+
+  public function testAddTitlePrepend3() {
+    $title = array('Jerity', 'test');
+    Chrome::setTitle($title);
+    Chrome::addToTitle('title', true);
+    array_unshift($title, 'title');
+    $this->assertEquals($title, Chrome::getTitle(false));
+  }
+
   public function testMetaName1() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
