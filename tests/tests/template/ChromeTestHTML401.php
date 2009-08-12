@@ -48,3 +48,5 @@ class ChromeTestHTML401 extends PHPUnit_Framework_TestCase {
   }
 
 }
+
+# vim: ts=2 sw=2 et foldmethod=marker
