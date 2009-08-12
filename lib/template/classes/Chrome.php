@@ -263,7 +263,7 @@ class Chrome extends Template {
     $items = ArrayUtil::flatten(func_get_args());
     foreach ($items as $i) {
       if (!($i instanceof Renderable) && !is_string($i) && !(is_object($i) && method_exists($i, '__toString'))) {
-        throw new TemplateException('Non-renderable or non-string item set as content.');
+        throw new InvalidArgumentException('Non-renderable or non-string item set as content.');
       }
     }
     $this->content = $items;
@@ -312,9 +312,6 @@ class Chrome extends Template {
     if ($http_equiv === self::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
     if ($http_equiv === self::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
     $key = $http_equiv ? self::META_HTTP : self::META_NAME;
-    if (!isset(self::$metadata[$key])) {
-      throw new InvalidArgumentException('The given metadata key does not exist');
-    }
     unset(self::$metadata[$key][$name]);
   }
 
