@@ -236,4 +236,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($a, $b);
   }
 
+  public function testFoot() {
+    ob_start();
+    Chrome::outputFoot();
+    $a = ob_get_clean();
+
+    $this->assertRegExp('#^</html>\s*$#s', $a);
+  }
+
 }
