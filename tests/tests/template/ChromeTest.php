@@ -175,10 +175,58 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count($c->getContent()));
   }
 
+  public function testContent2() {
+    $c = new Chrome('simple');
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+
+    $cont = new Content('simple');
+    $c->setContent($cont);
+    $this->assertEquals(1, count($c->getContent()));
+    $c->setContent($cont);
+    $this->assertEquals(1, count($c->getContent()));
+    $c->setContent($cont, $cont);
+    $this->assertEquals(2, count($c->getContent()));
+    $c->setContent(array($cont, $cont));
+    $this->assertEquals(2, count($c->getContent()));
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+  }
+
+  /**
+   * @expectedException  InvalidArgumentException
+   */
+  public function testContentFail1() {
+    $c = new Chrome('simple');
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+    $c->setContent(new stdClass());
+  }
+
+  /**
+   * @expectedException  InvalidArgumentException
+   */
+  public function testContentFail2() {
+    $c = new Chrome('simple');
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+    $c->setContent();
+  }
+
   public function testMultiContent1() {
     $c = new Chrome('multicontent');
     $c->clearContent();
     $c->setContent('PASS', 'PASS');
+    $d = $c->render();
+    $this->assertEquals('PASS|PASS|', $d);
+  }
+
+  public function testMultiContent1a() {
+    $c = new Chrome('multicontent');
+    $cont = new Content('simple');
+    $cont->set('content', 'PASS');
+    $c->clearContent();
+    $c->setContent($cont, $cont);
     $d = $c->render();
     $this->assertEquals('PASS|PASS|', $d);
   }
