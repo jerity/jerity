@@ -428,28 +428,30 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
 
   public function testCustomRelLink() {
     Chrome::clearLinks();
+    $this->assertEquals(0, count(Chrome::getLinks()));
 
     Chrome::addLink('next', 'http://www.jerity.com/next');
     $l = Chrome::getLinks();
 
     $this->assertTrue(is_array($l));
-    $this->assertEquals(count($l), 1);
-    $this->assertEquals(count($l[0]), 2);
-    $this->assertEquals($l[0]['href'], 'http://www.jerity.com/next');
-    $this->assertEquals($l[0]['rel'],  'next');
+    $this->assertEquals(1, count($l));
+    $this->assertEquals(2, count($l[0]));
+    $this->assertEquals('next', $l[0]['rel']);
+    $this->assertEquals('http://www.jerity.com/next', $l[0]['href']);
   }
 
   public function testCustomRevLink() {
     Chrome::clearLinks();
+    $this->assertEquals(0, count(Chrome::getLinks()));
 
     Chrome::addLink('author', 'mailto:info@jerity.com', true);
     $l = Chrome::getLinks();
 
     $this->assertTrue(is_array($l));
-    $this->assertEquals(count($l), 1);
-    $this->assertEquals(count($l[0]), 2);
-    $this->assertEquals($l[0]['rev'],  'author');
-    $this->assertEquals($l[0]['href'], 'mailto:info@jerity.com');
+    $this->assertEquals(1, count($l));
+    $this->assertEquals(2, count($l[0]));
+    $this->assertEquals('author', $l[0]['rev']);
+    $this->assertEquals('mailto:info@jerity.com', $l[0]['href']);
   }
 
   # }}} Link tests
