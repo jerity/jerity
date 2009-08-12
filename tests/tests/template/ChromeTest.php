@@ -6,31 +6,8 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     Template::setPath(DATA_DIR.'templates');
   }
 
-  public function testCustomRelLink() {
-    Chrome::clearLinks();
-
-    Chrome::addLink('next', 'http://www.jerity.com/next');
-    $l = Chrome::getLinks();
-
-    $this->assertTrue(is_array($l));
-    $this->assertEquals(count($l), 1);
-    $this->assertEquals(count($l[0]), 2);
-    $this->assertEquals($l[0]['href'], 'http://www.jerity.com/next');
-    $this->assertEquals($l[0]['rel'],  'next');
-  }
-
-  public function testCustomRevLink() {
-    Chrome::clearLinks();
-
-    Chrome::addLink('author', 'mailto:info@jerity.com', true);
-    $l = Chrome::getLinks();
-
-    $this->assertTrue(is_array($l));
-    $this->assertEquals(count($l), 1);
-    $this->assertEquals(count($l[0]), 2);
-    $this->assertEquals($l[0]['rev'],  'author');
-    $this->assertEquals($l[0]['href'], 'mailto:info@jerity.com');
-  }
+  ############################################################################
+  # Title tests {{{
 
   public function testEmptyTitle() {
     Chrome::setTitle(null);
@@ -67,6 +44,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($title, Chrome::getTitle(false));
   }
 
+  ############################################################################
+  # Title append tests {{{
+
   public function testAddTitleAppend() {
     $title = array('Jerity', 'test');
     Chrome::setTitle($title);
@@ -102,6 +82,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($title, Chrome::getTitle(false));
   }
 
+  # }}} Title append tests
+  ############################################################################
+
+  ############################################################################
+  # Title prepend tests {{{
+
   public function testAddTitlePrepend() {
     $title = array('Jerity', 'test');
     Chrome::setTitle($title);
@@ -125,6 +111,187 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     array_unshift($title, 'title');
     $this->assertEquals($title, Chrome::getTitle(false));
   }
+
+  # }}} Title prepend tests
+  ############################################################################
+
+  # }}} Title tests
+  ############################################################################
+
+  ############################################################################
+  # Content tests {{{
+
+  ############################################################################
+  # Single content tests {{{
+
+  public function testContent1() {
+    $c = new Chrome('simple');
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+    $c->setContent('PASS');
+    $this->assertEquals(1, count($c->getContent()));
+    $c->setContent('PASS');
+    $this->assertEquals(1, count($c->getContent()));
+    $c->setContent('PASS', 'PASS');
+    $this->assertEquals(2, count($c->getContent()));
+    $c->setContent(array('PASS', 'PASS'));
+    $this->assertEquals(2, count($c->getContent()));
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+  }
+
+  public function testContent2() {
+    $c = new Chrome('simple');
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+
+    $cont = new Content('simple');
+    $c->setContent($cont);
+    $this->assertEquals(1, count($c->getContent()));
+    $c->setContent($cont);
+    $this->assertEquals(1, count($c->getContent()));
+    $c->setContent($cont, $cont);
+    $this->assertEquals(2, count($c->getContent()));
+    $c->setContent(array($cont, $cont));
+    $this->assertEquals(2, count($c->getContent()));
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+  }
+
+  # }}} Single content tests
+  ############################################################################
+
+  ############################################################################
+  # Content failure tests {{{
+
+  /**
+   * @expectedException  InvalidArgumentException
+   */
+  public function testContentFail1() {
+    $c = new Chrome('simple');
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+    $c->setContent(new stdClass());
+  }
+
+  /**
+   * @expectedException  InvalidArgumentException
+   */
+  public function testContentFail2() {
+    $c = new Chrome('simple');
+    $c->clearContent();
+    $this->assertEquals(0, count($c->getContent()));
+    $c->setContent();
+  }
+
+  # }}} Content failure tests
+  ############################################################################
+
+  ############################################################################
+  # Multiple content tests {{{
+
+  public function testMultiContent1() {
+    $c = new Chrome('multicontent');
+    $c->clearContent();
+    $c->setContent('PASS', 'PASS');
+    $d = $c->render();
+    $this->assertEquals('PASS|PASS|', $d);
+  }
+
+  public function testMultiContent1a() {
+    $c = new Chrome('multicontent');
+    $cont = new Content('simple');
+    $cont->set('content', 'PASS');
+    $c->clearContent();
+    $c->setContent($cont, $cont);
+    $d = $c->render();
+    $this->assertEquals('PASS|PASS|', $d);
+  }
+
+  public function testMultiContent2() {
+    $c = new Chrome('multicontent');
+    $c->clearContent();
+    $c->setContent('PASS', 'PASS', 'PASS');
+    $d = $c->render();
+    $this->assertEquals('PASS|PASS|PASS|', $d);
+  }
+
+  public function testMultiContent3() {
+    $c = new Chrome('multicontent');
+    $c->clearContent();
+    $c->set('count', 3);
+    $c->setContent('PASS', 'PASS');
+    $d = $c->render();
+    $this->assertEquals('PASS|PASS||', $d);
+  }
+
+  # }}} Multiple content tests
+  ############################################################################
+
+  # }}} Content tests
+  ############################################################################
+
+  ############################################################################
+  # Modular head tests {{{
+
+  public function testModularHead() {
+    Chrome::setLanguage('en-gb');
+    Chrome::setTitle('Test title');
+    Chrome::clearMetadata();
+    Chrome::addMetadata('Content-Type', 'text/html; charset=utf-8', true);
+    Chrome::addMetadata('generator', 'Jerity');
+    Chrome::addMetadata('description', 'Jerity test case page');
+    Chrome::clearStylesheets();
+    Chrome::addStylesheet('/css/common.css');
+    Chrome::addStylesheet('/css/blah.css', 75);
+    Chrome::clearScripts();
+    Chrome::addScript('/js/scriptaculous.js', 25);
+    Chrome::addScript('/js/prototype.js', 15);
+    Chrome::clearIcons();
+    Chrome::addIcon('/favicon.ico');
+    Chrome::addIcon('/img/icons/favicon.png', Chrome::ICON_PNG);
+
+    ob_start();
+    Chrome::outputHead();
+    $a = ob_get_clean();
+
+    ob_start();
+    echo RenderContext::getGlobalContext()->renderPreContent();
+    Chrome::outputOpeningTags();
+    Chrome::outputMetaTags();
+    Chrome::outputTitleTag();
+    Chrome::outputLinkTags();
+    Chrome::outputStylesheetTags();
+    Chrome::outputExternalScriptTags();
+    Chrome::outputFaviconTags();
+    Chrome::outputEndHead();
+    $b = ob_get_clean();
+
+    $this->assertSame($a, $b);
+  }
+
+  # }}} Modular head tests
+  ############################################################################
+
+  ############################################################################
+  # Foot tests {{{
+
+  public function testFoot() {
+    ob_start();
+    Chrome::outputFoot();
+    $a = ob_get_clean();
+
+    $this->assertRegExp('#^</html>\s*$#s', $a);
+  }
+
+  # }}} Foot tests
+  ############################################################################
+
+  ############################################################################
+  # Metadata tests {{{
+
+  ############################################################################
+  # Named metadata tests {{{
 
   public function testMetaName1() {
     Chrome::clearMetadata();
@@ -160,6 +327,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getMetadata()));
   }
 
+  # }}} Named metadata tests
+  ############################################################################
+
+  ############################################################################
+  # HTTP metadata tests {{{
+
   public function testMetaHttp1() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
@@ -193,6 +366,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
   }
+
+  # }}} HTTP metadata tests
+  ############################################################################
+
+  ############################################################################
+  # Mixed metadata tests {{{
 
   public function testMetaMixed1() {
     Chrome::clearMetadata();
@@ -238,138 +417,43 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
   }
 
-  public function testContent1() {
-    $c = new Chrome('simple');
-    $c->clearContent();
-    $this->assertEquals(0, count($c->getContent()));
-    $c->setContent('PASS');
-    $this->assertEquals(1, count($c->getContent()));
-    $c->setContent('PASS');
-    $this->assertEquals(1, count($c->getContent()));
-    $c->setContent('PASS', 'PASS');
-    $this->assertEquals(2, count($c->getContent()));
-    $c->setContent(array('PASS', 'PASS'));
-    $this->assertEquals(2, count($c->getContent()));
-    $c->clearContent();
-    $this->assertEquals(0, count($c->getContent()));
+  # }}} Mixed metadata tests
+  ############################################################################
+
+  # }}} Metadata tests
+  ############################################################################
+
+  ############################################################################
+  # Link tests {{{
+
+  public function testCustomRelLink() {
+    Chrome::clearLinks();
+
+    Chrome::addLink('next', 'http://www.jerity.com/next');
+    $l = Chrome::getLinks();
+
+    $this->assertTrue(is_array($l));
+    $this->assertEquals(count($l), 1);
+    $this->assertEquals(count($l[0]), 2);
+    $this->assertEquals($l[0]['href'], 'http://www.jerity.com/next');
+    $this->assertEquals($l[0]['rel'],  'next');
   }
 
-  public function testContent2() {
-    $c = new Chrome('simple');
-    $c->clearContent();
-    $this->assertEquals(0, count($c->getContent()));
+  public function testCustomRevLink() {
+    Chrome::clearLinks();
 
-    $cont = new Content('simple');
-    $c->setContent($cont);
-    $this->assertEquals(1, count($c->getContent()));
-    $c->setContent($cont);
-    $this->assertEquals(1, count($c->getContent()));
-    $c->setContent($cont, $cont);
-    $this->assertEquals(2, count($c->getContent()));
-    $c->setContent(array($cont, $cont));
-    $this->assertEquals(2, count($c->getContent()));
-    $c->clearContent();
-    $this->assertEquals(0, count($c->getContent()));
+    Chrome::addLink('author', 'mailto:info@jerity.com', true);
+    $l = Chrome::getLinks();
+
+    $this->assertTrue(is_array($l));
+    $this->assertEquals(count($l), 1);
+    $this->assertEquals(count($l[0]), 2);
+    $this->assertEquals($l[0]['rev'],  'author');
+    $this->assertEquals($l[0]['href'], 'mailto:info@jerity.com');
   }
 
-  /**
-   * @expectedException  InvalidArgumentException
-   */
-  public function testContentFail1() {
-    $c = new Chrome('simple');
-    $c->clearContent();
-    $this->assertEquals(0, count($c->getContent()));
-    $c->setContent(new stdClass());
-  }
-
-  /**
-   * @expectedException  InvalidArgumentException
-   */
-  public function testContentFail2() {
-    $c = new Chrome('simple');
-    $c->clearContent();
-    $this->assertEquals(0, count($c->getContent()));
-    $c->setContent();
-  }
-
-  public function testMultiContent1() {
-    $c = new Chrome('multicontent');
-    $c->clearContent();
-    $c->setContent('PASS', 'PASS');
-    $d = $c->render();
-    $this->assertEquals('PASS|PASS|', $d);
-  }
-
-  public function testMultiContent1a() {
-    $c = new Chrome('multicontent');
-    $cont = new Content('simple');
-    $cont->set('content', 'PASS');
-    $c->clearContent();
-    $c->setContent($cont, $cont);
-    $d = $c->render();
-    $this->assertEquals('PASS|PASS|', $d);
-  }
-
-  public function testMultiContent2() {
-    $c = new Chrome('multicontent');
-    $c->clearContent();
-    $c->setContent('PASS', 'PASS', 'PASS');
-    $d = $c->render();
-    $this->assertEquals('PASS|PASS|PASS|', $d);
-  }
-
-  public function testMultiContent3() {
-    $c = new Chrome('multicontent');
-    $c->clearContent();
-    $c->set('count', 3);
-    $c->setContent('PASS', 'PASS');
-    $d = $c->render();
-    $this->assertEquals('PASS|PASS||', $d);
-  }
-
-  public function testModularHead() {
-    Chrome::setLanguage('en-gb');
-    Chrome::setTitle('Test title');
-    Chrome::clearMetadata();
-    Chrome::addMetadata('Content-Type', 'text/html; charset=utf-8', true);
-    Chrome::addMetadata('generator', 'Jerity');
-    Chrome::addMetadata('description', 'Jerity test case page');
-    Chrome::clearStylesheets();
-    Chrome::addStylesheet('/css/common.css');
-    Chrome::addStylesheet('/css/blah.css', 75);
-    Chrome::clearScripts();
-    Chrome::addScript('/js/scriptaculous.js', 25);
-    Chrome::addScript('/js/prototype.js', 15);
-    Chrome::clearIcons();
-    Chrome::addIcon('/favicon.ico');
-    Chrome::addIcon('/img/icons/favicon.png', Chrome::ICON_PNG);
-
-    ob_start();
-    Chrome::outputHead();
-    $a = ob_get_clean();
-
-    ob_start();
-    echo RenderContext::getGlobalContext()->renderPreContent();
-    Chrome::outputOpeningTags();
-    Chrome::outputMetaTags();
-    Chrome::outputTitleTag();
-    Chrome::outputLinkTags();
-    Chrome::outputStylesheetTags();
-    Chrome::outputExternalScriptTags();
-    Chrome::outputFaviconTags();
-    Chrome::outputEndHead();
-    $b = ob_get_clean();
-
-    $this->assertSame($a, $b);
-  }
-
-  public function testFoot() {
-    ob_start();
-    Chrome::outputFoot();
-    $a = ob_get_clean();
-
-    $this->assertRegExp('#^</html>\s*$#s', $a);
-  }
+  # }}} Link tests
+  ############################################################################
 
 }
 
