@@ -395,7 +395,7 @@ class Chrome extends Template {
    * Note that 'charset' and 'defer' attributes can be passed into $attrs.
    *
    * @param  string  $href      The href of the file.
-   * @param  string  $priority  Defines the order that scripts are loaded [0-99]
+   * @param  int     $priority  Defines the order that scripts are loaded [0-99]
    * @param  string  $type      The type of script.
    * @param  array   $attrs     An array of additional attributes.
    *
@@ -443,7 +443,7 @@ class Chrome extends Template {
     if (is_null($type)) {
       $s = self::$scripts;
       foreach ($s as $t => $a) {
-        uasort($a, create_function('$a,$b', 'return strcmp($a[\'priority\'], $b[\'priority\']);'));
+        uasort($a, create_function('$a,$b', 'return Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
         $s[$t] = array_values(array_map(create_function('$a', 'return $a[\'attrs\'];'), $a));
       }
 
@@ -452,7 +452,7 @@ class Chrome extends Template {
 
     } else {
       $a = self::$scripts[$type];
-      uasort($a, create_function('$a,$b', 'return strcmp($a[\'priority\'], $b[\'priority\']);'));
+      uasort($a, create_function('$a,$b', 'return Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
       $s = array_values(array_map(create_function('$a', 'return $a[\'attrs\'];'), $a));
     }
     return $s;
@@ -465,7 +465,7 @@ class Chrome extends Template {
    * The media parameter should be a comma-separated string of media types.
    *
    * @param  string  $href      The href of the file.
-   * @param  string  $priority  Defines the order that scripts are loaded [0-99]
+   * @param  int     $priority  Defines the order that scripts are loaded [0-99]
    * @param  string  $type      The type of stylesheet.
    * @param  array   $attrs     An array of additional attributes.
    *
@@ -512,7 +512,7 @@ class Chrome extends Template {
   public static function getStylesheets() {
     $s = self::$stylesheets;
     foreach ($s as $t => $a) {
-      uasort($a, create_function('$a,$b', 'return strcmp($a[\'priority\'], $b[\'priority\']);'));
+      uasort($a, create_function('$a,$b', 'return Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
       $s[$t] = array_map(create_function('$a', 'return $a[\'attrs\'];'), $a);
     }
     return $s;
