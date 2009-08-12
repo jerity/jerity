@@ -311,15 +311,27 @@ class Chrome extends Template {
   public static function removeMetadata($name, $http_equiv = false) {
     if ($http_equiv === self::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
     if ($http_equiv === self::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
-    $key = $http_equiv ? self::META_HTTP : self::META_NAME;
-    unset(self::$metadata[$key][$name]);
+    if ($http_equiv && strtolower($name) == 'content-type') {
+      # munge "Content-Type" meta header so we can find it later
+      $name = 'Content-Type';
+    }
+    unset(self::$metadata[$http_equiv ? self::META_HTTP : self::META_NAME][$name]);
   }
 
   /**
    * Clears all metadata currently added to the page.
+   *
+   * @param  boolean  $http_equiv  If true, clears just HTTP-equivalent metadata. If false, clears
+   *                               just named metadata. If null, clears all metadata.
    */
-  public static function clearMetadata() {
-    self::$metadata = array(self::META_HTTP=>array(), self::META_NAME=>array());
+  public static function clearMetadata($http_equiv = null) {
+    if (is_null($http_equiv)) {
+      self::$metadata = array(self::META_HTTP=>array(), self::META_NAME=>array());
+    } elseif ($http_equiv) {
+      self::$metadata[self::META_HTTP] = array();
+    } else {
+      self::$metadata[self::META_NAME] = array();
+    }
   }
 
   /**
