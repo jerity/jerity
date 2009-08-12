@@ -129,6 +129,7 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   public function testMetaName1() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
     Chrome::addMetadata('generator', 'Jerity');
     $this->assertEquals(1, count(Chrome::getMetadata()));
     Chrome::removeMetadata('generator');
@@ -138,6 +139,7 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   public function testMetaName2() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
+    $this->assertEquals(0, count(Chrome::getMetadata(true)));
     Chrome::addMetadata('generator', 'Jerity');
     Chrome::addMetadata('description', 'Jerity Test Page');
     $this->assertEquals(2, count(Chrome::getMetadata()));
