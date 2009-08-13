@@ -397,6 +397,13 @@ class Tag {
     return $r;
   }
 
+  /**
+   * Check whether a tag can never contain any data.
+   *
+   * @param  string $tag  A tag name.
+   *
+   * @return  bool  Whether a tag is always empty.
+   */
   public static function isAlwaysEmpty($tag) {
     $tag = strtolower($tag);
     $is_xhtml = (RenderContext::getGlobalContext()->getLanguage() === RenderContext::LANG_XHTML);
@@ -419,6 +426,13 @@ class Tag {
     return false;
   }
 
+  /**
+   * Checks whether the content of a tag is implied CDATA in XHTML.
+   *
+   * @param  string  $tag  A tag name.
+   *
+   * @return  bool  Whether the tag contains implied CDATA.
+   */
   public static function isImpliedCData($tag) {
     $tag = strtolower($tag);
     $is_xhtml = (RenderContext::getGlobalContext()->getLanguage() === RenderContext::LANG_XHTML);
