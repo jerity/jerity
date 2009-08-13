@@ -388,9 +388,13 @@ class Tag {
     }
     if (!is_null($content) && $content !== false) {
       if ($content !== '') {
-        if ($is_xml && self::isImpliedCData($tag)) $r .= PHP_EOL.'//<![CDATA['.PHP_EOL;
+        if (self::shouldMaskContent($tag)) {
+          $r .= PHP_EOL.self::getContentMask($tag, true).PHP_EOL;
+        }
         $r .= $content;
-        if ($is_xml && self::isImpliedCData($tag)) $r .= PHP_EOL.'//]]>'.PHP_EOL;
+        if (self::shouldMaskContent($tag)) {
+          $r .= PHP_EOL.self::getContentMask($tag, false).PHP_EOL;
+        }
       }
       $r .= '</'.$tag.'>';
     }
@@ -444,6 +448,56 @@ class Tag {
         return true;
     }
     return false;
+  }
+
+  /**
+   * Checks whether the content of the specified tag should be masked to hide
+   * the content from older browsers that do not support it.
+   *
+   * @param  string  $tag  A tag name.
+   *
+   * @return  bool  Whether the content should be masked.
+   */
+  public static function shouldMaskContent($tag) {
+    $tag = strtolower($tag);
+    switch ($tag) {
+      case 'script':
+      case 'style':
+        return true;
+    }
+    return false;
+  }
+
+  /**
+   * Returns the opening or closing character sequence used to mask content for
+   * the specified tag.
+   *
+   * See the following link for more information:
+   *   http://www.webdevout.net/articles/escaping-style-and-script-data
+   *
+   * @param  string  $tag   A tag name.
+   * @param  bool    $open  Whether we want the opening or closing sequence.
+   *
+   * @return  string  The opening or closing content mask.
+   */
+  public static function getContentMask($tag, $open) {
+    $tag = strtolower($tag);
+    $is_html = (RenderContext::getGlobalContext()->getLanguage() === RenderContext::LANG_HTML);
+    switch ($tag) {
+      case 'script':
+        if (self::isImpliedCData($tag)) {
+          return ($open ? '<!--//--><![CDATA[//><!--' : '//--><!]]>');
+        } elseif ($is_html) {
+          return ($open ? '<!--' : '//-->');
+        }
+      case 'style':
+        if (self::isImpliedCData($tag)) {
+          return ($open ? '<!--/*--><![CDATA[/*><!--*/' : '/*]]>*/-->');
+        } elseif ($is_html) {
+          return ($open ? '<!--' : '-->');
+        }
+    }
+    return '';
   }
 
 }
