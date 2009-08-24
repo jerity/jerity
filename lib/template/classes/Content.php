@@ -26,4 +26,18 @@ class Content extends Template {
     parent::__construct('content/'.$t);
   }
 
+  /**
+   * Create a new content template in a fluent API manner.
+   *
+   * @param  string  $t  The template to use.
+   *
+   * @return  Content
+   * @see     self::__construct()
+   *
+   * @todo  Replace with PHP 5.3 late static binding support?
+   */
+  public static function create($t) {
+    return new Content($t);
+  }
+
 }
