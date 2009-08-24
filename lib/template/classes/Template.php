@@ -91,6 +91,21 @@ abstract class Template implements Renderable {
     $this->template = $t;
   }
 
+  /**
+   * Create a new template in a fluent API manner.
+   *
+   * @param  string  $t  The template to use.
+   *
+   * @return  Template
+   * @see     self::__construct()
+   *
+   * @todo  Replace with PHP 5.3 late static binding support?
+   */
+  public static function create($t) {
+    throw new Exception('The Template::create() function must be overridden in child classes.');
+    return new Template($t);
+  }
+
   ##############################################################################
   # global template options {{{
 

@@ -189,6 +189,20 @@ class Chrome extends Template {
     parent::__construct('chrome/'.$t);
   }
 
+  /**
+   * Create a new chrome template in a fluent API manner.
+   *
+   * @param  string  $t  The template to use.
+   *
+   * @return  Chrome
+   * @see     self::__construct()
+   *
+   * @todo  Replace with PHP 5.3 late static binding support?
+   */
+  public static function create($t) {
+    return new Chrome($t);
+  }
+
   ##############################################################################
   # chrome-specific rendering {{{
 
