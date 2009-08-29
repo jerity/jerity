@@ -154,23 +154,16 @@ class Redirector {
   }
 
   /**
-   * Performs a redirection to the specified URL (see below for details on
-   * partial URLs.  If specified, a message can be provided with a specific
-   * notification type such that the message can be rendered according to
-   * the nature of its content.
+   * Performs a simple redirection to the specified URL (see below for details 
+   * on partial URLs).
    *
    * Partial URLs work as follows:
-   *   /^#/  -- Appends a URL hash to the current URL.
-   *   /^?/  -- Sets the query string for the current page.
-   *   /^&/  -- Appends all specified queries to the URL (Overwrite).
-   *   /^&&/ -- Appends all specified queries to the URL (No overwrite).
-   *   /^\// -- Redirects to URL relative to root of site (prepends domain).
-   *   /^[a-z]*:\/\// -- Redirects to absolute URL.
-   *
-   * The message type should be one of the provided constants in the
-   * Notification class.
-   *
-   * @see     Notification
+   *   - /^#/  -- Appends a URL hash to the current URL.
+   *   - /^?/  -- Sets the query string for the current page.
+   *   - /^&/  -- Appends all specified queries to the URL (Overwrite).
+   *   - /^&&/ -- Appends all specified queries to the URL (No overwrite).
+   *   - /^\// -- Redirects to URL relative to root of site (prepends domain).
+   *   - /^[a-z]*:\/\// -- Redirects to absolute URL.
    *
    * @todo    Make URL absolute
    * @todo    Specific exception for redirect error?
@@ -179,41 +172,27 @@ class Redirector {
    *
    * @param   string  $url           Where to redirect to.
    * @param   string  $message       The message to display after redirect.
-   * @param   string  $message_type  The type of message.
    *
    * @throws  Exception
    */
-  public static function redirect($url = null, $message = null, $message_type = null) {
-    # We will select a default type of message to display if none has been
-    # specified.  Informational messages are likely to be the most desired.
-    if (!is_null($message) && is_null($message_type)) {
-      $message_type = Notification::INFORMATION;
+  public static function redirect($url = null, $message = null) {
+    # Skip some processing for most redirects
+    if (!is_null($message)) {
+      # Need to be very careful not to introduce an infinite loop
+      return self::redirectWithState($url, $message);
     }
 
     # TODO: Update URL to be absolute...
 
-    # Store redirect information in the session.
-    $item_key = self::generateKey();
-    $_SESSION[self::DATA_KEY][$item_key] = array(
-      'message'      => $message,
-      'message_type' => $message_type,
-      'post_data'    => $_POST,
-      'source'       => (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null),
-      'target'       => $url,
-    );
-
-    # Append item key to query string
-    $url = URL::appendToQueryString(self::ITEM_KEY, $item_key, $url);
-
-    # Get the current render context.
+    # Get the current render context
     $ctx = RenderContext::getGlobalContext();
 
-    # Perform redirect.
+    # Perform redirect
     if (headers_sent()) {
       switch ($ctx->getLanguage()) {
         case RenderContext::LANG_HTML:
         case RenderContext::LANG_XHTML:
-          $url = String::escape($url, RenderContext::CONTENT_JS);
+          $url = String::escapeJS($url, false);
           echo '<script type="text/javascript">window.location = \''.$url.'\';</script>"';
           break;
         default:
@@ -228,22 +207,72 @@ class Redirector {
       header('Location: '.$url);
     }
 
-    # Output message just in case we have a silly browser.
+    # Output message just in case we have a silly browser
     # TODO: Check RFC 2616
     if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'HEAD') {
       switch ($ctx->getLanguage()) {
         case RenderContext::LANG_HTML:
         case RenderContext::LANG_XHTML:
-          $url = String::escape($url);
-          printf('Redirecting to: <a href="%s">%s</a>.', $url, $url);
+          printf('Redirecting to: <a href="%s">%s</a>.', $url, String::escapeHTML($url));
           break;
         default:
           # Ignore
       }
     }
 
-    # We've redirected, so stop executing now.
+    # We've redirected, so stop executing now
     exit();
+  }
+
+  /**
+   * Performs a redirection to the specified URL.
+   *
+   * If specified, a message can be provided with a specific notification type 
+   * such that the message can be rendered according to the nature of its 
+   * content.
+   *
+   * The message type should be one of the provided constants in the
+   * Notification class.
+   *
+   * @see     Notification
+   * @see     Redirector::redirect()
+   *
+   * @todo    Make URL absolute
+   * @todo    Specific exception for redirect error?
+   * @todo    Ensure that we handle standard redirects correctly.
+   * @todo    Check RFC 2616
+   *
+   * @param   string  $url           Where to redirect to.
+   * @param   string  $message       The message to display after redirect.
+   * @param   string  $message_type  The type of message.
+   *
+   * @throws  Exception
+   */
+  public static function redirectWithState($url = null, $message = null, $message_type = null) {
+    # We will select a default type of message to display if none has been
+    # specified.  Informational messages are likely to be the most desired.
+    if (!is_null($message) && is_null($message_type)) {
+      $message_type = Notification::INFORMATION;
+    }
+
+    # TODO: Update URL to be absolute...
+
+    # Store redirect information in the session
+    $item_key = self::generateKey();
+    $_SESSION[self::DATA_KEY][$item_key] = array(
+      'message'      => $message,
+      'message_type' => $message_type,
+      'post_data'    => $_POST,
+      'source'       => (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null),
+      'target'       => $url,
+    );
+
+    # Append item key to query string
+    $url = new URL($url);
+    $url->appendToQueryString(self::ITEM_KEY, $item_key);
+
+    # Perform redirect
+    self::redirect($url);
   }
 
 }

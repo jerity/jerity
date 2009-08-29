@@ -39,12 +39,14 @@ class URL {
     if (!empty($url)) {
       $c = parse_url($url);
       $q = array();
-      $p = split('[&]', $c['query']);
-      foreach($p as $i) {
-        list($k, $v) = split('[=]', $i);
-        $q[$k] = $v;
+      if ($c['query'] !== null) {
+        $p = explode('&', $c['query']);
+        foreach($p as $i) {
+          list($k, $v) = explode('=', $i);
+          $q[$k] = $v;
+        }
+        $c['query'] = $q;
       }
-      $c['query'] = $q;
       $this->components = $c + $this->components;
     }
   }
@@ -181,22 +183,23 @@ class URL {
    *
    * @return  string
    */
-  public function toString() {
+  public function __toString() {
     extract($this->components);
     $url = '';
     $url .= (empty($scheme) ? '' : $scheme.'://'.($scheme === 'file' ? '/' : ''));
     $url .= (empty($user) ? '' : $user.(empty($pass) ? '' : ':'.$pass).'@');
     $url .= (empty($host) ? '' : $host.(empty($port) ? '' : ':'.$port).'/');
-    $url .= (empty($path) ? '' : ltrim($path, '/'));
+    $url .= (empty($path) ? '' : ((empty($host) ? '/' : '') . ltrim($path, '/')));
     if ($query) {
-      foreach ($query as $k => $v) {
+      foreach ($query as $k => &$v) {
         if (is_array($v)) {
           $v = $k.'[]='.join('&'.$k.'[]=', asort($v));
         } else {
           $v = $k.'='.$v;
         }
       }
-      $url .= join('&', $query);
+      unset($v);
+      $url .= '?'.join('&', $query);
     }
     $url .= (empty($fragment) ? '' : $fragment);
     return $url;
