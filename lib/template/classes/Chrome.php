@@ -476,13 +476,16 @@ class Chrome extends Template {
   }
 
   /**
-   * Adds a stylesheet to the page, at most once. Stylesheets will be loaded
-   * in order of ascending priority (i.e. priority 5 will be loaded before
-   * priority 15). This means that rules in stylesheets with higher priority
-   * values will override lower-priority stylesheets.
+   * Adds a persistent stylesheet to the page, at most once. Stylesheets will
+   * be loaded in order of ascending priority (i.e. priority 5 will be loaded
+   * before priority 15). This means that rules in stylesheets with higher
+   * priority values will override lower-priority stylesheets.
    *
    * The media attribute should be a comma-separated string of one or more
    * media types.
+   *
+   * Note that if alternate stylesheets are defined, stylesheets added by this
+   * method will always be applied.
    *
    * @param  string  $href      The href of the file.
    * @param  int     $priority  Defines the order that stylesheets are loaded.
@@ -503,6 +506,30 @@ class Chrome extends Template {
       'priority' => $priority,
       'attrs'    => $attrs,
     );
+  }
+
+  /**
+   * Adds an alternate stylesheet to the page, at most once.
+   *
+   * There should be at most one preferred alternate stylesheet per page. There
+   * can only be one active alternate stylesheet at a time, which may be
+   * changed by the user agent.
+   *
+   * @param  string  $href       The href of the file.
+   * @param  string  $title      The title for the stylesheet.
+   * @param  bool    $preferred  Whether this alternative stylesheet is enabled by default
+   * @param  int     $priority   Defines the order that stylesheets are output.
+   * @param  array   $attrs      An array of additional attributes.
+   *
+   * @throws  OutOfRangeException
+   * @see     Chrome::addStylesheet()
+   */
+  public static function addAlternateStylesheet($href, $title, $preferred = false, $priority = 50, array $attrs = array()) {
+    $attrs = array_merge(
+      $attrs,
+      array('rel' => $preferred ? 'stylesheet' : 'alternate stylesheet', 'title' => $title)
+    );
+    self::addStylesheet($href, $priority, $attrs);
   }
 
   /**
