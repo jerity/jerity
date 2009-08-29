@@ -522,6 +522,15 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getScripts()));
   }
 
+  /**
+   * @expectedException  OutOfRangeException
+   */
+  function testScriptPriorityFail() {
+    Chrome::clearScripts();
+    $this->assertEquals(0, count(Chrome::getScripts()));
+    Chrome::addScript('/js/scriptaculous.js', -5);
+  }
+
   # }}} Script tests
   ############################################################################
 
