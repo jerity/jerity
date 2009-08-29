@@ -4,6 +4,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/setUp.php');
 if (!class_exists('TemplateT')) {
   // Template is an abstract class, so we need aa simple concrete implementation for testing
   class TemplateT extends Template {
+    public static function create($t) {return new TemplateT($t);}
     public static function nullizePath() {parent::$base_path='';}
   }
 }
