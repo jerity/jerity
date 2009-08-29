@@ -486,21 +486,20 @@ class Chrome extends Template {
    *
    * @param  string  $href      The href of the file.
    * @param  int     $priority  Defines the order that stylesheets are loaded.
-   * @param  string  $type      The type of stylesheet.
    * @param  array   $attrs     An array of additional attributes.
    *
    * @throws  OutOfRangeException
    */
-  public static function addStylesheet($href, $priority = 50, $type = RenderContext::CONTENT_CSS, array $attrs = array()) {
+  public static function addStylesheet($href, $priority = 50, array $attrs = array()) {
     if ($priority < 0) {
       throw new OutOfRangeException('Stylesheet priority must be zero or greater');
     }
     $attrs = array_merge(
-      array('rel' => 'stylesheet', 'type' => $type),
+      array('rel' => 'stylesheet', 'type' => RenderContext::CONTENT_CSS),
       $attrs,
       array('href' => $href)
     );
-    self::$stylesheets[$type][$href] = array(
+    self::$stylesheets[$href] = array(
       'priority' => $priority,
       'attrs'    => $attrs,
     );
@@ -510,10 +509,9 @@ class Chrome extends Template {
    * Removes a stylesheet from the page.
    *
    * @param  string  $href  The href of the file.
-   * @param  string  $type  The type of stylesheet.
    */
-  public static function removeStylesheet($href, $type = RenderContext::CONTENT_CSS) {
-    unset(self::$stylesheet[$type][$href]);
+  public static function removeStylesheet($href) {
+    unset(self::$stylesheets[$href]);
   }
 
   /**
@@ -525,16 +523,14 @@ class Chrome extends Template {
 
   /**
    * Gets the array of stylesheets for the page.  The stylesheets are returned
-   * in ascending priority order by type.
+   * in ascending priority order.
    *
    * @return  array  The stylesheets for the current page.
    */
   public static function getStylesheets() {
     $s = self::$stylesheets;
-    foreach ($s as $t => $a) {
-      uasort($a, create_function('$a,$b', 'return Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
-      $s[$t] = array_map(create_function('$a', 'return $a[\'attrs\'];'), $a);
-    }
+    uasort($s, create_function('$a,$b', 'return Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
+    $s = array_map(create_function('$a', 'return $a[\'attrs\'];'), $s);
     return $s;
   }
 
@@ -819,10 +815,8 @@ class Chrome extends Template {
    * account.
    */
   public static function outputStylesheetTags() {
-    foreach (self::getStylesheets() as $type => $a) {
-      foreach ($a as $href => $attrs) {
-        echo Tag::link($href, $type, $attrs), PHP_EOL;
-      }
+    foreach (self::getStylesheets() as $href => $attrs) {
+      echo Tag::link($href, RenderContext::CONTENT_CSS, $attrs), PHP_EOL;
     }
   }
 
