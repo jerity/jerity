@@ -534,6 +534,76 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # }}} Script tests
   ############################################################################
 
+  ############################################################################
+  # Stylesheet tests {{{
+
+  function testStylesheet1() {
+    Chrome::clearStylesheets();
+    $this->assertEquals(0, count(Chrome::getStylesheets()));
+    Chrome::addStylesheet('/css/common.css');
+    $this->assertEquals(1, count(Chrome::getStylesheets()));
+    Chrome::removeStylesheet('/css/common.css');
+    $this->assertEquals(0, count(Chrome::getStylesheets()));
+  }
+
+  function testDuplicateStylesheet() {
+    Chrome::clearStylesheets();
+    $this->assertEquals(0, count(Chrome::getStylesheets()));
+    Chrome::addStylesheet('/css/foo.css');
+    $this->assertEquals(1, count(Chrome::getStylesheets()));
+    Chrome::addStylesheet('/css/foo.css');
+    $this->assertEquals(1, count(Chrome::getStylesheets()));
+    Chrome::addStylesheet('/css/foo.css', 10);
+    $this->assertEquals(1, count(Chrome::getStylesheets()));
+    Chrome::clearStylesheets();
+    $this->assertEquals(0, count(Chrome::getStylesheets()));
+  }
+
+  function testStylesheetPriority1() {
+    Chrome::clearStylesheets();
+    $this->assertEquals(0, count(Chrome::getStylesheets()));
+    Chrome::addStylesheet('/css/common.css');
+    Chrome::addStylesheet('/css/reset.css', 5);
+    $this->assertEquals(2, count(Chrome::getStylesheets()));
+    $stylesheetArr = array(
+      array('rel'=>'stylesheet', 'type'=>RenderContext::CONTENT_CSS, 'href'=>'/css/reset.css'),
+      array('rel'=>'stylesheet', 'type'=>RenderContext::CONTENT_CSS, 'href'=>'/css/common.css'),
+    );
+    $this->assertEquals($stylesheetArr, array_values(Chrome::getStylesheets()));
+    Chrome::clearStylesheets();
+    $this->assertEquals(0, count(Chrome::getStylesheets()));
+  }
+
+  function testStylesheetPriority2() {
+    Chrome::clearStylesheets();
+    $this->assertEquals(0, count(Chrome::getStylesheets()));
+    Chrome::addStylesheet('/css/common.css');
+    Chrome::addStylesheet('/css/reset.css', 5);
+    Chrome::addStylesheet('/css/misc.css', 15);
+    $this->assertEquals(3, count(Chrome::getStylesheets()));
+    $scriptArr = array(
+      array('rel'=>'stylesheet', 'type'=>RenderContext::CONTENT_CSS, 'href'=>'/css/reset.css'),
+      array('rel'=>'stylesheet', 'type'=>RenderContext::CONTENT_CSS, 'href'=>'/css/misc.css'),
+      array('rel'=>'stylesheet', 'type'=>RenderContext::CONTENT_CSS, 'href'=>'/css/common.css'),
+    );
+    $this->assertEquals($scriptArr, array_values(Chrome::getStylesheets()));
+    Chrome::clearStylesheets();
+    $this->assertEquals(0, count(Chrome::getStylesheets()));
+  }
+
+
+  /**
+   * @expectedException  OutOfRangeException
+   */
+  function testStylesheetPriorityFail() {
+    Chrome::clearStylesheets();
+    $this->assertEquals(0, count(Chrome::getStylesheets()));
+    Chrome::addStylesheet('/css/common.css', -5);
+  }
+
+  # }}} Stylesheet tests
+  ############################################################################
+
 }
 
 # vim: ts=2 sw=2 et foldmethod=marker
