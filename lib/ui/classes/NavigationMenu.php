@@ -25,6 +25,8 @@ class NavigationMenu implements Renderable {
   protected $attrs = array();
   protected $our_url = '';
   protected $level_hints = false;
+  protected $static_best = false;
+  protected $static_exact = true;
 
   /**
    * Create a navigation menu from an array of URLs.
@@ -83,6 +85,50 @@ class NavigationMenu implements Renderable {
   public function setExactUrlClass($c) {
     if (is_array($c)) $c = implode(' ', $c);
     $this->exact_url_class = $c;
+  }
+
+  /**
+   * Returns whether or not level hints are enabled. Level hints are
+   * additional classes added to the \t <ul> element in order to distinguish
+   * between multiple levels. They are of the form "level0", "level1", etc.
+   *
+   * @return  bool
+   */
+  public function getStaticBest() {
+    return $this->static_best;
+  }
+
+  /**
+   * Enable or disable level hints. Level hints are additional classes added
+   * to the \t <ul> element in order to distinguish between multiple levels.
+   * They are of the form "level0", "level1", etc.
+   *
+   * @param  bool  $hint
+   */
+  public function setStaticBest($hint) {
+    $this->static_best = $hint;
+  }
+
+  /**
+   * Returns whether or not level hints are enabled. Level hints are
+   * additional classes added to the \t <ul> element in order to distinguish
+   * between multiple levels. They are of the form "level0", "level1", etc.
+   *
+   * @return  bool
+   */
+  public function getStaticExact() {
+    return $this->static_exact;
+  }
+
+  /**
+   * Enable or disable level hints. Level hints are additional classes added
+   * to the \t <ul> element in order to distinguish between multiple levels.
+   * They are of the form "level0", "level1", etc.
+   *
+   * @param  bool  $hint
+   */
+  public function setStaticExact($hint) {
+    $this->static_exact = $hint;
   }
 
   /**
@@ -205,6 +251,19 @@ class NavigationMenu implements Renderable {
     $cururl = $this->getOurUrl();
     $besturl = $this->getBestUrl($level);
     foreach ($urls as $url) {
+      if (!isset($url[1])) {
+        $a_text = htmlentities($url[0], ENT_QUOTES, 'UTF-8');
+        $content = Tag::renderTag('span', array('class'=>'nolink'), $a_text);
+        if (isset($i_attrs['_children']) && count($i_attrs['_children'])) {
+          $children = $i_attrs['_children'];
+          $child_attrs = isset($i_attrs['_child_attrs']) ? $i_attrs['_child_attrs'] : array();
+          $content .= "\n".$this->renderURLs($children, $child_attrs, $level + 1);
+        }
+        $out .= Tag::renderTag('li', $i_attrs, $content)."\n";
+
+        continue;
+      }
+
       $a_text = htmlentities($url[0], ENT_QUOTES, 'UTF-8');
       $a_attrs = array('href'=>$url[1]);
       $i_attrs = isset($url[2]) ? $url[2] : array();
@@ -216,8 +275,11 @@ class NavigationMenu implements Renderable {
         unset($i_attrs['accesskey']);
       }
 
+      $static_link = false;
+
       if (!is_null($this->exact_url_class) && $url[1] == $cururl) {
         $i_class[] = $this->exact_url_class;
+        $static_link |= $this->static_exact;
 
       } elseif (!is_null($this->best_match_class)) {
         if (
@@ -225,6 +287,7 @@ class NavigationMenu implements Renderable {
           ($url[1] == $besturl)
         ) {
           $i_class[] = $this->best_match_class;
+          $static_link |= $this->static_best;
         }
       }
 
@@ -232,11 +295,21 @@ class NavigationMenu implements Renderable {
         $i_attrs['class'] = implode(' ', $i_class);
       }
 
-      $content = Tag::renderTag('a', $a_attrs, $a_text);
-      if (isset($i_attrs['_children']) && count($i_attrs['_children'])) {
-        $children = $i_attrs['_children'];
-        $child_attrs = isset($i_attrs['_child_attrs']) ? $i_attrs['_child_attrs'] : array();
-        $content .= "\n".$this->renderURLs($children, $child_attrs, $level + 1);
+      if ($static_link) {
+        $content = Tag::renderTag('span', array(), $a_text);
+        if (isset($i_attrs['_children']) && count($i_attrs['_children'])) {
+          $children = $i_attrs['_children'];
+          $child_attrs = isset($i_attrs['_child_attrs']) ? $i_attrs['_child_attrs'] : array();
+          $content .= "\n".$this->renderURLs($children, $child_attrs, $level + 1);
+        }
+
+      } else {
+        $content = Tag::renderTag('a', $a_attrs, $a_text);
+        if (isset($i_attrs['_children']) && count($i_attrs['_children'])) {
+          $children = $i_attrs['_children'];
+          $child_attrs = isset($i_attrs['_child_attrs']) ? $i_attrs['_child_attrs'] : array();
+          $content .= "\n".$this->renderURLs($children, $child_attrs, $level + 1);
+        }
       }
       $out .= Tag::renderTag('li', $i_attrs, $content)."\n";
     }
