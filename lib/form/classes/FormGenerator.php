@@ -390,6 +390,12 @@ class FormGenerator_Element extends ArrayObject {
 
     if ($error) {
       $out .= self::renderError($this->props, $error);
+
+      if (!isset($this->props['class'])) {
+        $this->props['class'] = 'haserror';
+      } elseif (!preg_match('/(?:^| )haserror(?:$| )/', $this->props['class'])) {
+        $this->props['class'] .= ' haserror';
+      }
     }
     $out .= self::renderTag('input', $this->props, null, array('label', 'required'))."\n";
 
@@ -551,6 +557,12 @@ class FormGenerator_Textarea extends FormGenerator_Element {
     }
     if ($error) {
       $out .= self::renderError($this->props, $error);
+
+      if (!isset($this->props['class'])) {
+        $this->props['class'] = 'haserror';
+      } elseif (!preg_match('/(?:^| )haserror(?:$| )/', $this->props['class'])) {
+        $this->props['class'] .= ' haserror';
+      }
     }
     $out .= self::renderTag('textarea', $this->props, String::escape($data), array('label', 'value', 'type'))."\n";
 
@@ -610,6 +622,12 @@ class FormGenerator_Select extends FormGenerator_Element {
     }
     if ($error) {
       $out .= self::renderError($this->props, $error);
+
+      if (!isset($this->props['class'])) {
+        $this->props['class'] = 'haserror';
+      } elseif (!preg_match('/(?:^| )haserror(?:$| )/', $this->props['class'])) {
+        $this->props['class'] .= ' haserror';
+      }
     }
     $out .= self::renderTag('select', $this->props, null, array('label', 'value', 'type'))."\n";
     if (!is_null($this->data)) {
@@ -726,6 +744,12 @@ class FormGenerator_CustomHTML extends FormGenerator_Element {
     }
     if ($error) {
       $out .= self::renderError($this->props, $error);
+
+      if (!isset($this->props['class'])) {
+        $this->props['class'] = 'haserror';
+      } elseif (!preg_match('/(?:^| )haserror(?:$| )/', $this->props['class'])) {
+        $this->props['class'] .= ' haserror';
+      }
     }
     $out .= self::renderTag('div', $this->props, $content, array('content', 'escape', 'name', 'type'))."\n";
 
