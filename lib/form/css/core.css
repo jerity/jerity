@@ -94,5 +94,6 @@ form div.hint {
 }
 form label em {
   display: block;
+  position: absolute;
   font-size: 75%;
 }
