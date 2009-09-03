@@ -17,8 +17,9 @@ class Number {
   /**
    * This is a non-instantiable utility class.
    */
-  protected function __construct() {
-  }
+  // @codeCoverageIgnoreStart
+  private function __construct() { }
+  // @codeCoverageIgnoreEnd
 
   /**
    * Perform an integer comparison on two numbers.

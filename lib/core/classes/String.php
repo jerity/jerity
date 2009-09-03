@@ -17,8 +17,9 @@ class String {
   /**
    * This is a non-instantiable utility class.
    */
-  protected function __construct() {
-  }
+  // @codeCoverageIgnoreStart
+  private function __construct() { }
+  // @codeCoverageIgnoreEnd
 
   /**
    * Escapes the provided text for (X)HTML output. If required, a full encoding can be done, which will encode
