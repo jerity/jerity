@@ -33,8 +33,9 @@ class Redirector {
   /**
    * The redirector should not be instantiated.
    */
-  protected function __construct() {
-  }
+  // @codeCoverageIgnoreStart
+  private function __construct() { }
+  // @codeCoverageIgnoreEnd
 
   /**
    * Generates a new key for storing the message.
@@ -154,7 +155,7 @@ class Redirector {
   }
 
   /**
-   * Performs a simple redirection to the specified URL (see below for details 
+   * Performs a simple redirection to the specified URL (see below for details
    * on partial URLs).
    *
    * Partial URLs work as follows:
@@ -227,8 +228,8 @@ class Redirector {
   /**
    * Performs a redirection to the specified URL.
    *
-   * If specified, a message can be provided with a specific notification type 
-   * such that the message can be rendered according to the nature of its 
+   * If specified, a message can be provided with a specific notification type
+   * such that the message can be rendered according to the nature of its
    * content.
    *
    * The message type should be one of the provided constants in the

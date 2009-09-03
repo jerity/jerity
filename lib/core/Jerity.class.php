@@ -33,8 +33,9 @@ class Jerity {
   /**
    * Private constructor; static-only class
    */
-  private function __construct() {
-  }
+  // @codeCoverageIgnoreStart
+  private function __construct() { }
+  // @codeCoverageIgnoreEnd
 
   /**
    * Autoload a class by name. This function should not be called directly.

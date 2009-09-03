@@ -25,8 +25,9 @@ class Debug {
   /**
    * Non-instantiable class.
    */
-  protected function __construct() {
-  }
+  // @codeCoverageIgnoreStart
+  private function __construct() { }
+  // @codeCoverageIgnoreEnd
 
   ##############################################################################
   # debugging control {{{

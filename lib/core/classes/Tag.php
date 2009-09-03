@@ -23,8 +23,9 @@ class Tag {
   /**
    * Static helper class.  Non-instantiable.
    */
-  protected function __construct() {
-  }
+  // @codeCoverageIgnoreStart
+  private function __construct() { }
+  // @codeCoverageIgnoreEnd
 
   # empty tag helpers {{{
 

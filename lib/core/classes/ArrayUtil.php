@@ -21,8 +21,9 @@ final class ArrayUtil {
   /**
    * This is a non-instantiable utility class.
    */
-  private function __construct() {
-  }
+  // @codeCoverageIgnoreStart
+  private function __construct() { }
+  // @codeCoverageIgnoreEnd
 
   /**
    * Flattens an multi-dimensional array down to a single-dimensional array.
