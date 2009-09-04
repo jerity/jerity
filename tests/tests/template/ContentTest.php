@@ -19,4 +19,17 @@ class ContentTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('PASS', $c->render());
   }
 
+  /**
+   * @covers  Content::create()
+   * @covers  Content::set()
+   * @covers  Content::render()
+   */
+  public function testRender2() {
+    $c = Content::create('simple');
+    $c->set('content', '');
+    $this->assertSame('', $c->render());
+    $c->set('content', 'PASS');
+    $this->assertSame('PASS', $c->render());
+  }
+
 }

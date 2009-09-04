@@ -47,6 +47,13 @@ class ChromeTestHTML401 extends PHPUnit_Framework_TestCase {
     $this->assertSame('PASS', (string)$c);
   }
 
+  public function testFullRenderByCreate() {
+    $c = Chrome::create('simple');
+    $c->setContent('PASS');
+    $this->assertSame('PASS', $c->render());
+    $this->assertSame('PASS', (string)$c);
+  }
+
 }
 
 # vim: ts=2 sw=2 et foldmethod=marker

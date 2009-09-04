@@ -4,7 +4,6 @@ require_once(dirname(dirname(dirname(__FILE__))).'/setUp.php');
 if (!class_exists('TemplateT')) {
   // Template is an abstract class, so we need aa simple concrete implementation for testing
   class TemplateT extends Template {
-    public static function create($t) {return new TemplateT($t);}
     public static function nullizePath() {parent::$base_path='';}
   }
 }
@@ -96,6 +95,17 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
    */
   public function testValidTemplate() {
     $t = new TemplateT('foo-succeed');
+  }
+
+  /**
+   * Top-level Template::create() should throw an exception (until PHP 5.3)
+   *
+   * @expectedException  Exception
+   *
+   * @covers  Template::create()
+   */
+  public function testCreate() {
+    $t = TemplateT::create('foo-succeed');
   }
 
   /**
@@ -482,6 +492,17 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
       $this->fail();
     } catch (InvalidArgumentException $e) {
     }
+  }
+
+  /**
+   * @covers  Template::getVariablePrefix()
+   * @covers  Template::setVariablePrefix()
+   */
+  public function testVarPrefix() {
+    $t = new TemplateT('simple');
+    $t->set('foo', 'bar');
+    $t->setVariablePrefix('foobar');
+    $this->assertSame('foobar', $t->getVariablePrefix());
   }
 
   /**
