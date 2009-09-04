@@ -6,6 +6,11 @@ class ContentTest extends PHPUnit_Framework_TestCase {
     Template::setPath(DATA_DIR.'templates');
   }
 
+  /**
+   * @covers  Content::__construct()
+   * @covers  Content::set()
+   * @covers  Content::render()
+   */
   public function testRender() {
     $c = new Content('simple');
     $c->set('content', '');
