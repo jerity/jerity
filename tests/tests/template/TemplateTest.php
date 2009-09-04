@@ -39,6 +39,8 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
    * path that was set in the setUp() for the test.
    *
    * @expectedException  UnexpectedValueException
+   *
+   * @covers  Template::getPath()
    */
   public function testNullPath() {
     TemplateT::nullizePath();
@@ -52,6 +54,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 
   /**
    * Check a template path with a trailing slash.
+   *
+   * @covers  Template::setPath()
+   * @covers  Template::getPath()
    */
   public function testValidPath1() {
     $path = DATA_DIR.'templates/';
@@ -62,6 +67,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   /**
    * Check a template path without a trailing slash is automagically given
    * one.
+   *
+   * @covers  Template::setPath()
+   * @covers  Template::getPath()
    */
   public function testValidPath2() {
     $path = DATA_DIR.'templates';
@@ -74,6 +82,8 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
    * Fail if a non-existant template directory is given.
    *
    * @expectedException  InvalidArgumentException
+   *
+   * @covers  Template::setPath()
    */
   public function testInvalidPath() {
     Template::setPath(DATA_DIR.'no-templates');
@@ -81,6 +91,8 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 
   /**
    * Ensure no errors when a valid template is loaded
+   *
+   * @covers  Template::__construct()
    */
   public function testValidTemplate() {
     $t = new TemplateT('foo-succeed');
@@ -92,6 +104,8 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
    * @todo  This behaviour will change when automatic per-context templates are implemented
    *
    * @expectedException  RuntimeException
+   *
+   * @covers  Template::__construct()
    */
   public function testInvalidTemplate() {
     $t = new TemplateT('foo-fail');
@@ -101,6 +115,8 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
    * Fail if a template file doesn't exist at render time.
    *
    * @todo  This behaviour may change when automatic per-context templates are implemented
+   *
+   * @covers  Template::render()
    */
   public function testInvalidRenderTemplate() {
     touch(Template::getPath().'foo-fail.tpl.php');
@@ -124,6 +140,7 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
    *
    * @dataProvider       jailbreakProvider
    * @expectedException  InvalidArgumentException
+   * @covers             Template::__construct()
    */
   public function testJailbreak($path) {
     $t = new TemplateT($path);
@@ -163,6 +180,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 
   /**
    * Simple assignment/retrieval test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
    */
   public function testSingleGetSet() {
     $t = new TemplateT('simple');
@@ -171,8 +191,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval test.
-    */
+   * Simple assignment/retrieval test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   */
   public function testMultipleGetSet1() {
     $t = new TemplateT('simple');
     $t->set(array('foo' => 'bar'));
@@ -180,8 +203,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval test.
-    */
+   * Simple assignment/retrieval test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   */
   public function testMultipleGetSet2() {
     $t = new TemplateT('simple');
     $t->set(array('foo'), array('bar'));
@@ -189,8 +215,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval test.
-    */
+   * Simple assignment/retrieval test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   */
   public function testMultipleGetSet3() {
     $t = new TemplateT('simple');
     $t->set('foo', 'bar');
@@ -200,8 +229,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval test.
-    */
+   * Simple assignment/retrieval test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   */
   public function testMultipleGetSet4() {
     $t = new TemplateT('simple');
     $t->set(array('foo' => 'bar', 'baz' => 'qux'));
@@ -210,8 +242,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval test.
-    */
+   * Simple assignment/retrieval test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   */
   public function testMultipleGetSet5() {
     $t = new TemplateT('simple');
     $t->set(array('foo', 'baz'), array('bar', 'qux'));
@@ -220,8 +255,12 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval/clear test.
-    */
+   * Simple assignment/retrieval/clear test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   * @covers  Template::clear()
+   */
   public function testGetSetSingleClearSingle() {
     $t = new TemplateT('simple');
     $t->set('foo', 'bar');
@@ -231,8 +270,12 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval/clear test.
-    */
+   * Simple assignment/retrieval/clear test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   * @covers  Template::clear()
+   */
   public function testGetSetSingleClearAll() {
     $t = new TemplateT('simple');
     $t->set('foo', 'bar');
@@ -242,8 +285,12 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval/clear test.
-    */
+   * Simple assignment/retrieval/clear test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   * @covers  Template::clear()
+   */
   public function testGetSetMultipleClearIndividual() {
     $t = new TemplateT('simple');
     $t->set('foo', 'bar');
@@ -259,8 +306,12 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval/clear test.
-    */
+   * Simple assignment/retrieval/clear test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   * @covers  Template::clear()
+   */
   public function testGetSetMultipleClearGroup() {
     $t = new TemplateT('simple');
     $t->set('foo', 'bar');
@@ -280,8 +331,12 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Simple assignment/retrieval/clear test.
-    */
+   * Simple assignment/retrieval/clear test.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   * @covers  Template::clear()
+   */
   public function testGetSetMultipleClearAll() {
     $t = new TemplateT('simple');
     $t->set('foo', 'bar');
@@ -296,8 +351,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Assignment/retrieval test with non-trivial values.
-    */
+   * Assignment/retrieval test with non-trivial values.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   */
   public function testComplexSingleGetSet1() {
     $t = new TemplateT('simple');
     $t->set('foo', array('bar'));
@@ -307,8 +365,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Assignment/retrieval test with non-trivial values.
-    */
+   * Assignment/retrieval test with non-trivial values.
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   */
   public function testComplexSingleGetSet2() {
     $t = new TemplateT('simple');
     $obj = new StdClass();
@@ -320,10 +381,13 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Assignment/retrieval test with non-trivial values.
-    *
-    * NOTE: checks that objects are set by reference
-    */
+   * Assignment/retrieval test with non-trivial values.
+   *
+   * NOTE: checks that objects are set by reference
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   */
   public function testComplexSingleGetSet3() {
     $t = new TemplateT('simple');
     $obj = new StdClass();
@@ -336,10 +400,13 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-    * Assignment/retrieval test with non-trivial values.
-    *
-    * NOTE: checks that objects are set by reference, and breaking that reference
-    */
+   * Assignment/retrieval test with non-trivial values.
+   *
+   * NOTE: checks that objects are set by reference, and breaking that reference
+   *
+   * @covers  Template::set()
+   * @covers  Template::get()
+   */
   public function testComplexSingleGetSet4() {
     $t = new TemplateT('simple');
     $obj = new StdClass();
@@ -354,6 +421,8 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException  LengthException
+   *
+   * @covers  Template::set()
    */
   public function testSetFail1() {
     $t = new TemplateT('simple');
@@ -362,12 +431,17 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException  InvalidArgumentException
+   *
+   * @covers  Template::set()
    */
   public function testSetFail2() {
     $t = new TemplateT('simple');
     $t->set(array('foo', 'bar'), 'baz');
   }
 
+  /**
+   * @covers  Template::set()
+   */
   public function testSetFail3() {
     $t = new TemplateT('simple');
     try {
@@ -387,6 +461,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     }
   }
 
+  /**
+   * @covers  Template::clear()
+   */
   public function testClearFail() {
     $t = new TemplateT('simple');
     $t->set('foo', 'bar');
@@ -407,6 +484,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     }
   }
 
+  /**
+   * @covers  Template::setVariablePrefix()
+   */
   public function testVarPrefixFail() {
     $t = new TemplateT('simple');
     $t->set('foo', 'bar');
@@ -433,12 +513,18 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Rendering tests {{{
 
+  /**
+   * @covers  Template::render()
+   */
   public function testSimpleRender() {
     $t = new TemplateT('simple');
     $t->set('content', 'Simple string');
     $this->assertSame('Simple string', $t->render());
   }
 
+  /**
+   * @covers  Template::render()
+   */
   public function testDumpRender() {
     $t = new TemplateT('vardump');
     $t->set('content', 'Simple string');
@@ -451,6 +537,8 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 
   /**
    * We shouldn't be able to overwrite $this
+   *
+   * @covers  Template::render()
    */
   public function testDumpRender2() {
     $t = new TemplateT('thistest');
@@ -458,6 +546,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('PASS', $t->render());
   }
 
+  /**
+   * @covers  Template::render()
+   */
   public function testPrefixRender() {
     $t = new TemplateT('vardump');
     $t->set('content', 'Simple string');
@@ -470,6 +561,9 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($dump, $t->render());
   }
 
+  /**
+   * @covers  Template::__toString()
+   */
   public function testToString() {
     $t = new TemplateT('simple');
     $t->set('content', 'Simple string');
@@ -488,6 +582,13 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Post-rendering hook tests {{{
 
+  /**
+   * @covers  Template::addPostrenderHook()
+   * @covers  Template::generateCallbackHash()
+   * @covers  Template::getPostrenderHook()
+   * @covers  Template::clearPostrenderHook()
+   * @covers  Template::render()
+   */
   public function testSingleSimplePostRenderHook() {
     $t = new TemplateT('simple');
     $t->set('content', 'pass');
@@ -499,6 +600,12 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('pass', $t->render());
   }
 
+  /**
+   * @covers  Template::addPostrenderHook()
+   * @covers  Template::getPostrenderHook()
+   * @covers  Template::clearPostrenderHook()
+   * @covers  Template::render()
+   */
   public function testSimplePostRenderHookPriority() {
     $t = new TemplateT('simple');
     $t->set('content', 'pass');
@@ -511,6 +618,12 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('pass', $t->render());
   }
 
+  /**
+   * @covers  Template::addPostrenderHook()
+   * @covers  Template::getPostrenderHook()
+   * @covers  Template::removePostrenderHook()
+   * @covers  Template::render()
+   */
   public function testSimplePostRenderHookPriority2() {
     $t = new TemplateT('simple');
     $t->set('content', 'pass');
@@ -526,6 +639,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('pass', $t->render());
   }
 
+  /**
+   * @covers  Template::addPostrenderHook()
+   * @covers  Template::generateCallbackHash()
+   * @covers  Template::render()
+   */
   public function testSingleStaticPostRenderHook() {
     $t = new TemplateT('simple');
     $t->set('content', 'pass');
@@ -533,6 +651,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('PASS', $t->render());
   }
 
+  /**
+   * @covers  Template::addPostrenderHook()
+   * @covers  Template::generateCallbackHash()
+   * @covers  Template::render()
+   */
   public function testSingleDynamicPostRenderHook() {
     $t = new TemplateT('simple');
     $t->set('content', 'pass');
@@ -541,6 +664,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
     $this->assertSame('PASS', $t->render());
   }
 
+  /**
+   * @covers  Template::addPostrenderHook()
+   * @covers  Template::removePostrenderHook()
+   * @covers  Template::render()
+   */
   public function testPostRenderHookFail() {
     $t = new TemplateT('simple');
     $t->set('content', 'pass');
