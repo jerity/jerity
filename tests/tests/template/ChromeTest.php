@@ -9,6 +9,10 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Title tests {{{
 
+  /**
+   * @covers  Chrome::setTitle()
+   * @covers  Chrome::getTitle()
+   */
   public function testEmptyTitle() {
     Chrome::setTitle(null);
     $this->assertSame('', Chrome::getTitle());
@@ -16,6 +20,8 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  titleSeparatorProvider
+   * @covers        Chrome::getTitleSeparator()
+   * @covers        Chrome::getTitle()
    */
   public function testTitleSeparator($sep) {
     if ($sep === null) $sep = Chrome::getTitleSeparator();
@@ -38,6 +44,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     );
   }
 
+  /**
+   * @covers  Chrome::getTitle()
+   */
   public function testGetTitleArray() {
     $title = array('Jerity', 'test', 'title');
     Chrome::setTitle($title);
@@ -47,6 +56,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Title append tests {{{
 
+  /**
+   * @covers  Chrome::addToTitle()
+   */
   public function testAddTitleAppend() {
     $title = array('Jerity', 'test');
     Chrome::setTitle($title);
@@ -55,6 +67,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($title, Chrome::getTitle(false));
   }
 
+  /**
+   * @covers  Chrome::addToTitle()
+   */
   public function testAddTitleAppend2() {
     $title = array('Jerity', 'test');
     Chrome::setTitle($title);
@@ -63,6 +78,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($title, Chrome::getTitle(false));
   }
 
+  /**
+   * @covers  Chrome::addToTitle()
+   */
   public function testAddTitleAppend3() {
     $title = array('Jerity', 'test');
     Chrome::setTitle($title);
@@ -73,6 +91,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($title, Chrome::getTitle(false));
   }
 
+  /**
+   * @covers  Chrome::addToTitle()
+   */
   public function testAddTitleAppend4() {
     $title = array('Jerity', 'test');
     Chrome::setTitle($title);
@@ -88,6 +109,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Title prepend tests {{{
 
+  /**
+   * @covers  Chrome::addToTitle()
+   */
   public function testAddTitlePrepend() {
     $title = array('Jerity', 'test');
     Chrome::setTitle($title);
@@ -96,6 +120,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($title, Chrome::getTitle(false));
   }
 
+  /**
+   * @covers  Chrome::addToTitle()
+   */
   public function testAddTitlePrepend2() {
     $title = array('Jerity', 'test');
     Chrome::setTitle($title);
@@ -104,6 +131,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($title, Chrome::getTitle(false));
   }
 
+  /**
+   * @covers  Chrome::addToTitle()
+   */
   public function testAddTitlePrepend3() {
     $title = array('Jerity', 'test');
     Chrome::setTitle($title);
@@ -124,6 +154,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Single content tests {{{
 
+  /**
+   * @covers  Chrome::__construct()
+   * @covers  Chrome::clearContent()
+   * @covers  Chrome::getContent()
+   * @covers  Chrome::setContent()
+   */
   public function testContent1() {
     $c = new Chrome('simple');
     $c->clearContent();
@@ -140,6 +176,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count($c->getContent()));
   }
 
+  /**
+   * @covers  Chrome::__construct()
+   * @covers  Chrome::clearContent()
+   * @covers  Chrome::getContent()
+   */
   public function testContent2() {
     $c = new Chrome('simple');
     $c->clearContent();
@@ -166,6 +207,7 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException  InvalidArgumentException
+   * @covers             Chrome::setContent()
    */
   public function testContentFail1() {
     $c = new Chrome('simple');
@@ -176,6 +218,7 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException  InvalidArgumentException
+   * @covers             Chrome::setContent()
    */
   public function testContentFail2() {
     $c = new Chrome('simple');
@@ -190,6 +233,13 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Multiple content tests {{{
 
+  /**
+   * @covers  Chrome::__construct()
+   * @covers  Chrome::clearContent()
+   * @covers  Chrome::setContent()
+   * @covers  Chrome::render()
+   * @covers  Chrome::getNextContent()
+   */
   public function testMultiContent1() {
     $c = new Chrome('multicontent');
     $c->clearContent();
@@ -198,6 +248,13 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('PASS|PASS|', $d);
   }
 
+  /**
+   * @covers  Chrome::__construct()
+   * @covers  Chrome::clearContent()
+   * @covers  Chrome::setContent()
+   * @covers  Chrome::render()
+   * @covers  Chrome::getNextContent()
+   */
   public function testMultiContent1a() {
     $c = new Chrome('multicontent');
     $cont = new Content('simple');
@@ -208,6 +265,13 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('PASS|PASS|', $d);
   }
 
+  /**
+   * @covers  Chrome::__construct()
+   * @covers  Chrome::clearContent()
+   * @covers  Chrome::setContent()
+   * @covers  Chrome::render()
+   * @covers  Chrome::getNextContent()
+   */
   public function testMultiContent2() {
     $c = new Chrome('multicontent');
     $c->clearContent();
@@ -216,6 +280,13 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('PASS|PASS|PASS|', $d);
   }
 
+  /**
+   * @covers  Chrome::__construct()
+   * @covers  Chrome::clearContent()
+   * @covers  Chrome::setContent()
+   * @covers  Chrome::render()
+   * @covers  Chrome::getNextContent()
+   */
   public function testMultiContent3() {
     $c = new Chrome('multicontent');
     $c->clearContent();
