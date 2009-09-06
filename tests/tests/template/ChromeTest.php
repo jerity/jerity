@@ -316,8 +316,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     Chrome::addMetadata('generator', 'Jerity');
     Chrome::addMetadata('description', 'Jerity test case page');
     Chrome::clearStylesheets();
-    Chrome::addStylesheet('/css/common.css');
+    Chrome::addStylesheet('/css/common.css', 15);
     Chrome::addStylesheet('/css/blah.css', 75);
+    Chrome::addAlternateStylesheet('/css/theme1.css', 'Theme One', true);
+    Chrome::addAlternateStylesheet('/css/theme2.css', 'Theme Two', false);
+    Chrome::addAlternateStylesheet('/css/theme3.css', 'Theme Three', false);
     Chrome::clearScripts();
     Chrome::addScript('/js/scriptaculous.js', 25);
     Chrome::addScript('/js/prototype.js', 15);
@@ -779,6 +782,8 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getStylesheets()));
     Chrome::addStylesheet('/css/common.css', -5);
   }
+
+  /* TODO: Alternate stylesheet tests */
 
   # }}} Stylesheet tests
   ############################################################################
