@@ -2,6 +2,8 @@
 
 /**
  * This class creates valid and accessible HTML forms.
+ *
+ * @todo  Separate form structure from HTML output to allow different HTML output methods
  */
 class FormGenerator {
   /**
@@ -313,44 +315,7 @@ class FormGenerator_Element extends ArrayObject {
   protected static function renderError(array $attrs = null, $error = null) {
     $attrs['id'] .= '-error';
     $attrs = array_intersect_key($attrs, array_flip(array('id')));
-    return self::renderTag('strong', $attrs, $error)."\n";
-  }
-
-  /**
-   * Render an HTML tag.
-   *
-   * Note that \a $content is \b not escaped, but is output verbatim.
-   *
-   * @param string $tag         The name of the tag to render
-   * @param array  $attrs       Associative array of attributes for the tag
-   * @param mixed  $content     Tag content; false to force an empty tag in XHTML mode (single tag in HTML mode), null to force open tag.
-   * @param array  $ignoreAttrs Array of keys to ignore from \a $attrs
-   */
-  protected static function renderTag($tag, array $attrs = null, $content = null, array $ignoreAttrs = null) {
-    if (is_null($attrs)) {
-      $attrs = array();
-    }
-    if (!is_null($ignoreAttrs) && count($ignoreAttrs)) {
-      $attrs = array_diff_key($attrs, array_flip($ignoreAttrs));
-    }
-
-    $out = '<'.$tag;
-    foreach ($attrs as $k=>$v) {
-      if ($v === false) {
-        continue;
-      }
-      if ($v===true) {
-        $v = $k;
-      }
-      $out .= ' '.String::escape($k, true).'="'.String::escape($v, true).'"';
-    }
-    $out .= (RenderContext::getGlobalContext()->getLanguage() == RenderContext::LANG_XHTML && $content===false) ? " />" : ">";
-    if (!is_null($content) && $content !== false) {
-      $out .= $content;
-      $out .= '</'.$tag.'>';
-    }
-
-    return $out;
+    return Tag::renderTag('strong', $attrs, $error)."\n";
   }
 
   /**
@@ -367,7 +332,7 @@ class FormGenerator_Element extends ArrayObject {
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
-      $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
+      $out .= Tag::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
     }
 
     if (!is_null($this->data)) {
@@ -397,10 +362,11 @@ class FormGenerator_Element extends ArrayObject {
         $this->props['class'] .= ' haserror';
       }
     }
-    $out .= self::renderTag('input', $this->props, null, array('label', 'required'))."\n";
+    $attrs = array_diff_key($this->props, array_flip(array('label', 'required')));
+    $out .= Tag::renderTag('input', $attrs)."\n";
 
     if (isset($this['label']) && in_array($this['type'], array('checkbox', 'radio'))) {
-      $out .= self::renderTag('label', array('for'=>$this['id']), String::escape($this['label']))."\n";
+      $out .= Tag::renderTag('label', array('for'=>$this['id']), String::escape($this['label']))."\n";
     }
 
     return $out;
@@ -512,7 +478,8 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
   }
 
   public function render($error=null) {
-    $out = self::renderTag('fieldset', $this->props, null, array('label', 'type'))."\n";
+    $attrs = array_diff_key($this->props, array_flip(array('label', 'type')));
+    $out = Tag::renderTag('fieldset', $attrs)."\n";
     if (isset($this['label']) && $this['label']) {
       # TODO: required flag
       $out .= '<legend><span>'.String::escape($this['label'])."</span></legend>\n";
@@ -546,7 +513,7 @@ class FormGenerator_Textarea extends FormGenerator_Element {
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
-      $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
+      $out .= Tag::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
     }
     if (!is_null($this->data)) {
       $data = $this->data;
@@ -564,7 +531,8 @@ class FormGenerator_Textarea extends FormGenerator_Element {
         $this->props['class'] .= ' haserror';
       }
     }
-    $out .= self::renderTag('textarea', $this->props, String::escape($data), array('label', 'value', 'type'))."\n";
+    $attrs = array_diff_key($this->props, array_flip(array('label', 'value', 'type')));
+    $out .= Tag::renderTag('textarea', $attrs, String::escape($data))."\n";
 
     return $out;
   }
@@ -618,7 +586,7 @@ class FormGenerator_Select extends FormGenerator_Element {
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
-      $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
+      $out .= Tag::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
     }
     if ($error) {
       $out .= self::renderError($this->props, $error);
@@ -629,7 +597,8 @@ class FormGenerator_Select extends FormGenerator_Element {
         $this->props['class'] .= ' haserror';
       }
     }
-    $out .= self::renderTag('select', $this->props, null, array('label', 'value', 'type'))."\n";
+    $attrs = array_diff_key($this->props, array_flip(array('label', 'value', 'type')));
+    $out .= Tag::renderTag('select', $attrs)."\n";
     if (!is_null($this->data)) {
       if (isset($this->options[$this->data])) {
         $this->options[$this->data]['selected'] = 'selected';
@@ -640,7 +609,8 @@ class FormGenerator_Select extends FormGenerator_Element {
       }
     }
     foreach ($this->options as $option) {
-      $out .= self::renderTag('option', $option, String::escape($option['label']), array('label'))."\n";
+      $attrs = array_diff_key($option, array_flip(array('label')));
+      $out .= Tag::renderTag('option', $attrs, String::escape($option['label']))."\n";
     }
     $out .= "</select>\n";
 
@@ -689,7 +659,8 @@ class FormGenerator_Hint extends FormGenerator_Element {
       $content = '';
     }
 
-    $out .= self::renderTag('div', $this->props, $content, array('content', 'escape', 'type'))."\n";
+    $attrs = array_diff_key($this->props, array_flip(array('content', 'escape', 'type')));
+    $out .= Tag::renderTag('div', $attrs, $content)."\n";
 
     return $out;
   }
@@ -735,7 +706,7 @@ class FormGenerator_CustomHTML extends FormGenerator_Element {
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
-      $out .= self::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
+      $out .= Tag::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
     }
     if (isset($this['content'])) {
       $content = $this['content'];
@@ -751,7 +722,8 @@ class FormGenerator_CustomHTML extends FormGenerator_Element {
         $this->props['class'] .= ' haserror';
       }
     }
-    $out .= self::renderTag('div', $this->props, $content, array('content', 'escape', 'name', 'type'))."\n";
+    $attrs = array_diff_key($this->props, array_flip(array('content', 'escape', 'name', 'type')));
+    $out .= Tag::renderTag('div', $attrs, $content)."\n";
 
     return $out;
   }
