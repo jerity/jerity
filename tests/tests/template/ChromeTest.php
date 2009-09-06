@@ -305,6 +305,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Modular head tests {{{
 
+  /**
+   * @covers  Chrome::outputHead()
+   */
   public function testModularHead() {
     Chrome::setLanguage('en-gb');
     Chrome::setTitle('Test title');
@@ -347,6 +350,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Foot tests {{{
 
+  /**
+   * @covers  Chrome::outputFoot()
+   */
   public function testFoot() {
     ob_start();
     Chrome::outputFoot();
@@ -364,6 +370,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Named metadata tests {{{
 
+  /**
+   * @covers  Chrome::clearMetadata()
+   * @covers  Chrome::getMetadata()
+   * @covers  Chrome::addMetadata()
+   * @covers  Chrome::removeMetadata()
+   */
   public function testMetaName1() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
@@ -374,6 +386,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getMetadata()));
   }
 
+  /**
+   * @covers  Chrome::clearMetadata()
+   * @covers  Chrome::getMetadata()
+   * @covers  Chrome::addMetadata()
+   * @covers  Chrome::removeMetadata()
+   */
   public function testMetaName2() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
@@ -387,6 +405,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getMetadata()));
   }
 
+  /**
+   * @covers  Chrome::getMetadata()
+   * @covers  Chrome::addMetadata()
+   * @covers  Chrome::clearMetadata()
+   */
   public function testMetaName3() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
@@ -404,6 +427,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # HTTP metadata tests {{{
 
+  /**
+   * @covers  Chrome::clearMetadata()
+   * @covers  Chrome::getMetadata()
+   * @covers  Chrome::addMetadata()
+   * @covers  Chrome::removeMetadata()
+   */
   public function testMetaHttp1() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
@@ -414,6 +443,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
   }
 
+  /**
+   * @covers  Chrome::clearMetadata()
+   * @covers  Chrome::getMetadata()
+   * @covers  Chrome::addMetadata()
+   * @covers  Chrome::removeMetadata()
+   */
   public function testMetaHttp2() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
@@ -427,6 +462,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
   }
 
+  /**
+   * @covers  Chrome::clearMetadata()
+   * @covers  Chrome::getMetadata()
+   * @covers  Chrome::addMetadata()
+   */
   public function testMetaHttp3() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
@@ -444,6 +484,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Mixed metadata tests {{{
 
+  /**
+   * @covers  Chrome::clearMetadata()
+   * @covers  Chrome::getMetadata()
+   * @covers  Chrome::addMetadata()
+   */
   public function testMetaMixed1() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
@@ -466,6 +511,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
   }
 
+  /**
+   * @covers  Chrome::clearMetadata()
+   * @covers  Chrome::addMetadata()
+   * @covers  Chrome::getMetadata()
+   */
   public function testMetaMixed2() {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata()));
@@ -497,6 +547,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Link tests {{{
 
+  /**
+   * @covers  Chrome::clearLinks()
+   * @covers  Chrome::getLinks()
+   * @covers  Chrome::addLink()
+   */
   public function testCustomRelLink() {
     Chrome::clearLinks();
     $this->assertEquals(0, count(Chrome::getLinks()));
@@ -511,6 +566,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('http://www.jerity.com/next', $l[0]['href']);
   }
 
+  /**
+   * @covers  Chrome::clearLinks()
+   * @covers  Chrome::getLinks()
+   * @covers  Chrome::addLink()
+   */
   public function testCustomRevLink() {
     Chrome::clearLinks();
     $this->assertEquals(0, count(Chrome::getLinks()));
@@ -531,6 +591,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Script tests {{{
 
+  /**
+   * @covers  Chrome::clearScripts()
+   * @covers  Chrome::getScripts()
+   * @covers  Chrome::addScript()
+   * @covers  Chrome::removeScript()
+   */
   function testScript1() {
     Chrome::clearScripts();
     $this->assertEquals(0, count(Chrome::getScripts()));
@@ -544,6 +610,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($s[RenderContext::CONTENT_JS], Chrome::getScripts());
   }
 
+  /**
+   * @covers  Chrome::clearScripts()
+   * @covers  Chrome::getScripts()
+   * @covers  Chrome::addScript()
+   */
   function testDuplicateScript() {
     Chrome::clearScripts();
     $this->assertEquals(0, count(Chrome::getScripts()));
@@ -557,6 +628,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getScripts()));
   }
 
+  /**
+   * @covers  Chrome::clearScripts()
+   * @covers  Chrome::getScripts()
+   * @covers  Chrome::addScript()
+   */
   function testScriptPriority1() {
     Chrome::clearScripts();
     $this->assertEquals(0, count(Chrome::getScripts()));
@@ -574,6 +650,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getScripts()));
   }
 
+  /**
+   * @covers  Chrome::clearScripts()
+   * @covers  Chrome::getScripts()
+   * @covers  Chrome::addScript()
+   */
   function testScriptPriority2() {
     Chrome::clearScripts();
     $this->assertEquals(0, count(Chrome::getScripts()));
@@ -594,6 +675,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   * @covers             Chrome::clearScripts()
+   * @covers             Chrome::getScripts()
+   * @covers             Chrome::addScript()
    * @expectedException  OutOfRangeException
    */
   function testScriptPriorityFail() {
@@ -608,6 +692,12 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
   # Stylesheet tests {{{
 
+  /**
+   * @covers  Chrome::clearStylesheets()
+   * @covers  Chrome::getStylesheets()
+   * @covers  Chrome::addStylesheet()
+   * @covers  Chrome::removeStylesheet()
+   */
   function testStylesheet1() {
     Chrome::clearStylesheets();
     $this->assertEquals(0, count(Chrome::getStylesheets()));
@@ -617,6 +707,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getStylesheets()));
   }
 
+  /**
+   * @covers  Chrome::clearStylesheets()
+   * @covers  Chrome::getStylesheets()
+   * @covers  Chrome::addStylesheet()
+   */
   function testDuplicateStylesheet() {
     Chrome::clearStylesheets();
     $this->assertEquals(0, count(Chrome::getStylesheets()));
@@ -630,6 +725,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getStylesheets()));
   }
 
+  /**
+   * @covers  Chrome::clearStylesheets()
+   * @covers  Chrome::getStylesheets()
+   * @covers  Chrome::addStylesheet()
+   */
   function testStylesheetPriority1() {
     Chrome::clearStylesheets();
     $this->assertEquals(0, count(Chrome::getStylesheets()));
@@ -645,6 +745,11 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(0, count(Chrome::getStylesheets()));
   }
 
+  /**
+   * @covers  Chrome::clearStylesheets()
+   * @covers  Chrome::getStylesheets()
+   * @covers  Chrome::addStylesheet()
+   */
   function testStylesheetPriority2() {
     Chrome::clearStylesheets();
     $this->assertEquals(0, count(Chrome::getStylesheets()));
@@ -664,6 +769,9 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
 
 
   /**
+   * @covers             Chrome::clearStylesheets()
+   * @covers             Chrome::getStylesheets()
+   * @covers             Chrome::addStylesheet()
    * @expectedException  OutOfRangeException
    */
   function testStylesheetPriorityFail() {
