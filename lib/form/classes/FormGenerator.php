@@ -59,6 +59,11 @@ class FormGenerator {
     return $newObj;
   }
 
+  public function addHidden($name, $value, array $extra = null) {
+    $extra = array_merge(array('value'=>$value), $extra?$extra:array());
+    return $this->addElement($name, null, 'hidden', $extra);
+  }
+
   public function addInput($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'text', $extra);
   }
@@ -171,7 +176,7 @@ class FormGenerator {
     }
     $out = ($this->topLevelList) ? "<ul>\n" : '';
     foreach ($elements as $e) {
-      if ($this->topLevelList) $out .= "<li>\n";
+      if ($this->topLevelList && $e['type'] !== 'hidden') $out .= "<li>\n";
       if (isset($e['name']) && $e['name']) {
         if (isset($this->data[$e['name']])) {
           $e->populate($this->data[$e['name']]);
@@ -184,7 +189,7 @@ class FormGenerator {
         }
         $out .= $e->render();
       }
-      if ($this->topLevelList) $out .= "</li>\n";
+      if ($this->topLevelList && $e['type'] !== 'hidden') $out .= "</li>\n";
     }
     if ($this->topLevelList) $out .= "</ul>\n";
 
@@ -327,7 +332,7 @@ class FormGenerator_Element extends ArrayObject {
   public function render($error=null) {
     $out = '';
     # add label, and remove from properties array
-    if (isset($this['label']) && !in_array($this['type'], array('checkbox', 'radio'))) {
+    if (isset($this['label']) && !in_array($this['type'], array('hidden', 'checkbox', 'radio'))) {
       $labelcontent = String::escape($this['label']).':';
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
@@ -338,6 +343,7 @@ class FormGenerator_Element extends ArrayObject {
     if (!is_null($this->data)) {
       switch ($this['type']) {
         case 'text':
+        case 'hidden':
           $this->props['value'] = $this->data;
           break;
         case 'checkbox':
@@ -353,7 +359,7 @@ class FormGenerator_Element extends ArrayObject {
       }
     }
 
-    if ($error) {
+    if ($error && $this['type'] !== 'hidden') {
       $out .= self::renderError($this->props, $error);
 
       if (!isset($this->props['class'])) {
@@ -457,7 +463,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     }
     $out = "<ul>\n";
     foreach ($elements as $e) {
-      $out .= "<li>\n";
+      if ($e['type'] !== 'hidden') $out .= "<li>\n";
       if (isset($e['name']) && $e['name']) {
         if (isset($this->data[$e['name']])) {
           $e->populate($this->data[$e['name']]);
@@ -470,7 +476,7 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
         }
         $out .= $e->render();
       }
-      $out .= "</li>\n";
+      if ($e['type'] !== 'hidden') $out .= "</li>\n";
     }
     $out .= "</ul>\n";
 
