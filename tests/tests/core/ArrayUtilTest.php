@@ -49,4 +49,41 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
     return $final;
   }
 
+  /**
+   * @dataProvider  collapseKeysProvider
+   * @covers        ArrayUtil::collapseKeys()
+   */
+  public function testCollapseKeys($input, $expected) {
+    $this->assertSame($expected, ArrayUtil::collapseKeys($input));
+  }
+
+  public static function collapseKeysProvider() {
+    $input  = array();
+    $output = array();
+    $final  = array();
+
+    $count = -1;
+
+    $input[++$count] = array(0, 1, 2, 3, 4, 5);
+    $output[ $count] = array(0, 1, 2, 3, 4, 5);
+
+    $input[++$count] = array(5, 4, 3, 2, 1, 0);
+    $output[ $count] = array(5, 4, 3, 2, 1, 0);
+
+    $input[++$count] = array('a'=>0, 'b'=>1, 'c'=>2, 'd'=>3, 'e'=>4, 'f'=>5);
+    $output[ $count] = array('a'=>0, 'b'=>1, 'c'=>2, 'd'=>3, 'e'=>4, 'f'=>5);
+
+    $input[++$count] = array('a'=>0, 'b'=>1, 'c'=>array('d'=>3, 'e'=>4, 'f'=>5));
+    $output[ $count] = array('a'=>0, 'b'=>1, 'c[d]'=>3, 'c[e]'=>4, 'c[f]'=>5);
+
+    $input[++$count] = array('a'=>0, 'b'=>1, 'c'=>array('d'=>array('e'=>4, 'f'=>5)));
+    $output[ $count] = array('a'=>0, 'b'=>1, 'c[d][e]'=>4, 'c[d][f]'=>5);
+
+    for ($i=0; $i<=$count; ++$i) {
+      $final[] = array($input[$i], $output[$i]);
+    }
+
+    return $final;
+  }
+
 }
