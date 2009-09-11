@@ -151,6 +151,8 @@ class FormGenerator {
   }
 
   public function populateData(array $data, $replace = true) {
+    // $data should be a single-dimension array
+    $data = ArrayUtil::collapseKeys($data);
     if ($replace) {
       $this->data = $data;
     } else { // merge and overwrite
