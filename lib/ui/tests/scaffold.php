@@ -34,10 +34,11 @@ $schema = array(
   ),
 );
 
-$scaffold = new Scaffold($schema, $db);
-$scaffold->processActions();
-$f = new FormGenerator(true);
-$scaffold->generateCreateForm('bar', $f);
+#$scaffold = new Scaffold($schema, $db);
+#$scaffold->processActions();
+#$f = new FormGenerator(true);
+##$scaffold->generateCreateForm('bar', $f);
 #$scaffold->generateUpdateForm('foo', 1, $f);
-$f->addSubmit('', 'Update');
-echo $f->render();
+#$f->addSubmit('', 'Update');
+#echo $f->render();
+echo Scaffold::doScaffold($schema, $db, 'foo');
