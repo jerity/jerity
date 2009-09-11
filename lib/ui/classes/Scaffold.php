@@ -132,10 +132,12 @@ class Scaffold {
 
   /**
    * Perform the actions dictated by the posted data.
+   *
+   * @return  boolean  Whether actions were successfully processed.
    */
   public function processActions() {
     if (!isset($_POST[self::FORM_PREFIX.'_action'])) {
-      return;
+      return null;
     }
     $action = $_POST[self::FORM_PREFIX.'_action'];
     $values = $_POST[self::FORM_PREFIX.'_args'];
@@ -186,10 +188,10 @@ class Scaffold {
             $stmt = $this->db->prepare($sql);
             if (is_array($values)) {
               foreach ($values as $value) {
-                $result = $stmt->execute($value);
+                $result = $stmt->execute(array($value));
               }
             } else {
-              $result = $stmt->execute($values);
+              $result = $stmt->execute(array($values));
             }
           }
           break;
@@ -200,7 +202,278 @@ class Scaffold {
     } catch (Exception $e) {
       $this->db->setAttribute(PDO::ATTR_ERRMODE, $mode);
       var_dump('Database error: '.$e->getMessage());
+      return false;
     }
+    return true;
+  }
+
+  /**
+   * Create and output all HTML up to the beginning of the content, including a title.
+   *
+   * @param  string  $title  The title of the page, also output in an H1 at the top.
+   */
+  protected function outputPageHeader($title) {
+    $title = String::escapeHTML($title);
+    echo <<<EOHTML
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="Jerity Scaffold Generator">
+<title>Jerity Scaffold :: {$title}</title>
+</head>
+<body>
+<h1>{$title}</h1>
+
+EOHTML;
+  }
+
+  /**
+   * Create and output all HTML that should go after the content.
+   */
+  protected function outputPageFooter() {
+    echo <<<EOHTML
+</body>
+</html>
+EOHTML;
+  }
+
+  /**
+   * Create and return the URL for an action.
+   *
+   * @param   string  $action       The action to be added to the URL.
+   * @param   string  $primary_key  The primary key value for the action.
+   *
+   * @return  string
+   */
+  protected function generateActionUrl($action, $primary_key=null) {
+    $url = self::cleanUrl();
+    if (strpos($url, '?') === false) {
+      $url .= '?';
+    } else {
+      $url .= '&';
+    }
+    if (isset($_GET[self::FORM_PREFIX.'_table'])) {
+      $url .= self::FORM_PREFIX.'_table='.rawurlencode($_GET[self::FORM_PREFIX.'_table']).'&';
+    }
+    $url .= self::FORM_PREFIX.'_method='.rawurlencode($action);
+    if (!is_null($primary_key)) {
+      $url .= '&'.self::FORM_PREFIX.'_primary='.rawurlencode($primary_key);
+    }
+    return $url;
+  }
+
+  /**
+   * Generate a page suitable for creating a record in the given table.
+   *
+   * @param   string  $table  The table in which a record should be created.
+   *
+   * @return  string
+   */
+  public function generateCreatePage($table) {
+    if (is_null($table)) {
+      return 'Need a table to create things.';
+    }
+    ob_start();
+    $this->outputPageHeader('New item in '.$table);
+    $f = $this->generateCreateForm($table);
+    $f->addSubmit('', 'Create');
+    echo $f->render();
+    $this->outputPageFooter();
+    return ob_get_clean();
+  }
+
+  /**
+   * Generate a page suitable for updating a record in the given table.
+   *
+   * Note: takes the primary key for the record to update from the request.
+   *
+   * @param   string  $table  The table in which a record should be updated.
+   *
+   * @return  string
+   */
+  public function generateUpdatePage($table) {
+    if (is_null($table)) {
+      return 'Need a table to update things.';
+    }
+    if (!isset($_GET[self::FORM_PREFIX.'_primary'])) {
+      return 'Need a primary key to update things.';
+    }
+    $primary_key = $_GET[self::FORM_PREFIX.'_primary'];
+    ob_start();
+    $this->outputPageHeader('Update item in '.$table);
+    $f = $this->generateUpdateForm($table, $primary_key);
+    $f->addSubmit('', 'Update');
+    echo $f->render();
+    $this->outputPageFooter();
+    return ob_get_clean();
+  }
+
+  /**
+   * Generate a page to confirm deleting a record in the given table.
+   *
+   * Note: takes the primary key for the record to delete from the request.
+   *
+   * @param   string  $table  The table in which a record should be deleted.
+   *
+   * @return  string
+   */
+  public function generateDeleteConfirmPage($table) {
+    if (is_null($table)) {
+      return 'Need a table to delete things.';
+    }
+    if (!isset($_GET[self::FORM_PREFIX.'_primary'])) {
+      return 'Need a primary key to delete things.';
+    }
+    $primary_key = $_GET[self::FORM_PREFIX.'_primary'];
+    ob_start();
+    $this->outputPageHeader('Delete item in '.$table);
+    echo '<p>Are you sure you want to delete this item?</p>', "\n";
+    $data = $this->fetchRow($table, $primary_key);
+    echo "<ul>\n";
+    foreach ($data as $k => $v) {
+      echo '<li>'.String::escape($k).': '.String::escape($v)."</li>\n";
+    }
+    echo "</ul>\n";
+    $f = new FormGenerator();
+    $f->addHidden(self::FORM_PREFIX.'_action', 'delete');
+    $f->addHidden(self::FORM_PREFIX.'_args['.$table.']['.$this->schema[$table]['_primary'].']', $primary_key);
+    $f->addSubmit('', 'Delete');
+    echo $f->render();
+    echo '<a href="'.String::escape(self::cleanUrl()).'">Cancel</a>', "\n";
+    $this->outputPageFooter();
+    return ob_get_clean();
+  }
+
+  /**
+   * Generate a list of records in the given table.
+   *
+   * If the given table is null, then all tables defined in the schema will be
+   * listed.
+   *
+   * @param   string  $table  The table from which records should be listed.
+   *
+   * @return  string
+   */
+  public function generateListPage($table) {
+    ob_start();
+    if (is_null($table)) {
+      // TODO: list all tables
+      $this->outputPageHeader('All tables');
+      # $_GET[self::FORM_PREFIX.'_table']
+
+    } else {
+      // specific table
+      $this->outputPageHeader('Table '.$table);
+      $db = $this->db;
+      $primary_field = $this->schema[$table]['_primary'];
+      // TODO: join with belongsTo tables (and hasMany?)
+      $sql = 'SELECT * FROM `'.$table.'` ORDER BY `'.$primary_field.'`';
+      $stmt = $db->prepare($sql);
+      $stmt->execute();
+      if ($stmt->rowCount()) {
+        $header = false;
+        echo "<table>\n<thead>\n<tr>";
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        foreach (array_keys($row) as $col) {
+          echo '<th>'.String::escapeHTML($col).'</th>';
+        }
+        echo '<th class="actions">Actions</th>';
+        echo "</tr>\n</thead>\n<tfoot></tfoot>\n<tbody>\n";
+        $i = 0;
+        do {
+          echo '<tr class="zebra'.($i++ % 2).'">';
+          foreach ($row as $k => $v) {
+            if ($k === $primary_field) {
+              echo '<td class="primary">'.String::escapeHTML($v).'</td>';
+            } else {
+              echo '<td>'.String::escapeHTML($v).'</td>';
+            }
+          }
+          echo '<td class="actions"><a href="'.$this->generateActionUrl('update', $row[$primary_field]).'">Edit</a> <a href="'.$this->generateActionUrl('delete', $row[$primary_field]).'">Delete</a></th>';
+          echo "</tr>\n";
+        } while ($row = $stmt->fetch(PDO::FETCH_ASSOC));
+        echo "</tbody>\n</table>\n";
+      } else {
+        echo '<p>No rows to display.</p>', "\n";
+      }
+      echo '<p><a href="'.$this->generateActionUrl('create').'">New item</a></p>', "\n";
+    }
+    $this->outputPageFooter();
+    return ob_get_clean();
+  }
+
+  /**
+   * Generate a full page of the specified type.
+   *
+   * @param   string  $table  The table which the page should be based on.
+   * @param   string  $type   The type of page: create, update, delete or list.
+   *
+   * @return  string
+   */
+  public function generatePage($table, $type) {
+    switch ($type) {
+      case 'create':
+        return $this->generateCreatePage($table);
+        break;
+      case 'update':
+        return $this->generateUpdatePage($table);
+        break;
+      case 'delete':
+        return $this->generateDeleteConfirmPage($table);
+        break;
+      case 'list':
+      default:
+        return $this->generateListPage($table);
+        break;
+    }
+  }
+
+  /**
+   * Clean the scaffold method and primary key value arguments from the query string of a URL.
+   *
+   * @param   string  $url  The URL to be cleaned. If empty, uses the current URL.
+   *
+   * @return  string
+   */
+  protected static function cleanUrl($url='') {
+    if ($url === '') {
+      $url = $_SERVER['REQUEST_URI'];
+    }
+    if (isset($_GET[self::FORM_PREFIX.'_method'])) {
+      $url = preg_replace('/(\?.*)'.self::FORM_PREFIX.'_method=[^&]+/', '\1', $url);
+      if (isset($_GET[self::FORM_PREFIX.'_primary'])) {
+        $url = preg_replace('/(\?.*)'.self::FORM_PREFIX.'_primary=[^&]+/', '\1', $url);
+      }
+      $url = preg_replace('/[?&]+&/', '&', $url);
+      $url = preg_replace('/[?&]$/',  '',   $url);
+    }
+
+    return $url;
+  }
+
+  /**
+   * Do everything required for the scaffold, including processing actions and
+   * creating/displaying the page.
+   *
+   * @param   array   $schema  The schema for the database.
+   * @param   PDO     $db      The database connection to use.
+   * @param   string  $table   The table to be used.
+   *
+   * @return  string  The generated page to be displayed.
+   */
+  public static function doScaffold(array $schema, PDO $db, $table=null) {
+    $scaffold = new Scaffold($schema, $db);
+    if ($scaffold->processActions() === true) {
+      $url = self::cleanUrl();
+      Redirector::redirect($url);
+    }
+
+    $action = isset($_GET[self::FORM_PREFIX.'_method']) ? $_GET[self::FORM_PREFIX.'_method'] : 'list';
+    if (is_null($table) && isset($_GET[self::FORM_PREFIX.'_table'])) {
+      $table = $_GET[self::FORM_PREFIX.'_table'];
+    }
+
+    return $scaffold->generatePage($table, $action);
   }
 
   /**
@@ -341,6 +614,22 @@ class Scaffold {
   }
 
   /**
+   * Fetch a row with the given primary key from the given table and return it.
+   *
+   * @param  string  $table        The table from which to fetch a row.
+   * @param  string  $primary_key  The primary key value of the row to fetch.
+   *
+   * @return  array
+   */
+  protected function fetchRow($table, $primary_key) {
+    $primary_field = $this->schema[$table]['_primary'];
+    $sql = 'SELECT * FROM `'.$table.'` WHERE `'.$primary_field.'` = ?';
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(array($primary_key));
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  /**
    * Generate form elements suitable for creating a new record in the given
    * table.
    *
@@ -371,11 +660,7 @@ class Scaffold {
   public function generateUpdateForm($table, $primary_key, FormGenerator $generator = null) {
     $generator = $this->generateForm($table, 'update', $generator, $primary_key);
     // fetch row and populate form
-    $primary_field = $this->schema[$table]['_primary'];
-    $sql = 'SELECT * FROM `'.$table.'` WHERE `'.$primary_field.'` = ?';
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute(array($primary_key));
-    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    $data = $this->fetchRow($table, $primary_key);
     if (count($data)) {
       $generator->populateData(ArrayUtil::collapseKeys($data, self::FORM_PREFIX.'_args['.$table.']'));
     }
