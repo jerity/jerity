@@ -44,4 +44,38 @@ final class ArrayUtil {
     return $flat;
   }
 
+  /**
+   * Collapse a multi-dimensional key-value array down to a single-dimensional array, collapsing keys by appending.
+   *
+   * For example, the array:
+   *
+   *   array('a' => '16', 'foo' => array('bar' => 'a', 'qux' => array('baz' => 31415)))
+   *
+   * Will be flattened to:
+   *
+   *   array(
+   *     'a' => 16,
+   *     'foo[bar]' => 'a',
+   *     'foo[qux][baz]' = 31415
+   *   )
+   *
+   * @param   array   $array   The array to collapse.
+   * @param   string  $prefix  A prefix for the array
+   *
+   * @return  array  The collapsed array.
+   */
+  public static function collapseKeys(array $array, $prefix=null) {
+    $final = array();
+    foreach ($array as $k => $v) {
+      if (!is_null($prefix)) $k = $prefix."[$k]";
+      if (!is_array($v)) {
+        $final[$k] = $v;
+      } else {
+        // recurse and append to key
+        $final = array_merge($final, self::collapseKeys($v, $k));
+      }
+    }
+    return $final;
+  }
+
 }
