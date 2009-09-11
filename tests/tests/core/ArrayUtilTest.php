@@ -42,7 +42,7 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
     $multi[++$count] = array(array(array(0)), array('z'=>1, 'a'=>array(2, 'f'=>3, array(4))), 5);
     $result[ $count] = array(0, 1, 2, 3, 4, 5);
 
-    for ($i=0; $i<$count; ++$i) {
+    for ($i=0; $i<=$count; ++$i) {
       $final[] = array($multi[$i], $result[$i]);
     }
 
