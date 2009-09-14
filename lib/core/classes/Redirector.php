@@ -202,7 +202,7 @@ class Redirector {
       }
     } else {
       # TODO
-      if ($permanent) {
+      if (false /*$permanent*/) {
         header('HTTP/1.1 301 Moved Permanently');
       }
       header('Location: '.$url);
