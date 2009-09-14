@@ -310,6 +310,7 @@ EOHTML;
     $f = $this->generateCreateForm($table);
     $f->addSubmit('', 'Create');
     echo $f->render();
+    echo '<a href="'.String::escape(self::cleanUrl()).'">Cancel</a>', "\n";
     $this->outputPageFooter();
     return ob_get_clean();
   }
@@ -336,6 +337,7 @@ EOHTML;
     $f = $this->generateUpdateForm($table, $primary_key);
     $f->addSubmit('', 'Update');
     echo $f->render();
+    echo '<a href="'.String::escape(self::cleanUrl()).'">Cancel</a>', "\n";
     $this->outputPageFooter();
     return ob_get_clean();
   }
@@ -588,7 +590,7 @@ EOHTML;
       case 'char':
       case 'varchar':
         if (isset($length) && $length) {
-          return $generator->addInput($formname, $field, array('maxlength'=>$length, 'size'=>$length));
+          return $generator->addInput($formname, $field, array('maxlength'=>$length, 'size'=>min($length, 40)));
         } else {
           return $generator->addInput($formname, $field);
         }
@@ -606,7 +608,7 @@ EOHTML;
       case 'datetime':
         return $generator->addHint($field.' ('.$type.') goes here.');
       case 'text':
-        return $generator->addTextarea($formname, $field);
+        return $generator->addTextarea($formname, $field, array('rows'=>7, 'cols'=>60, 'style'=>'vertical-align: bottom;'));
       case 'enum':
         return $generator->addSelect($formname, $field, $additional);
       case 'boolean':
