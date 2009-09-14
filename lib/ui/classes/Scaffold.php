@@ -284,9 +284,10 @@ EOHTML;
     } else {
       $url .= '&';
     }
-    if (isset($_GET[self::FORM_PREFIX.'_table'])) {
-      $url .= self::FORM_PREFIX.'_table='.rawurlencode($_GET[self::FORM_PREFIX.'_table']).'&';
-    }
+    # not needed, as we don't clean the table from the URL in self::cleanUrl()
+    #if (isset($_GET[self::FORM_PREFIX.'_table'])) {
+    #  $url .= self::FORM_PREFIX.'_table='.rawurlencode($_GET[self::FORM_PREFIX.'_table']).'&';
+    #}
     $url .= self::FORM_PREFIX.'_method='.rawurlencode($action);
     if (!is_null($primary_key)) {
       $url .= '&'.self::FORM_PREFIX.'_primary='.rawurlencode($primary_key);
