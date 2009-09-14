@@ -68,15 +68,13 @@ class Scaffold {
    * @param  PDO    $db      The database connection to be used.
    */
   public function __construct(array $schema, PDO $db) {
-    $this->schema = $this->transformSchema($schema);
     $this->db = $db;
+    $this->schema = $this->transformSchema($schema);
   }
 
   /**
    * Normalise the schema and pull out important fields (e.g. primary key and
    * display field).
-   *
-   * @todo  Automatically fetch field definitions from database.
    *
    * @param   array  $schema  The database schema definition.
    *
@@ -90,34 +88,68 @@ class Scaffold {
       // display field (only one supported per table)
       $schema[$table]['_display'] = null;
 
-      foreach ($schema[$table]['fields'] as $field => $data) {
-        // just a simple field; normalise it
-        if (!is_array($data)) {
-          $schema[$table]['fields'][$field] = array($data, '', array());
-          continue;
-        }
-        // field attributes
-        if (!isset($data[1])) {
-          $data[1] = '';
-        } else {
-          $data[1] = strtolower($data[1]);
-          switch ($data[1]) {
-            case 'primary':
-              $schema[$table]['_primary'] = $field;
-              break;
-            case 'display':
-              $schema[$table]['_display'] = $field;
-              break;
+      if (isset($schema[$table]['fields']) && is_array($schema[$table]['fields']) && count($schema[$table]['fields'])) {
+        foreach ($schema[$table]['fields'] as $field => $data) {
+          // just a simple field; normalise it
+          if (!is_array($data)) {
+            $schema[$table]['fields'][$field] = array($data, '', array());
+            continue;
           }
+          // field attributes
+          if (!isset($data[1])) {
+            $data[1] = '';
+          } else {
+            $data[1] = strtolower($data[1]);
+            switch ($data[1]) {
+              case 'primary':
+                $schema[$table]['_primary'] = $field;
+                break;
+              case 'display':
+                $schema[$table]['_display'] = $field;
+                break;
+            }
+          }
+          // field values
+          if (!isset($data[2])) {
+            $data[2] = null;
+          } elseif (!is_array($data[2])) {
+            $data[2] = array($data[2]);
+          }
+          // save back to schema
+          $schema[$table]['fields'][$field] = $data;
         }
-        // field values
-        if (!isset($data[2])) {
-          $data[2] = null;
-        } elseif (!is_array($data[2])) {
-          $data[2] = array($data[2]);
+
+      } else {
+        // fetch from DB
+
+        try {
+          $mode = $this->db->getAttribute(PDO::ATTR_ERRMODE);
+          $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          $sql = 'DESCRIBE `'.$table.'`';
+          $stmt = $this->db->prepare($sql);
+          $stmt->execute();
+          while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            // Field, Type, 'Key' => 'PRI'
+            $data = array();
+            $data[0] = $r['Type'];
+            $data[0] = preg_replace('/^(.*).[0-9]+. unsigned/', 'u\1', $data[0]);
+            if ($r['Key'] === 'PRI') {
+              $data[1] = 'primary';
+              $schema[$table]['_primary'] = $r['Field'];
+            } else {
+              $data[1] = '';
+            }
+            if (!isset($schema[$table]['_display']) && preg_match('/^(?:name|title|description)$/i', $r['Field'])) {
+              $schema[$table]['_display'] = $r['Field'];
+            }
+            $data[2] = null;
+
+            $schema[$table]['fields'][$r['Field']] = $data;
+          }
+        } catch (Exception $e) {
+          $this->db->setAttribute(PDO::ATTR_ERRMODE, $mode);
+          var_dump('Database error: '.$e->getMessage());
         }
-        // save back to schema
-        $schema[$table]['fields'][$field] = $data;
       }
 
       if (isset($schema[$table]['belongsTo'])) {
