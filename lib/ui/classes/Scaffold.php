@@ -416,13 +416,38 @@ EOHTML;
       $this->outputPageHeader('Table '.$table);
       $db = $this->db;
       $primary_field = $this->schema[$table]['_primary'];
-      // TODO: join with belongsTo tables (and hasMany?)
-      $sql = 'SELECT * FROM `'.$table.'` ORDER BY `'.$primary_field.'`';
+      // join with belongsTo tables (and hasMany?)
+      if (count($this->schema[$table]['_belongsTo'])) {
+        $sql = 'SELECT * FROM `'.$table.'` ORDER BY `'.$primary_field.'`';
+        $select = array();
+        $from = array(''); # critical hack to include one LEFT JOIN
+        foreach (array_keys($this->schema[$table]['fields']) as $field) {
+          if (isset($this->schema[$table]['_belongsTo'][$field])) {
+            $linked_table = $this->schema[$table]['_belongsTo'][$field];
+            if (isset($this->schema[$linked_table]['_primary'])) {
+              $linked_field = $this->schema[$linked_table]['_primary'];
+              $linked_display_field = $this->schema[$linked_table]['_primary'];
+              if (isset($this->schema[$linked_table]['_display'])) {
+                $linked_display_field = $this->schema[$linked_table]['_display'];
+              }
+              $select[] = 'CONCAT(`'.$linked_table.'`.`'.$linked_display_field.'`, \' [\', `'.$table.'`.`'.$field.'`, \']\') AS `'.$field.'`';
+              $from[] = '`'.$linked_table.'` ON `'.$linked_table.'`.`'.$linked_field.'` = `'.$table.'`.`'.$field.'`';
+            } else {
+              $select[] = '`'.$table.'`.`'.$field.'`';
+            }
+          } else {
+            $select[] = '`'.$table.'`.`'.$field.'`';
+          }
+        }
+        $sql = 'SELECT '.implode(', ', $select).' FROM `'.$table.'`'.implode(' LEFT JOIN ', $from).' ORDER BY `'.$table.'`.`'.$primary_field.'`';
+      } else {
+        $sql = 'SELECT * FROM `'.$table.'` ORDER BY `'.$primary_field.'`';
+      }
       $stmt = $db->prepare($sql);
       $stmt->execute();
       if ($stmt->rowCount()) {
         $header = false;
-        echo "<table>\n<thead>\n<tr>";
+        echo "<table class=\"scaffold\">\n<thead>\n<tr>";
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         foreach (array_keys($row) as $col) {
           echo '<th>'.String::escapeHTML($col).'</th>';
