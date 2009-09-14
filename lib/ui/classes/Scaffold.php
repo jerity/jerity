@@ -402,9 +402,14 @@ EOHTML;
   public function generateListPage($table) {
     ob_start();
     if (is_null($table)) {
-      // TODO: list all tables
+      // list all tables
       $this->outputPageHeader('All tables');
       # $_GET[self::FORM_PREFIX.'_table']
+      echo "<ul>\n";
+      foreach (array_keys($this->schema) as $table) {
+        echo '<li><a href="'.$this->generateActionUrl('list').'&'.self::FORM_PREFIX.'_table='.rawurlencode($table).'">'.String::escape($table)."</a></li>\n";
+      }
+      echo "</ul>\n";
 
     } else {
       // specific table
@@ -484,14 +489,11 @@ EOHTML;
     if ($url === '') {
       $url = $_SERVER['REQUEST_URI'];
     }
-    if (isset($_GET[self::FORM_PREFIX.'_method'])) {
-      $url = preg_replace('/(\?.*)'.self::FORM_PREFIX.'_method=[^&]+/', '\1', $url);
-      if (isset($_GET[self::FORM_PREFIX.'_primary'])) {
-        $url = preg_replace('/(\?.*)'.self::FORM_PREFIX.'_primary=[^&]+/', '\1', $url);
-      }
-      $url = preg_replace('/[?&]+&/', '&', $url);
-      $url = preg_replace('/[?&]$/',  '',   $url);
-    }
+    $url = preg_replace('/&?'.self::FORM_PREFIX.'_method=[^&]+/', '\1', $url);
+    $url = preg_replace('/&?'.self::FORM_PREFIX.'_primary=[^&]+/', '\1', $url);
+    $url = preg_replace('/[?&]+&/',    '&',   $url);
+    $url = preg_replace('/[?&]$/',     '',    $url);
+    $url = preg_replace('/^([^?]+)&/', '\1?', $url);
 
     return $url;
   }
@@ -574,6 +576,9 @@ EOHTML;
    *                                       foreign key.
    *
    * @return  FormGenerator_Element
+   *
+   * @todo  Date/time field support
+   * @todo  Decide what to do with BLOBs, BINARY, etc
    */
   public function inputFromField(FormGenerator $generator, $table, $field) {
     $table_schema = $this->schema[$table];
