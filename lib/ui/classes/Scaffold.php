@@ -132,6 +132,16 @@ class Scaffold {
             // Field, Type, 'Key' => 'PRI'
             $data = array();
             $data[0] = $r['Type'];
+            if (preg_match('/tinyint/', $data[0])) {
+              // see if it's a boolean in disguise
+              $tmpsql = 'SELECT 1 FROM `'.$table.'` WHERE `'.$r['Field'].'` != 0 AND `'.$r['Field'].'` != 1';
+              $tstmt = $this->db->prepare($tmpsql);
+              $tstmt->execute();
+              if (!$tstmt->rowCount()) {
+                $data[0] = 'boolean';
+              }
+            }
+            $data[0] = preg_replace('/^(?:tiny|small|medium|big|long)/', '', $data[0]);
             $data[0] = preg_replace('/^(.*).[0-9]+. unsigned/', 'u\1', $data[0]);
             if ($r['Key'] === 'PRI') {
               $data[1] = 'primary';
