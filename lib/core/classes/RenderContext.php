@@ -27,6 +27,7 @@ class RenderContext {
 
   const DIALECT_FRAMESET     = 'frameset';
   const DIALECT_MOBILE       = 'mobile';
+  const DIALECT_NONE         = '';
   const DIALECT_STRICT       = 'strict';
   const DIALECT_TRANSITIONAL = 'transitional';
 
@@ -134,7 +135,7 @@ class RenderContext {
    *
    * @return  RenderContext
    */
-  public static function popGlobalContext(RenderContext $context) {
+  public static function popGlobalContext() {
     return array_shift(self::$globalContext);
   }
 
@@ -189,6 +190,21 @@ class RenderContext {
         $ctx->setLanguage(self::LANG_XHTML);
         $ctx->setVersion(1.1);
         $ctx->setDialect('');
+        break;
+      case self::TYPE_XHTML1_MOBILE:
+        $ctx->setLanguage(self::LANG_XHTML);
+        $ctx->setVersion(1.0);
+        $ctx->setDialect(self::DIALECT_MOBILE);
+        break;
+      case self::TYPE_XHTML1_1_MOBILE:
+        $ctx->setLanguage(self::LANG_XHTML);
+        $ctx->setVersion(1.1);
+        $ctx->setDialect(self::DIALECT_MOBILE);
+        break;
+      case self::TYPE_XHTML1_2_MOBILE:
+        $ctx->setLanguage(self::LANG_XHTML);
+        $ctx->setVersion(1.2);
+        $ctx->setDialect(self::DIALECT_MOBILE);
         break;
       default:
         throw new InvalidArgumentException('Unrecognised context type: '.$type);
@@ -262,9 +278,11 @@ class RenderContext {
   public function renderPreContent() {
     $output = '';
     if ($this->language == self::LANG_XML || $this->language == self::LANG_XHTML) {
-      $output .= '<'.'?xml version="1.0" encoding="utf-8" ?'.'>'."\n";
+      $output .= '<'.'?xml version="1.0" encoding="utf-8" ?'.">\n";
     }
-    $output .= $this->getDoctype()."\n";
+    if ($doctype = $this->getDoctype()) {
+      $output .= $doctype."\n";
+    }
     return $output;
   }
 
@@ -383,9 +401,10 @@ class RenderContext {
   }
 
   /**
-   * Set the content type appropriate for this rendering context. Blah.
+   * Set the content type appropriate for this rendering context, or null to
+   * automatically detect based on the properties of the context.
    *
-   * @param   bool  $type  The new content type for this rendering context.
+   * @param   string  $type  The new content type for this rendering context.
    * @return  string
    */
   public function setContentType($type) {
