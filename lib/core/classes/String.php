@@ -25,16 +25,17 @@ class String {
    * Escapes the provided text for (X)HTML output. If required, a full encoding can be done, which will encode
    * all entities rather than just the five special ones (< > ' " &).
    *
-   * @param  string   $text         The string to be made safe.
-   * @param  boolean  $full_encode  Whether to encode all special characters.
+   * @param  string   $text           The string to be made safe.
+   * @param  boolean  $full_encode    Whether to encode all special characters.
+   * @param  boolean  $double_encode  Whether to allow an entity to be encoded twice (e.g. "&amp;" -> "&amp;amp;")
    *
    * @return  string
    */
-  public static function escapeHTML($text, $full_encode = false) {
+  public static function escapeHTML($text, $full_encode = false, $double_encode = true) {
     if ($full_encode) {
-      return htmlentities($text, ENT_QUOTES, 'UTF-8', false);
+      return htmlentities($text, ENT_QUOTES, 'UTF-8', $double_encode);
     } else {
-      return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
+      return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', $double_encode);
     }
   }
 
@@ -48,14 +49,14 @@ class String {
    *
    * @return  string
    */
-  public static function escapeXML($text, $full_encode = false) {
+  public static function escapeXML($text, $full_encode = false, $double_encode = true) {
     if ($full_encode) {
       # TODO: Need to convert table to return numeric entities.
       #       For now just output bare minimal, i.e. don't do anything
       # http://uk.php.net/manual/en/function.get-html-translation-table.php#54927
-      return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
+      return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', $double_encode);
     } else {
-      return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', false);
+      return htmlspecialchars($text, ENT_QUOTES, 'UTF-8', $double_encode);
     }
   }
 
@@ -70,16 +71,14 @@ class String {
    */
   public static function escapeJS($text, $double_quote = true) {
     if ($double_quote) {
-      return str_replace(
-        array("\n",  "\r",  '"',   "'",   '</' ),
-        array('\\n', '\\r', '\\"', "\\'", '<\/'),
-        $text
+      return strtr(
+        $text,
+        array("\n" => "\\n", "\r" => "\\r", '"' => '\\"', "'" => "\\'", '\\' => "\\\\", '</' => "<\\/" )
       );
     } else {
-      return str_replace(
-        array("'",   '</' ),
-        array("\\'", '<\/'),
-        $text
+      return strtr(
+        $text,
+        array("'" => "\\'", '\\' => "\\\\", '</' => "<\\/")
       );
     }
   }
@@ -180,6 +179,7 @@ class String {
    * will force the ellipsis to prevent confusion.
    *
    * @todo  Preserve HTML tags and entities.
+   * @todo  Split into multiple functions: truncate, truncateFilename, truncatePath, ...
    *
    * @param  string   $text       The text to truncate.
    * @param  integer  $length     The amount of text to show.
@@ -265,7 +265,8 @@ class String {
    */
   public static function splitSplitCase($str) {
     $output = preg_split('/_+/', $str);
-    $output = array_filter($output, create_function('$a', 'return $a!=="";'));
+    $output = array_merge(array_filter($output, create_function('$a', 'return $a!=="";')));
+    if (!count($output)) $output = array('');
     return $output;
   }
 
