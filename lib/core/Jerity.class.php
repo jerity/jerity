@@ -38,9 +38,10 @@ class Jerity {
   // @codeCoverageIgnoreEnd
 
   /**
-   * Autoload a class by name. This function should not be called directly.
+   * Autoload a class by name. <b>This function should not be called directly.</b>
    *
    * @todo  Implement harder autoloading...
+   * @internal
    *
    * @param   string  $name  The name of the class to load
    *

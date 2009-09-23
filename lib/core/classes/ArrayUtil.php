@@ -26,7 +26,8 @@ final class ArrayUtil {
   // @codeCoverageIgnoreEnd
 
   /**
-   * Flattens an multi-dimensional array down to a single-dimensional array.
+   * Flattens an multi-dimensional array down to a single-dimensional array by
+   * recursive preorder traversal, discarding any keys.
    *
    * @param   array  $array  The array to flatten.
    *
@@ -45,19 +46,24 @@ final class ArrayUtil {
   }
 
   /**
-   * Collapse a multi-dimensional key-value array down to a single-dimensional array, collapsing keys by appending.
+   * Collapse a multi-dimensional key-value array down to a single-dimensional
+   * array, collapsing keys by appending.
    *
    * For example, the array:
    *
-   *   array('a' => '16', 'foo' => array('bar' => 'a', 'qux' => array('baz' => 31415)))
+   * <code>
+   * array('a' => '16', 'foo' => array('bar' => 'a', 'qux' => array('baz' => 31415)))
+   * </code>
    *
    * Will be flattened to:
    *
-   *   array(
-   *     'a' => 16,
-   *     'foo[bar]' => 'a',
-   *     'foo[qux][baz]' = 31415
-   *   )
+   * <code>
+   * array(
+   *   'a' => 16,
+   *   'foo[bar]' => 'a',
+   *   'foo[qux][baz]' = 31415
+   * )
+   * </code>
    *
    * @param   array   $array   The array to collapse.
    * @param   string  $prefix  A prefix for the array

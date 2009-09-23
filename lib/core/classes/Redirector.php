@@ -6,7 +6,7 @@
  */
 
 /**
- * Redirector class to handle redirection in a tidy and safe manner while
+ * A class to handle redirection in a tidy and safe manner while
  * providing useful information and allowing messages on redirect.
  *
  * @package    JerityCore
@@ -159,12 +159,12 @@ class Redirector {
    * on partial URLs).
    *
    * Partial URLs work as follows:
-   *   - /^#/  -- Appends a URL hash to the current URL.
-   *   - /^?/  -- Sets the query string for the current page.
-   *   - /^&/  -- Appends all specified queries to the URL (Overwrite).
-   *   - /^&&/ -- Appends all specified queries to the URL (No overwrite).
-   *   - /^\// -- Redirects to URL relative to root of site (prepends domain).
-   *   - /^[a-z]*:\/\// -- Redirects to absolute URL.
+   *   - <kbd>/^#/</kbd>  -- Appends a URL hash to the current URL.
+   *   - <kbd>/^?/</kbd>  -- Sets the query string for the current page.
+   *   - <kbd>/^&/</kbd>  -- Appends all specified queries to the URL (Overwrite).
+   *   - <kbd>/^&&/</kbd> -- Appends all specified queries to the URL (No overwrite).
+   *   - <kbd>/^\//</kbd> -- Redirects to URL relative to root of site (prepends domain).
+   *   - <kbd>/^[a-z]*:\/\//</kbd> -- Redirects to absolute URL.
    *
    * @todo    Make URL absolute
    * @todo    Specific exception for redirect error?

@@ -23,7 +23,7 @@ class String {
 
   /**
    * Escapes the provided text for (X)HTML output. If required, a full encoding can be done, which will encode
-   * all entities rather than just the five special ones (< > ' " &).
+   * all entities rather than just the five special ones (<kbd>< > ' " &</kbd>).
    *
    * @param  string   $text           The string to be made safe.
    * @param  boolean  $full_encode    Whether to encode all special characters.
@@ -42,7 +42,7 @@ class String {
   /**
    * Escapes the provided text for XML output. If required, a full encoding can
    * be done, which will encode all entities numerically, rather than just the
-   * five special ones (< > ' " &) to their named counterparts.
+   * five special ones (<kbd>< > ' " &</kbd>) to their named counterparts.
    *
    * @param  string   $text         The string to be made safe.
    * @param  boolean  $full_encode  Whether to encode all special characters.
@@ -88,7 +88,7 @@ class String {
    * Escapes the provided text according to the type of content being output.
    * The is the option to override to encode for a specific content type.  If
    * required, a full encoding can be done, which in the case of HTML/XHTML
-   * will use htmlentities() instead of htmlspecialchars().
+   * will use {@link htmlentities()} instead of {@link htmlspecialchars()}.
    *
    * Note that this function will escape JavaScript for double quotes rather
    * than single.
@@ -132,23 +132,26 @@ class String {
   /**
    * Create a natural conjunction of a list of items.
    *
-   * Examples (with oxford_comma = null):
-   *   array('one') --> 'one'
-   *   array('one', 'two') --> 'one and two'
-   *   array('one', 'two', 'three') --> 'one, two, and three'
-   *   array('one', 'two', 'three', 'four') --> 'one, two, three, and four'
+   * Examples (with oxford_comma = <kbd>null</kbd>):<ul>
+   *   <li><kbd>array('one')</kbd> --> 'one'</li>
+   *   <li><kbd>array('one', 'two')</kbd> --> 'one and two'</li>
+   *   <li><kbd>array('one', 'two', 'three')</kbd> --> 'one, two, and three'</li>
+   *   <li><kbd>array('one', 'two', 'three', 'four')</kbd> --> 'one, two, three, and four'</li>
+   * </ul>
    *
-   * Examples (with oxford_comma = true):
-   *   array('one') --> 'one'
-   *   array('one', 'two') --> 'one, and two'
-   *   array('one', 'two', 'three') --> 'one, two, and three'
-   *   array('one', 'two', 'three', 'four') --> 'one, two, three, and four'
+   * Examples (with oxford_comma = <kbd>true</kbd>):<ul>
+   *   <li><kbd>array('one')</kbd> --> 'one'</li>
+   *   <li><kbd>array('one', 'two')</kbd> --> 'one, and two'</li>
+   *   <li><kbd>array('one', 'two', 'three')</kbd> --> 'one, two, and three'</li>
+   *   <li><kbd>array('one', 'two', 'three', 'four')</kbd> --> 'one, two, three, and four'</li>
+   * </ul>
    *
-   * Examples (with oxford_comma = false):
-   *   array('one') --> 'one'
-   *   array('one', 'two') --> 'one and two'
-   *   array('one', 'two', 'three') --> 'one, two and three'
-   *   array('one', 'two', 'three', 'four') --> 'one, two, three and four'
+   * Examples (with oxford_comma = <kbd>false</kbd>):<ul>
+   *   <li><kbd>array('one')</kbd> --> 'one'</li>
+   *   <li><kbd>array('one', 'two')</kbd> --> 'one and two'</li>
+   *   <li><kbd>array('one', 'two', 'three')</kbd> --> 'one, two and three'</li>
+   *   <li><kbd>array('one', 'two', 'three', 'four')</kbd> --> 'one, two, three and four'</li>
+   * </ul>
    *
    * @param  array    $list          The list of items to join.
    * @param  boolean  $oxford_comma  Whether to force the "Oxford comma" on or off.
