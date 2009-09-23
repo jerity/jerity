@@ -27,7 +27,7 @@ class Number {
    * @param  int  $a  The first number to be compared.
    * @param  int  $b  The second number to be compared.
    *
-   * @return  0 if they are equal, -1 if $a < $b, 1 if $a > $b
+   * @return  int  0 if they are equal, -1 if $a < $b, 1 if $a > $b
    */
   public static function intcmp($a, $b) {
     $a = intval($a);
@@ -37,12 +37,12 @@ class Number {
 
   /**
    * Perform a floating-point comparison on two numbers. Note that the epsilon
-   * value used is currently 1.0-8.
+   * value used is currently 1.0e-8.
    *
    * @param  double  $a  The first number to be compared.
    * @param  double  $b  The second number to be compared.
    *
-   * @return  0 if they are equal, -1 if $a < $b, 1 if $a > $b
+   * @return  int  0 if they are equal, -1 if $a < $b, 1 if $a > $b
    */
   public static function dblcmp($a, $b) {
     $EPSILON = 1.0e-8;

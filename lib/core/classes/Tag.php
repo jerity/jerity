@@ -34,12 +34,12 @@ class Tag {
    *
    * Should only come in the MAP element.
    *
-   * Attributes:
-   * -----------
-   * Required: alt
-   * Optional: coords, href, nohref, shape
-   * Standard: Yes
-   * Event:    Yes
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> alt</li>
+   *   <li><b>Optional:</b> coords, href, nohref, shape</li>
+   *   <li><b>Standard:</b> Yes</li>
+   *   <li><b>Event:</b>    Yes</li>
+   * </ul>
    *
    * @param   string  $alt    The alternate text.
    * @param   array   $attrs  An associative array of addional attributes.
@@ -56,12 +56,12 @@ class Tag {
    *
    * Should only come in the HEAD element.
    *
-   * Attributes:
-   * -----------
-   * Required: href
-   * Optional: -
-   * Standard: No
-   * Event:    No
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> href</li>
+   *   <li><b>Optional:</b> -</li>
+   *   <li><b>Standard:</b> No</li>
+   *   <li><b>Event:</b>    No</li>
+   * </ul>
    *
    * @param   string  $href    The base href.
    *
@@ -75,12 +75,12 @@ class Tag {
   /**
    * Renders a BR tag according to the current render context.
    *
-   * Attributes:
-   * -----------
-   * Required: -
-   * Optional: -
-   * Standard: Partial (class, id, style, title)
-   * Event:    No
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> -</li>
+   *   <li><b>Optional:</b> -</li>
+   *   <li><b>Standard:</b> Partial (class, id, style, title)</li>
+   *   <li><b>Event:</b>    No</li>
+   * </ul>
    *
    * @param   array  $attrs  An associative array of addional attributes.
    *
@@ -95,12 +95,12 @@ class Tag {
   /**
    * Renders a COL tag according to the current render context.
    *
-   * Attributes:
-   * -----------
-   * Required: -
-   * Optional: align, char, charoff, span, valign, width
-   * Standard: Yes
-   * Event:    Yes
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> -</li>
+   *   <li><b>Optional:</b> align, char, charoff, span, valign, width</li>
+   *   <li><b>Standard:</b> Yes</li>
+   *   <li><b>Event:</b>    Yes</li>
+   * </ul>
    *
    * @param   array  $attrs  An associative array of addional attributes.
    *
@@ -113,12 +113,12 @@ class Tag {
   /**
    * Renders an HR tag according to the current render context.
    *
-   * Attributes:
-   * -----------
-   * Required: -
-   * Optional: -
-   * Standard: Yes
-   * Event:    Yes
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> -</li>
+   *   <li><b>Optional:</b> -</li>
+   *   <li><b>Standard:</b> Yes</li>
+   *   <li><b>Event:</b>    Yes</li>
+   * </ul>
    *
    * @param   array  $attrs  An associative array of addional attributes.
    *
@@ -131,12 +131,12 @@ class Tag {
   /**
    * Renders an IMG tag according to the current render context.
    *
-   * Attributes:
-   * -----------
-   * Required: alt, src
-   * Optional: height, ismap, longdesc, usemap, width
-   * Standard: Yes
-   * Event:    Yes
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> alt, src</li>
+   *   <li><b>Optional:</b> height, ismap, longdesc, usemap, width</li>
+   *   <li><b>Standard:</b> Yes</li>
+   *   <li><b>Event:</b>    Yes</li>
+   * </ul>
    *
    * @param   string  $src    The URL of an image.
    * @param   string  $alt    The alternate text.
@@ -153,13 +153,13 @@ class Tag {
   /**
    * Renders an INPUT tag according to the current render context.
    *
-   * Attributes:
-   * -----------
-   * Required: -
-   * Optional: accept, alt, checked, disabled, maxlength, (name), readonly, size,
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> -</li>
+   *   <li><b>Optional:</b> accept, alt, checked, disabled, maxlength, (name), readonly, size,</li>
    *           src, (type), (value)
-   * Standard: Yes
-   * Event:    Yes
+   *   <li><b>Standard:</b> Yes</li>
+   *   <li><b>Event:</b>    Yes</li>
+   * </ul>
    *
    * @param   string  $type   The type of the input element.
    * @param   string  $name   The name of the input element.
@@ -190,12 +190,12 @@ class Tag {
   /**
    * Renders a LINK tag according to the current render context.
    *
-   * Attributes:
-   * -----------
-   * Required: -
-   * Optional: charset, (href), hreflang, media, rel, rev, (type)
-   * Standard: Yes
-   * Event:    Yes
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> -</li>
+   *   <li><b>Optional:</b> charset, (href), hreflang, media, rel, rev, (type)</li>
+   *   <li><b>Standard:</b> Yes</li>
+   *   <li><b>Event:</b>    Yes</li>
+   * </ul>
    *
    * @param   string  $type   The type of the resource being linked to.
    * @param   string  $href   The URL of the resource being linked to.
@@ -211,12 +211,12 @@ class Tag {
   /**
    * Renders a META tag according to the current render context.
    *
-   * Attributes:
-   * -----------
-   * Required: content
-   * Optional: ( http-equiv | name, scheme )
-   * Standard: Partial (dir, lang, xml:lang)
-   * Event:    No
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> content</li>
+   *   <li><b>Optional:</b> ( http-equiv | name, scheme )</li>
+   *   <li><b>Standard:</b> Partial (dir, lang, xml:lang)</li>
+   *   <li><b>Event:</b>    No</li>
+   * </ul>
    *
    * @param   string   $name     The name of the metadata.
    * @param   string   $content  The meta content.
@@ -241,12 +241,12 @@ class Tag {
   /**
    * Renders a PARAM tag according to the current render context.
    *
-   * Attributes:
-   * -----------
-   * Required: name
-   * Optional: type, value, valuetype
-   * Standard: Partial (id)
-   * Event:    No
+   * <b>Attributes:</b><ul>
+   *   <li><b>Required:</b> name</li>
+   *   <li><b>Optional:</b> type, value, valuetype</li>
+   *   <li><b>Standard:</b> Partial (id)</li>
+   *   <li><b>Event:</b>    No</li>
+   * </ul>
    *
    * @param   string   $name     The name of the parameter.
    * @param   array    $attrs    An associative array of addional attributes.
@@ -303,7 +303,6 @@ class Tag {
    * Renders a STYLE tag according to the current render context.
    *
    * This is provided for inline stylesheets.
-   * source attribute.  The source attribute will take precedence.
    *
    * @param   string  $content  The inline content.
    * @param   array   $attrs    An associative array of addional attributes.
@@ -326,7 +325,7 @@ class Tag {
    * a provided expression.
    *
    * For more information on expression syntax, see:
-   *   http://msdn.microsoft.com/en-us/library/ms537512%28VS.85%29.aspx#syntax
+   *   {@link http://msdn.microsoft.com/en-us/library/ms537512%28VS.85%29.aspx#syntax}
    *
    * @param   string   $expression  The condition to check for.
    * @param   string   $content     The content to wrap inside the comment.
@@ -403,7 +402,7 @@ class Tag {
   }
 
   /**
-   * Check whether a tag can never contain any data.
+   * Returns true if and only if a tag can never contain any data.
    *
    * @param  string $tag  A tag name.
    *
@@ -474,7 +473,7 @@ class Tag {
    * the specified tag.
    *
    * See the following link for more information:
-   *   http://www.webdevout.net/articles/escaping-style-and-script-data
+   *   {@link http://www.webdevout.net/articles/escaping-style-and-script-data}
    *
    * @param  string  $tag   A tag name.
    * @param  bool    $open  Whether we want the opening or closing sequence.

@@ -13,52 +13,106 @@
  * @copyright  Copyright (c) 2009 Dave Ingram
  */
 class RenderContext {
+  /**#@+
+   * Known {@link RenderContext} languages.
+   */
+  /** CSS */
   const LANG_CSS   = 'css';
+  /** FBJS, Facebook's variant on JavaScript */
   const LANG_FBJS  = 'fbjs';
+  /** FBML, Facebook's markup language */
   const LANG_FBML  = 'fbml';
+  /** HTML */
   const LANG_HTML  = 'html';
+  /** JavaScript */
   const LANG_JS    = 'javascript';
+  /** JavaScript Object Notation */
   const LANG_JSON  = 'json';
+  /** Mobile HTML (obsolete?) */
   const LANG_MHTML = 'mhtml';
+  /** Plain text, or other text not covered here */
   const LANG_TEXT  = 'text';
+  /** Wireless Markup Language, generally used by older WAP browsers */
   const LANG_WML   = 'wml';
+  /** XHTML */
   const LANG_XHTML = 'xhtml';
+  /** XML */
   const LANG_XML   = 'xml';
+  /**#@-*/
 
+  /**#@+
+   * Known {@link RenderContext} language dialects, generally for (X)HTML.
+   */
+  /** Frameset (frame container page) */
   const DIALECT_FRAMESET     = 'frameset';
+  /** Mobile (for XHTML) */
   const DIALECT_MOBILE       = 'mobile';
+  /** No dialect/not applicable */
   const DIALECT_NONE         = '';
+  /** Strict dialect; deprecated features disallowed */
   const DIALECT_STRICT       = 'strict';
+  /** Transitional dialect; deprecated features allowed */
   const DIALECT_TRANSITIONAL = 'transitional';
+  /**#@-*/
 
+  /**#@+
+   * Known {@link RenderContext} MIME content types.
+   */
+  /** Atom (similar to RSS but more powerful) */
   const CONTENT_ATOM     = 'application/atom+xml';
+  /** CSS */
   const CONTENT_CSS      = 'text/css';
+  /** HTML */
   const CONTENT_HTML     = 'text/html';
+  /** JavaScript */
   const CONTENT_JS       = 'text/javascript'; # application/javascript
+  /** JavaScript Object Notation (JSON) */
   const CONTENT_JSON     = 'application/json';
+  /** RSS (Rich Site Summary/Syndication) */
   const CONTENT_RSS      = 'application/rss+xml';
+  /** Plain text */
   const CONTENT_TEXT     = 'text/plain';
+  /** Wireless Markup Language */
   const CONTENT_WML      = 'application/vnd.wap.wml';
+  /** XHTML */
   const CONTENT_XHTML    = 'application/xhtml+xml';
+  /** XHTML (mobile profile) */
   const CONTENT_XHTML_MP = 'application/vnd.wap.xhtml+xml';
+  /** XML */
   const CONTENT_XML      = 'application/xml';
+  /**#@-*/
 
+  /**#@+
+   * Common {@link RenderContext} types, incorporating language, version and dialect.
+   */
+  /** HTML 4.01 frameset */
   const TYPE_HTML4_FRAMESET      = 'html-4.01-frameset';
+  /** HTML 4.01 strict */
   const TYPE_HTML4_STRICT        = 'html-4.01-strict';
+  /** HTML 4.01 transitional */
   const TYPE_HTML4_TRANSITIONAL  = 'html-4.01-transitional';
+  /** HTML 5 */
   const TYPE_HTML5               = 'html-5';
+  /** XHTML 1.0 frameset */
   const TYPE_XHTML1_FRAMESET     = 'xhtml-1.0-frameset';
+  /** XHTML 1.0 mobile profile */
   const TYPE_XHTML1_MOBILE       = 'xhtml-1.0-mobile';
+  /** XHTML 1.0 strict */
   const TYPE_XHTML1_STRICT       = 'xhtml-1.0-strict';
+  /** XHTML 1.0 transitional */
   const TYPE_XHTML1_TRANSITIONAL = 'xhtml-1.0-transitional';
+  /** XHTML 1.1 */
   const TYPE_XHTML1_1            = 'xhtml-1.1';
+  /** XHTML 1.1 mobile profile */
   const TYPE_XHTML1_1_MOBILE     = 'xhtml-1.1-mobile';
+  /** XHTML 1.2 mobile profile */
   const TYPE_XHTML1_2_MOBILE     = 'xhtml-1.2-mobile';
+  /**#@-*/
 
   /**
    * The shared global rendering context.
    *
-   * @var  RenderContext
+   * @var  array
    */
   static protected $globalContext = array();
 
