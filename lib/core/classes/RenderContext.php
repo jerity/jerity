@@ -145,7 +145,23 @@ class RenderContext {
    */
   protected $contentType  = null;
 
-  public function __construct() {
+  /**
+   * Create a new rendering context.
+   *
+   * @param  string  $language  The language for the new context.
+   * @param  mixed   $version   The language version.
+   * @param  string  $dialect   The language dialect.
+   */
+  public function __construct($language=null, $version=null, $dialect=null) {
+    if (!is_null($language)) {
+      $this->setLanguage($language);
+      if (!is_null($version)) {
+        $this->setVersion($version);
+      }
+      if (!is_null($dialect)) {
+        $this->setDialect($dialect);
+      }
+    }
   }
 
   /**
@@ -153,7 +169,7 @@ class RenderContext {
    *
    * @return  RenderContext
    */
-  public static function getGlobalContext() {
+  public static function get() {
     if (count(self::$globalContext)) {
       return self::$globalContext[0];
     } else {
@@ -162,13 +178,34 @@ class RenderContext {
   }
 
   /**
+   * (Deprecated) Return the global shared rendering context.
+   *
+   * @return  RenderContext
+   */
+  public static function getGlobalContext() {
+    trigger_error('Deprecated in favour of RenderContext::get()', E_USER_WARNING);
+    return self::get();
+  }
+
+  /**
    * Set the global shared rendering context.
    *
    * @param   RenderContext  $context  The new global rendering context.
    * @return  RenderContext
    */
-  public static function setGlobalContext(RenderContext $context) {
+  public static function set(RenderContext $context) {
     return (self::$globalContext = array($context));
+  }
+
+  /**
+   * (Deprecated) Set the global shared rendering context.
+   *
+   * @param   RenderContext  $context  The new global rendering context.
+   * @return  RenderContext
+   */
+  public static function setGlobalContext(RenderContext $context) {
+    trigger_error('Deprecated in favour of RenderContext::set()', E_USER_WARNING);
+    return self::set($context);
   }
 
   /**
@@ -178,9 +215,21 @@ class RenderContext {
    * @param   RenderContext  $context  The new global rendering context.
    * @return  RenderContext
    */
-  public static function pushGlobalContext(RenderContext $context) {
+  public static function push(RenderContext $context) {
     array_unshift(self::$globalContext, $context);
     return $context;
+  }
+
+  /**
+   * (Deprecated) Push a new rendering context onto the global shared rendering
+   * context stack.
+   *
+   * @param   RenderContext  $context  The new global rendering context.
+   * @return  RenderContext
+   */
+  public static function pushGlobalContext(RenderContext $context) {
+    trigger_error('Deprecated in favour of RenderContext::push()', E_USER_WARNING);
+    return self::push($context);
   }
 
   /**
@@ -189,8 +238,19 @@ class RenderContext {
    *
    * @return  RenderContext
    */
-  public static function popGlobalContext() {
+  public static function pop() {
     return array_shift(self::$globalContext);
+  }
+
+  /**
+   * (Deprecated) Pop a rendering context from the global shared rendering
+   * context stack and return it.
+   *
+   * @return  RenderContext
+   */
+  public static function popGlobalContext() {
+    trigger_error('Deprecated in favour of RenderContext::pop()', E_USER_WARNING);
+    return self::pop();
   }
 
   /**
@@ -201,7 +261,7 @@ class RenderContext {
    *
    * @throws  InvalidArgumentException
    */
-  public static function makeContext($type) {
+  public static function create($type) {
     // standard context factory
     $ctx = new RenderContext();
     switch ($type) {
@@ -265,6 +325,19 @@ class RenderContext {
     }
 
     return $ctx;
+  }
+
+  /**
+   * (Deprecated) Generate one of a number of common rendering contexts.
+   *
+   * @param   string  $type  One of the TYPE_* class constants.
+   * @return  RenderContext
+   *
+   * @throws  InvalidArgumentException
+   */
+  public static function makeContext($type) {
+    trigger_error('Deprecated in favour of RenderContext::create()', E_USER_WARNING);
+    return self::create($type);
   }
 
   /**
