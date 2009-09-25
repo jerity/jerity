@@ -6,8 +6,9 @@
  */
 
 /**
- * A class to handle redirection in a tidy and safe manner while
- * providing useful information and allowing messages on redirect.
+ * A class to handle redirection in a tidy and safe manner which
+ * can preserve state by passing POST data and any extra information
+ * as required in the session.
  *
  * @package    JerityCore
  * @author     Nick Pope <nick@nickpope.me.uk>
@@ -18,17 +19,17 @@ class Redirector {
   /**
    * The name of the variable to use in the URL.
    */
-  const ITEM_KEY = 'msid';
+  const ITEM_KEY = '_r';
 
   /**
-   * Session variable name under which redirector should store data.
+   * Session variable name under which redirector should store state data.
    */
-  const DATA_KEY = 'Redirector_Data';
+  const DATA_KEY = '__redirector_states';
 
   /**
    * The maximum number of redirects to store.
    */
-  const MAX_ITEMS = 5;
+  const MAX_ITEMS = 15;
 
   /**
    * The redirector should not be instantiated.
@@ -38,7 +39,7 @@ class Redirector {
   // @codeCoverageIgnoreEnd
 
   /**
-   * Generates a new key for storing the message.
+   * Generates a new key for storing state information.
    *
    * @return  string
    */
@@ -47,12 +48,17 @@ class Redirector {
   }
 
   /**
-   * Fetches the redirect requested.
+   * Fetches the redirect requested and performs garbage collection.
+   *
+   * @param  string  $item_key  The key of a specific state to fetch.
    *
    * @return  array
    */
-  protected static function getRedirect() {
-    $item_key = (isset($_REQUEST[self::ITEM_KEY]) ? $_REQUEST[self::ITEM_KEY] : null);
+  protected static function getState($item_key = null) {
+    self::garbageCollect();
+    if (is_null($item_key)) {
+      $item_key = (isset($_REQUEST[self::ITEM_KEY]) ? $_REQUEST[self::ITEM_KEY] : null);
+    }
     if (!isset($_SESSION[self::DATA_KEY][$item_key])) {
       return null;
     }
@@ -61,57 +67,12 @@ class Redirector {
   }
 
   /**
-   * Retrieves the text for the current message.
-   * Also performs garbage collection.
-   *
-   * @param   boolean  $format  Whether to format the output.
-   *
-   * @return  string
-   */
-  public static function getMessage($format = true) {
-    # Perform garbage collection.
-    self::garbageCollect();
-    # Get the message.
-    $r = self::getRedirect();
-    if (isset($r['message'])) {
-      if ($format && isset($r['message_type'])) {
-        $n = new Notification($r['message'], $r['message_type']);
-        return $n->render();
-      } else {
-        return $r['message'];
-      }
-    } else {
-      return null;
-    }
-  }
-
-  /**
-   * Retrieves the type of the current message.
-   *
-   * @return  string
-   */
-  public static function getMessageType() {
-    $r = self::getRedirect();
-    return (isset($r['message_type']) ? $r['message_type'] : null);
-  }
-
-  /**
-   * Returns the POST data that was available when the redirect occurred.
-   *
-   * @return  array
-   */
-  public static function getPostData() {
-    $r = self::getRedirect();
-    return (isset($r['post_data']) ? $r['post_data'] : null);
-  }
-
-  /**
    * Returns the source of the current redirect.
    *
    * @return  string
    */
   public static function getSource() {
-    $r = self::getRedirect();
+    $r = self::getState();
     return (isset($r['source']) ? $r['source'] : null);
   }
 
@@ -121,13 +82,45 @@ class Redirector {
    * @return  string
    */
   public static function getTarget() {
-    $r = self::getRedirect();
+    $r = self::getState();
     return (isset($r['target']) ? $r['target'] : null);
   }
 
   /**
-   * Reduce the number of messages stored in the session until a maximum
-   * threshold is reached.
+   * Returns the time the current redirect occured at.
+   *
+   * @return  string
+   */
+  public static function getTime() {
+    $r = self::getState();
+    return (isset($r['time']) ? $r['time'] : null);
+  }
+
+  /**
+   * Returns the POST data that was available when the redirect occurred.
+   *
+   * @return  array
+   */
+  public static function getPostData() {
+    $r = self::getState();
+    return (isset($r['post_data']) ? $r['post_data'] : null);
+  }
+
+  /**
+   * Returns the extra data that was stored when the redirect occurred.
+   *
+   * @return  array
+   */
+  public static function getExtraData() {
+    $r = self::getState();
+    return (isset($r['extra_data']) ? $r['extra_data'] : null);
+  }
+
+  /**
+   * Reduce the amount of stored state information in the session until the
+   * maximum threshold is reached.
+   *
+   * @todo  Also garbage collect based on time of redirect.
    */
   protected static function garbageCollect() {
     # We only want to garbage collect once per page load at most:
@@ -148,9 +141,9 @@ class Redirector {
   }
 
   /**
-   * Clears all messages currently stored by the redirector.
+   * Clears all state information currently stored by the redirector.
    */
-  public static function purgeMessages() {
+  public static function purgeStates() {
     $_SESSION[self::DATA_KEY] = array();
   }
 
@@ -166,23 +159,15 @@ class Redirector {
    *   - <kbd>/^\//</kbd> -- Redirects to URL relative to root of site (prepends domain).
    *   - <kbd>/^[a-z]*:\/\//</kbd> -- Redirects to absolute URL.
    *
-   * @todo    Make URL absolute
-   * @todo    Specific exception for redirect error?
-   * @todo    Ensure that we handle standard redirects correctly.
-   * @todo    Check RFC 2616
+   * @todo  Make URL absolute
+   * @todo  Ensure that we handle standard redirects correctly.
+   * @todo  Check RFC 2616
    *
-   * @param   string  $url           Where to redirect to.
-   * @param   string  $message       The message to display after redirect.
+   * @param  string  $url  Where to redirect to.
    *
-   * @throws  Exception
+   * @throws  RedirectorException
    */
-  public static function redirect($url = null, $message = null) {
-    # Skip some processing for most redirects
-    if (!is_null($message)) {
-      # Need to be very careful not to introduce an infinite loop
-      return self::redirectWithState($url, $message);
-    }
-
+  public static function redirect($url = null) {
     # TODO: Update URL to be absolute...
 
     # Get the current render context
@@ -197,8 +182,7 @@ class Redirector {
           echo '<script type="text/javascript">window.location = \''.$url.'\';</script>"';
           break;
         default:
-          # TODO: Create a specific exception...
-          throw new Exception('Cannot redirect - headers sent and invalid render context.');
+          throw new RedirectorException('Cannot redirect - headers sent and invalid render context.');
       }
     } else {
       # TODO
@@ -226,46 +210,29 @@ class Redirector {
   }
 
   /**
-   * Performs a redirection to the specified URL.
+   * Performs a redirection to the specified URL with storage of state
+   * information in the session.
    *
-   * If specified, a message can be provided with a specific notification type
-   * such that the message can be rendered according to the nature of its
-   * content.
+   * @see  Redirector::redirect()
    *
-   * The message type should be one of the provided constants in the
-   * Notification class.
+   * @todo  Make URL absolute
    *
-   * @see     Notification
-   * @see     Redirector::redirect()
+   * @param  string  $url         Where to redirect to.
+   * @param  mixed   $extra_data  Extra data to preserve across redirect.
    *
-   * @todo    Make URL absolute
-   * @todo    Specific exception for redirect error?
-   * @todo    Ensure that we handle standard redirects correctly.
-   * @todo    Check RFC 2616
-   *
-   * @param   string  $url           Where to redirect to.
-   * @param   string  $message       The message to display after redirect.
-   * @param   string  $message_type  The type of message.
-   *
-   * @throws  Exception
+   * @throws  RedirectorException
    */
-  public static function redirectWithState($url = null, $message = null, $message_type = null) {
-    # We will select a default type of message to display if none has been
-    # specified.  Informational messages are likely to be the most desired.
-    if (!is_null($message) && is_null($message_type)) {
-      $message_type = Notification::INFORMATION;
-    }
-
+  public static function redirectWithState($url = null, $extra_data = null) {
     # TODO: Update URL to be absolute...
 
     # Store redirect information in the session
     $item_key = self::generateKey();
     $_SESSION[self::DATA_KEY][$item_key] = array(
-      'message'      => $message,
-      'message_type' => $message_type,
-      'post_data'    => $_POST,
-      'source'       => (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null),
-      'target'       => $url,
+      'source'     => (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null),
+      'target'     => $url,
+      'time'       => microtime(true);
+      'post_data'  => $_POST,
+      'extra_data' => $extra_data,
     );
 
     # Append item key to query string
