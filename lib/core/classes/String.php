@@ -44,8 +44,9 @@ class String {
    * be done, which will encode all entities numerically, rather than just the
    * five special ones (<kbd>< > ' " &</kbd>) to their named counterparts.
    *
-   * @param  string   $text         The string to be made safe.
-   * @param  boolean  $full_encode  Whether to encode all special characters.
+   * @param  string   $text           The string to be made safe.
+   * @param  boolean  $full_encode    Whether to encode all special characters.
+   * @param  boolean  $double_encode  Whether to allow an entity to be encoded twice (e.g. "&amp;" -> "&amp;amp;")
    *
    * @return  string
    */
