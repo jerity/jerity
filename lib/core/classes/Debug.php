@@ -75,7 +75,7 @@ class Debug {
    */
   public static function comment($text) {
     if (!self::$enabled) return;
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
     switch ($ctx->getLanguage()) {
       case RenderContext::LANG_FBML:
       case RenderContext::LANG_HTML:
