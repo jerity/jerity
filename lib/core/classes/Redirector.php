@@ -171,7 +171,7 @@ class Redirector {
     # TODO: Update URL to be absolute...
 
     # Get the current render context
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
 
     # Perform redirect
     if (headers_sent()) {
