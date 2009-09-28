@@ -72,7 +72,7 @@ class Notification implements Renderable {
     if (empty($this->message)) return '';
 
     # Get the current render context.
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
 
     # Render the message appropriately
     switch ($ctx->getLanguage()) {
