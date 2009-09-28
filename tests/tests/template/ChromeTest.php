@@ -333,7 +333,7 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $a = ob_get_clean();
 
     ob_start();
-    echo RenderContext::getGlobalContext()->renderPreContent();
+    echo RenderContext::get()->renderPreContent();
     Chrome::outputOpeningTags();
     Chrome::outputMetaTags();
     Chrome::outputTitleTag();

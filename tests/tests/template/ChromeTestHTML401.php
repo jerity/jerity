@@ -5,9 +5,7 @@ require_once(dirname(__FILE__).'/ChromeTest.php'); // needed for separator provi
 class ChromeTestHTML401 extends PHPUnit_Framework_TestCase {
   public function setUp() {
     Template::setPath(DATA_DIR.'templates');
-    RenderContext::setGlobalContext(
-      RenderContext::makeContext(RenderContext::TYPE_HTML4_STRICT)
-    );
+    RenderContext::set(RenderContext::create(RenderContext::TYPE_HTML4_STRICT));
   }
 
   /**
