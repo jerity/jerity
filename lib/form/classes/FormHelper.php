@@ -72,4 +72,52 @@ class FormHelper {
     }
   }
 
+  /**
+   * Checks whether a form field contains an integer.
+   *
+   * @param  string          $field   The field to check.
+   * @param  integer | null  $method  The method to check for.
+   *
+   * @return  boolean
+   *
+   * @throws  InvalidArgumentException
+   */
+  public static function isInteger($field, $method = null) {
+    if (is_null($method)) $method = self::$method;
+    switch ($method) {
+      case self::METHOD_POST:
+        if (!isset($_POST[$field])) return false;
+        return String::isInteger($_POST[$field]);
+      case self::METHOD_GET:
+        if (!isset($_GET[$field])) return false;
+        return String::isInteger($_GET[$field]);
+      default:
+        throw new InvalidArgumentException('Invalid method.');
+    }
+  }
+
+  /**
+   * Checks whether a form field contains a floating point number.
+   *
+   * @param  string          $field   The field to check.
+   * @param  integer | null  $method  The method to check for.
+   *
+   * @return  boolean
+   *
+   * @throws  InvalidArgumentException
+   */
+  public static function isFloat($field, $method = null) {
+    if (is_null($method)) $method = self::$method;
+    switch ($method) {
+      case self::METHOD_POST:
+        if (!isset($_POST[$field])) return false;
+        return String::isFloat($_POST[$field]);
+      case self::METHOD_GET:
+        if (!isset($_GET[$field])) return false;
+        return String::isFloat($_GET[$field]);
+      default:
+        throw new InvalidArgumentException('Invalid method.');
+    }
+  }
+
 }
