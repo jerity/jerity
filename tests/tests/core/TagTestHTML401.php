@@ -3,7 +3,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/setUp.php');
 
 class TagTestHTML401 extends PHPUnit_Framework_TestCase {
   public function setUp() {
-    RenderContext::setGlobalContext(RenderContext::makeContext(RenderContext::TYPE_HTML4_STRICT));
+    RenderContext::set(RenderContext::create(RenderContext::TYPE_HTML4_STRICT));
   }
 
   /**

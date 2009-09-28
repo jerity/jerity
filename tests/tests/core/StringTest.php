@@ -16,14 +16,14 @@ class StringTest extends PHPUnit_Framework_TestCase {
       // as it's usually the sensible behaviour.
       return;
     }
-    $ctx = RenderContext::makeContext(RenderContext::TYPE_HTML4_STRICT);
-    RenderContext::pushGlobalContext($ctx);
+    $ctx = RenderContext::create(RenderContext::TYPE_HTML4_STRICT);
+    RenderContext::push($ctx);
     $this->assertSame($expected, String::escape($text, null, $full_encode), 'Escaping using HTML RenderContext');
-    $ctx = RenderContext::makeContext(RenderContext::TYPE_XHTML1_STRICT);
-    RenderContext::pushGlobalContext($ctx);
+    $ctx = RenderContext::create(RenderContext::TYPE_XHTML1_STRICT);
+    RenderContext::push($ctx);
     $this->assertSame($expected, String::escape($text, null, $full_encode), 'Escaping using XHTML RenderContext');
-    RenderContext::popGlobalContext();
-    RenderContext::popGlobalContext();
+    RenderContext::pop();
+    RenderContext::pop();
     $this->assertSame($expected, String::escape($text, RenderContext::CONTENT_HTML, $full_encode), 'Escaping using HTML content override');
     $this->assertSame($expected, String::escape($text, RenderContext::CONTENT_XHTML, $full_encode), 'Escaping using XHTML content override');
   }
@@ -68,9 +68,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     }
     $ctx = new RenderContext();
     $ctx->setLanguage(RenderContext::LANG_XML);
-    RenderContext::pushGlobalContext($ctx);
+    RenderContext::push($ctx);
     $this->assertSame($expected, String::escape($text, null, $full_encode), 'Escaping using RenderContext');
-    RenderContext::popGlobalContext();
+    RenderContext::pop();
     $this->assertSame($expected, String::escape($text, RenderContext::CONTENT_XML, $full_encode), 'Escaping using content override');
   }
 
@@ -114,9 +114,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     }
     $ctx = new RenderContext();
     $ctx->setLanguage(RenderContext::LANG_JS);
-    RenderContext::pushGlobalContext($ctx);
+    RenderContext::push($ctx);
     $this->assertSame($expected, String::escape($text), 'Escaping using RenderContext');
-    RenderContext::popGlobalContext();
+    RenderContext::pop();
     $this->assertSame($expected, String::escape($text, RenderContext::CONTENT_JS), 'Escaping using content override');
   }
 
@@ -142,9 +142,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $text = '<foo\">\'&thing';
     $ctx = new RenderContext();
     $ctx->setLanguage(RenderContext::LANG_TEXT);
-    RenderContext::pushGlobalContext($ctx);
+    RenderContext::push($ctx);
     $this->assertSame($text, String::escape($text), 'Escaping using RenderContext');
-    RenderContext::popGlobalContext();
+    RenderContext::pop();
     try {
       $tmp = String::escape($text, RenderContext::CONTENT_TEXT);
       $this->fail('Escape override failure did not fail.');
@@ -188,13 +188,13 @@ class StringTest extends PHPUnit_Framework_TestCase {
     if ($text_mode) {
       $ctx = new RenderContext();
       $ctx->setLanguage(RenderContext::LANG_TEXT);
-      RenderContext::pushGlobalContext($ctx);
+      RenderContext::push($ctx);
     } else {
-      $this->assertSame(RenderContext::getGlobalContext()->getLanguage(), RenderContext::LANG_HTML, 'Wrong RenderContext!');
+      $this->assertSame(RenderContext::get()->getLanguage(), RenderContext::LANG_HTML, 'Wrong RenderContext!');
     }
     $this->assertSame($expected, String::truncate($text, $length, $boundary, $ellipsis, $extension));
     if ($text_mode) {
-      RenderContext::popGlobalContext();
+      RenderContext::pop();
     }
   }
 

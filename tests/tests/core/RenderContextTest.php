@@ -4,66 +4,66 @@ require_once(dirname(dirname(dirname(__FILE__))).'/setUp.php');
 class RenderContextTest extends PHPUnit_Framework_TestCase {
 
   /**
-   * @covers  RenderContext::getGlobalContext()
+   * @covers  RenderContext::get()
    */
   public function testInitialGlobalContext() {
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
     $this->assertType('RenderContext', $ctx);
   }
 
   /**
-   * @covers  RenderContext::pushGlobalContext()
-   * @covers  RenderContext::popGlobalContext()
+   * @covers  RenderContext::push()
+   * @covers  RenderContext::pop()
    */
   public function testPushPopContext() {
-    $ctx1 = RenderContext::getGlobalContext();
+    $ctx1 = RenderContext::get();
     $this->assertType('RenderContext', $ctx1);
 
-    $newctx = RenderContext::makeContext(RenderContext::TYPE_HTML5);
-    RenderContext::pushGlobalContext($newctx);
-    $ctx2 = RenderContext::getGlobalContext();
+    $newctx = RenderContext::create(RenderContext::TYPE_HTML5);
+    RenderContext::push($newctx);
+    $ctx2 = RenderContext::get();
     $this->assertNotSame($ctx1, $ctx2);
     $this->assertNotEquals($ctx1, $ctx2);
     $this->assertEquals($newctx, $ctx2);
     $this->assertSame($newctx, $ctx2);
 
-    $ctx2a = RenderContext::popGlobalContext();
+    $ctx2a = RenderContext::pop();
     $this->assertEquals($newctx, $ctx2a);
     $this->assertSame($newctx, $ctx2a);
-    $ctx1a = RenderContext::getGlobalContext();
+    $ctx1a = RenderContext::get();
     $this->assertEquals($ctx1, $ctx1a);
     $this->assertSame($ctx1, $ctx1a);
   }
 
   /**
-   * @covers  RenderContext::getGlobalContext()
-   * @covers  RenderContext::pushGlobalContext()
-   * @covers  RenderContext::popGlobalContext()
+   * @covers  RenderContext::get()
+   * @covers  RenderContext::push()
+   * @covers  RenderContext::pop()
    */
   public function testEmptyGlobalContext() {
     $ctxs = array();
-    while ($ctx = RenderContext::popGlobalContext()) {
+    while ($ctx = RenderContext::pop()) {
       $ctxs[] = $ctx;
     }
 
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
     $this->assertSame(null, $ctx);
 
     $ctxs = array_reverse($ctxs);
     foreach ($ctxs as $ctx) {
-      RenderContext::pushGlobalContext($ctx);
+      RenderContext::push($ctx);
     }
   }
 
   /**
-   * @covers  RenderContext::makeContext()
+   * @covers  RenderContext::create()
    * @covers  RenderContext::getLanguage()
    * @covers  RenderContext::getVersion()
    * @covers  RenderContext::getDialect()
    *
-   * @dataProvider  makeContextProvider
+   * @dataProvider  createProvider
    */
-  public function testMakeContext($type) {
+  public function testCreate($type) {
     $bits = explode('-', $type);
     while (count($bits) < 3) {
       $bits[] = null;
@@ -72,13 +72,13 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
     $version = doubleval($version);
     if (is_null($dialect))  $dialect='';
 
-    $ctx = RenderContext::makeContext($type);
+    $ctx = RenderContext::create($type);
     $this->assertSame(  $language, $ctx->getLanguage());
     $this->assertEquals($version,  $ctx->getVersion());
     $this->assertSame(  $dialect,  $ctx->getDialect());
   }
 
-  public static function makeContextProvider() {
+  public static function createProvider() {
     return array(
       array(RenderContext::TYPE_HTML4_FRAMESET),
       array(RenderContext::TYPE_HTML4_STRICT),
@@ -95,12 +95,12 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::makeContext()
+   * @covers  RenderContext::create()
    *
    * @expectedException  InvalidArgumentException
    */
-  public function testMakeContextFail() {
-    $ctx = RenderContext::makeContext('js-1.1');
+  public function testCreateFail() {
+    $ctx = RenderContext::create('js-1.1');
   }
 
   /**
@@ -124,6 +124,12 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($ver,    $ctx->getVersion());
     $this->assertSame($dialect,  $ctx->getDialect());
     $this->assertSame($expected, $ctx->getDoctype());
+
+    $ctx = new RenderContext($lang, $ver, $dialect);
+    $this->assertSame($lang,     $ctx->getLanguage());
+    $this->assertEquals($ver,    $ctx->getVersion());
+    $this->assertSame($dialect,  $ctx->getDialect());
+
     $preContent = $ctx->renderPreContent();
     if ($lang == RenderContext::LANG_XML || $lang == RenderContext::LANG_XHTML) {
       $this->assertContains('<'.'?xml version="1.0" encoding="utf-8" ?'.">\n", $preContent);
@@ -170,10 +176,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
    * @expectedException  InvalidArgumentException
    */
   public function testGetDoctypeFail($lang, $ver, $dialect) {
-    $ctx = new RenderContext();
-    $ctx->setLanguage($lang);
-    $ctx->setVersion($ver);
-    $ctx->setDialect($dialect);
+    $ctx = new RenderContext($lang, $ver, $dialect);
     $dt = $ctx->getDoctype();
   }
 
@@ -191,9 +194,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  contentTypeProvider
    */
   public function testContentTypeDetection($lang, $dialect, $strict, $expected) {
-    $ctx = new RenderContext();
-    $ctx->setLanguage($lang);
-    $ctx->setDialect($dialect);
+    $ctx = new RenderContext($lang, null, $dialect);
     $this->assertSame($expected, $ctx->getContentType($strict));
   }
 
@@ -221,7 +222,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
    * @covers  RenderContext::getContentType()
    */
   public function testContentTypeCache() {
-    $ctx = RenderContext::makeContext(RenderContext::TYPE_HTML5);
+    $ctx = RenderContext::create(RenderContext::TYPE_HTML5);
     $this->assertSame(RenderContext::CONTENT_HTML, $ctx->getContentType());
     $this->assertSame(RenderContext::CONTENT_HTML, $ctx->getContentType());
   }
@@ -232,8 +233,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
    * @dataProvider  xmlSyntaxProvider
    */
   public function testIsXMLSyntax($lang, $expected) {
-    $ctx = new RenderContext();
-    $ctx->setLanguage($lang);
+    $ctx = new RenderContext($lang);
     $this->assertSame($expected, $ctx->isXMLSyntax());
   }
 
