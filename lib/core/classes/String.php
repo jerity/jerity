@@ -102,7 +102,7 @@ class String {
    */
   public static function escape($text, $override = null, $full_encode = false) {
     if (is_null($override)) {
-      $contentType = RenderContext::getGlobalContext()->getContentType();
+      $contentType = RenderContext::get()->getContentType();
     } else {
       $contentType = $override;
     }
@@ -194,7 +194,7 @@ class String {
    * @return  string
    */
   public static function truncate($text, $length, $boundary = true, $ellipsis = true, $extension = false) {
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
 
     $text = trim($text);
     if (strlen($text) < $length) return $text;

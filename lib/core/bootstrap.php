@@ -12,4 +12,4 @@ require_once(dirname(__FILE__).'/Jerity.class.php');
 Jerity::addAutoloadDir(dirname(__FILE__));
 
 # Set default global render context to HTML 4.01 Strict
-RenderContext::setGlobalContext(RenderContext::makeContext(RenderContext::TYPE_HTML4_STRICT));
+RenderContext::set(RenderContext::create(RenderContext::TYPE_HTML4_STRICT));

@@ -366,7 +366,7 @@ class Tag {
     $tag = strtolower($tag);
 
     # Check whether we need to account for XML.
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
     $is_xml = $ctx->isXMLSyntax();
 
     $r = '<'.$tag;
@@ -410,7 +410,7 @@ class Tag {
    */
   public static function isAlwaysEmpty($tag) {
     $tag = strtolower($tag);
-    $is_xhtml = (RenderContext::getGlobalContext()->getLanguage() === RenderContext::LANG_XHTML);
+    $is_xhtml = (RenderContext::get()->getLanguage() === RenderContext::LANG_XHTML);
     // don't know anything about non-XHTML
     if (!$is_xhtml) return false;
     switch ($tag) {
@@ -439,7 +439,7 @@ class Tag {
    */
   public static function isImpliedCData($tag) {
     $tag = strtolower($tag);
-    $is_xhtml = (RenderContext::getGlobalContext()->getLanguage() === RenderContext::LANG_XHTML);
+    $is_xhtml = (RenderContext::get()->getLanguage() === RenderContext::LANG_XHTML);
     // don't know anything about non-XHTML
     if (!$is_xhtml) return false;
     switch ($tag) {
@@ -482,7 +482,7 @@ class Tag {
    */
   public static function getContentMask($tag, $open) {
     $tag = strtolower($tag);
-    $is_html = (RenderContext::getGlobalContext()->getLanguage() === RenderContext::LANG_HTML);
+    $is_html = (RenderContext::get()->getLanguage() === RenderContext::LANG_HTML);
     switch ($tag) {
       case 'script':
         if (self::isImpliedCData($tag)) {
