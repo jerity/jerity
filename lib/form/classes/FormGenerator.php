@@ -26,6 +26,11 @@ class FormGenerator {
    * Whether we need a top-level list
    */
   protected $topLevelList = true;
+  /**
+   * Whether we want the form tags to be generated.  If not, we can generate
+   * nested chunks of form elements which can be added with addCustomHTML().
+   */
+  protected $generateFormTags = true;
 
 
   /**
@@ -33,8 +38,9 @@ class FormGenerator {
    *
    * @param bool $topLevelList Whether to create the top-level UL. You almost always want this off.
    */
-  public function __construct($topLevelList=false) {
+  public function __construct($topLevelList=false, $generateFormTags=true) {
     $this->topLevelList = $topLevelList;
+    $this->generateFormTags = $generateFormTags;
   }
 
   public function setAttribute($name, $value) {
@@ -206,21 +212,25 @@ class FormGenerator {
    * @return string
    */
   public function render($action=null, $method=null) {
-    $props = $this->formProperties;
-    if (!is_null($action))            $props['action'] = $action;
-    elseif (!isset($props['action'])) $props['action'] = $_SERVER['REQUEST_URI'];
-    if (!is_null($method))            $props['method'] = strtoupper($method);
-    elseif (!isset($props['method'])) $props['method'] = 'POST';
-    $out = '<form';
-    foreach ($props as $k=>$v) {
-      $out .= ' '.$k.'="'.String::escape($v, true).'"';
+    $out = '';
+
+    if ($this->generateFormTags) {
+      $props = $this->formProperties;
+      if (!is_null($action))            $props['action'] = $action;
+      elseif (!isset($props['action'])) $props['action'] = $_SERVER['REQUEST_URI'];
+      if (!is_null($method))            $props['method'] = strtoupper($method);
+      elseif (!isset($props['method'])) $props['method'] = 'POST';
+      $out .= '<form';
+      foreach ($props as $k=>$v) {
+        $out .= ' '.$k.'="'.String::escape($v, true).'"';
+      }
+      $out .= ">\n";
     }
-    $out .= ">\n";
 
     // render elements
     $out .= $this->renderElementList($this->fields);
 
-    $out .= "</form>\n";
+    if ($this->generateFormTags) $out .= "</form>\n";
 
     return $out;
   }
