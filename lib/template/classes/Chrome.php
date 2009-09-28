@@ -737,7 +737,7 @@ class Chrome extends Template {
    */
   protected static function getDefaultXMLNamespace() {
     $ns = array();
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
     switch ($ctx->getLanguage()) {
       case RenderContext::LANG_XHTML:
         $ns['xmlns'] = self::XMLNS_XHTML;
@@ -772,7 +772,7 @@ class Chrome extends Template {
    * appropriate.
    */
   public static function outputOpeningTags() {
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
     $languages  = '';
     $namespaces = '';
     $profiles   = '';
@@ -884,7 +884,7 @@ class Chrome extends Template {
    * Outputs the HTML head of the page.
    */
   public static function outputHead() {
-    $ctx = RenderContext::getGlobalContext();
+    $ctx = RenderContext::get();
     echo $ctx->renderPreContent();
 
     # Opening <html> and <head> tags
