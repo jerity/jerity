@@ -23,10 +23,18 @@ class Debug {
   protected static $enabled = false;
 
   /**
+   * If true, the redirects will be paused if debugging is enabled.
+   *
+   * @var  boolean
+   */
+  protected static $pause_redirect = false;
+
+  /**
    * Non-instantiable class.
    */
   // @codeCoverageIgnoreStart
-  private function __construct() { }
+  private function __construct() {
+  }
   // @codeCoverageIgnoreEnd
 
   ##############################################################################
@@ -58,6 +66,20 @@ class Debug {
       if (extension_loaded('xdebug')) xdebug_disable();
       ini_set('display_errors', 'off');
     }
+  }
+
+  /**
+   * Checks or sets whether to pause on redirect.
+   *
+   * @param  bool  $pause  Whether to pause on redirect.
+   *
+   * @return  bool
+   */
+  public static function pauseOnRedirect($pause = null) {
+    if (!is_null($pause) && is_bool($pause)) {
+      self::$pause_redirect = $pause;
+    }
+    return self::$pause_redirect;
   }
 
   # }}} debugging control

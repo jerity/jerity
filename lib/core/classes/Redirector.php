@@ -149,9 +149,9 @@ class Redirector {
 
   /**
    * Performs a simple redirection to the specified URL (see below for details
-   * on partial URLs).
+   * on shorthand URLs).
    *
-   * Partial URLs work as follows:
+   * Shorthand URLs work as follows:
    *   - <kbd>/^#/</kbd>  -- Appends a URL hash to the current URL.
    *   - <kbd>/^?/</kbd>  -- Sets the query string for the current page.
    *   - <kbd>/^&/</kbd>  -- Appends all specified queries to the URL (Overwrite).
@@ -159,19 +159,34 @@ class Redirector {
    *   - <kbd>/^\//</kbd> -- Redirects to URL relative to root of site (prepends domain).
    *   - <kbd>/^[a-z]*:\/\//</kbd> -- Redirects to absolute URL.
    *
-   * @todo  Make URL absolute
-   * @todo  Ensure that we handle standard redirects correctly.
-   * @todo  Check RFC 2616
+   * There is also support for pausing redirects for debugging purposes.
+   * 
+   * @see Debug::pauseOnRedirect()
    *
-   * @param  string  $url  Where to redirect to.
+   * @param  string  $url        Where to redirect to.
+   * @param  bool    $permanent  Whether to redirect permanently (default: false)
    *
    * @throws  RedirectorException
    */
-  public static function redirect($url = null) {
-    # TODO: Update URL to be absolute...
+  public static function redirect($url = null, $permanent = false) {
+    $url = URL::ize($url);
 
     # Get the current render context
     $ctx = RenderContext::get();
+
+    # Check whether we should suspend redirects
+    if (Debug::isEnabled && (Debug::pauseOnRedirect() || Error::hasErred())) {
+      echo '<div>';
+      printf('<p><strong>Paused Redirect:</strong> <a href="%s">%s</a></p>.', $url, String::escapeHTML($url));
+      if (Error::hasErred()) {
+        echo '<p><strong>Last Error:</strong></p>';
+        Debug::out(Error::getLast());
+      }
+      echo '</div>';
+    }
+
+    # Write and close session to avoid losing changes:
+    session_write_close();
 
     # Perform redirect
     if (headers_sent()) {
@@ -185,15 +200,11 @@ class Redirector {
           throw new RedirectorException('Cannot redirect - headers sent and invalid render context.');
       }
     } else {
-      # TODO
-      if (false /*$permanent*/) {
-        header('HTTP/1.1 301 Moved Permanently');
-      }
+      if ($permanent) header('HTTP/1.1 301 Moved Permanently');
       header('Location: '.$url);
     }
 
-    # Output message just in case we have a silly browser
-    # TODO: Check RFC 2616
+    # Output message just in case we have a silly browser [RFC2616]
     if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'HEAD') {
       switch ($ctx->getLanguage()) {
         case RenderContext::LANG_HTML:
@@ -215,22 +226,20 @@ class Redirector {
    *
    * @see  Redirector::redirect()
    *
-   * @todo  Make URL absolute
-   *
    * @param  string  $url         Where to redirect to.
    * @param  mixed   $extra_data  Extra data to preserve across redirect.
    *
    * @throws  RedirectorException
    */
   public static function redirectWithState($url = null, $extra_data = null) {
-    # TODO: Update URL to be absolute...
+    $url = URL::ize($url);
 
     # Store redirect information in the session
     $item_key = self::generateKey();
     $_SESSION[self::DATA_KEY][$item_key] = array(
       'source'     => (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null),
       'target'     => $url,
-      'time'       => microtime(true);
+      'time'       => microtime(true),
       'post_data'  => $_POST,
       'extra_data' => $extra_data,
     );

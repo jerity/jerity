@@ -21,7 +21,30 @@ class Error {
    * Non-instantiable class.
    */
   // @codeCoverageIgnoreStart
-  private function __construct() { }
+  private function __construct() {
+  }
   // @codeCoverageIgnoreEnd
+
+  /**
+   * Checks whether the error handler has run into an error.
+   *
+   * @todo  Stub - implement.
+   *
+   * @return  bool
+   */
+  public static function hasErred() {
+    return false;
+  }
+
+  /**
+   * Gets the last error that occured.
+   *
+   * @todo  Stub - implement.
+   *
+   * @return  string
+   */
+  public static function getLast() {
+    return '';
+  }
 
 }
