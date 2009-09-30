@@ -217,7 +217,7 @@ class FormGenerator {
     if ($this->generateFormTags) {
       $props = $this->formProperties;
       if (!is_null($action))            $props['action'] = $action;
-      elseif (!isset($props['action'])) $props['action'] = $_SERVER['REQUEST_URI'];
+      elseif (!isset($props['action'])) $props['action'] = URL::getCurrent();
       if (!is_null($method))            $props['method'] = strtoupper($method);
       elseif (!isset($props['method'])) $props['method'] = 'POST';
       $out .= '<form';
