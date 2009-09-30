@@ -175,7 +175,7 @@ class Redirector {
     $ctx = RenderContext::get();
 
     # Check whether we should suspend redirects
-    if (Debug::isEnabled && (Debug::pauseOnRedirect() || Error::hasErred())) {
+    if (Debug::isEnabled() && (Debug::pauseOnRedirect() || Error::hasErred())) {
       echo '<div>';
       printf('<p><strong>Paused Redirect:</strong> <a href="%s">%s</a></p>.', $url, String::escapeHTML($url));
       if (Error::hasErred()) {
