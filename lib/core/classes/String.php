@@ -131,6 +131,52 @@ class String {
   }
 
   /**
+   * Makes a string safe for use as a filename.
+   *
+   * Converts the following characters to an underscore: < > : " \ / | ? *
+   * Removes non-printing characters in the range [0..31].
+   *
+   * @todo  Add parameter to select target OS/filsystem.
+   *
+   * @param  string   $filename     The filename to make safe.
+   * @param  array    $extra_rules  Character --> Replacement
+   * @param  boolean  $reduce       Reduce multiple replaced characters to one.
+   *
+   * @return  string
+   */
+  public static function escapeFilename($filename, array $extra_rules = array(), $reduce = true) {
+    $reserved = str_split('<>:"\\/|?*');
+    $nonprint = array_map('chr', range(0, 31));
+    $exclude = array_merge($reserved, array_keys($extra_rules), $nonprint);
+    $replace = array_merge(array_fill(0, count($reserved), '_'), array_values($extra_rules));
+    $filename = str_replace($exclude, $replace, $filename);
+    if ($reduce) {
+      return preg_replace(array_map(create_function('$c', 'return "/([{$c}])+/";'), array_unique($replace)), '$1', $filename);
+    } else {
+      return $filename;
+    }
+  }
+
+  /**
+   * Makes a string safe for use as a path.
+   *
+   * Currently this is just a synonym for escapeFilename().
+   *
+   * @see  String::escapeFilename()
+   *
+   * @todo  Add parameter to select target OS/filsystem.
+   *
+   * @param  string   $filename     The filename to make safe.
+   * @param  array    $extra_rules  Character --> Replacement
+   * @param  boolean  $reduce       Reduce multiple replaced characters to one.
+   *
+   * @return  string
+   */
+  public static function escapePath($path, array $extra_rules = array(), $reduce = true) {
+    return self::escapeFilename($path, $extra_rules, $reduce);
+  }
+
+  /**
    * Create a natural conjunction of a list of items.
    *
    * Examples (with oxford_comma = <kbd>null</kbd>):<ul>
