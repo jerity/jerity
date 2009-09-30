@@ -31,7 +31,7 @@ class URL {
 
   protected static $current = null;
 
-  protected static $ignore_query_parameters = array();
+  protected static $ignored_query_parameters = array();
 
   /**
    * Creates a new URL object.
@@ -44,7 +44,9 @@ class URL {
         $this->processShorthand($url);
       } else {
         $c = parse_url($url);
-        $c['query'] = $this->splitQueryString($c['query']);
+        if (isset($c['query'])) {
+          $c['query'] = $this->splitQueryString($c['query']);
+        }
         $this->components = $c + $this->components;
       }
     }
@@ -100,7 +102,7 @@ class URL {
    * @return  URL
    */
   public static function getCurrent($recreate = false) {
-    if (is_null($current) || $recreate) {
+    if (is_null(self::$current) || $recreate) {
       $url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://');
       $url .= $_SERVER['SERVER_NAME'];
       if (isset($_SERVER['HTTPS']) && $_SERVER['SERVER_PORT'] !== 443 || $_SERVER['SERVER_PORT'] !== 80) {
@@ -425,7 +427,7 @@ class URL {
    * @return  array
    */
   protected function splitQueryString($query) {
-    if (!is_string) throw new InvalidArgumentException('String expected for splitting.');
+    if (!is_string($query)) throw new InvalidArgumentException('String expected for splitting.');
     $q = array();
     if (!empty($query)) {
       foreach(explode('&', $query) as $i) {
