@@ -533,4 +533,42 @@ class URL {
     throw new InvalidArgumentException('Unable to get URL information.');
   }
 
+  /**
+   * Returns the absolute URL.
+   *
+   * @return  string
+   */
+  public function absolute() {
+    return $this->__toString();
+  }
+
+  /**
+   * Returns this URL as a shorthand relative to the current URL.
+   *
+   * If any one of the components before the path differ, an absolute URL is
+   * returned.
+   *
+   * @param  bool  $minimal  Whether to attempt to exclude the path.
+   *
+   * @return  string
+   */
+  public function relative($minimal = true) {
+    $current = URL::getCurrent();
+    $url = '';
+    extract($this->components);
+    switch (true) {
+      case ($scheme   !== $current->getScheme()):
+      case ($user     !== $current->getUser()):
+      case ($password !== $current->getPassword()):
+      case ($host     !== $current->getHost()):
+      case ($port     !== $current->getPort()):
+        return $this->absolute();
+      case (!$minimal || $path !== $current->getPath()):
+        $url .= (empty($path) ? '' : '/' . ltrim($path, '/'));
+    }
+    $url .= (empty($query) ? '' : '?'.$this->combineQueryString($query));
+    $url .= (empty($fragment) ? '' : $fragment);
+    return $url;
+  }
+
 }
