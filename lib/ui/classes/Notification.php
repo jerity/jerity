@@ -6,9 +6,8 @@
  */
 
 /**
- * Notification class for standard formatting.
- *
- * @todo  Remove?  Used with Redirector.  Perhaps more suitable for UI package.
+ * Notification class for standard formatting of messages. Also provides the
+ * ability to send notifications over redirects.
  *
  * @package  JerityCore
  * @author  Nick Pope <nick@nickpope.me.uk>
@@ -23,6 +22,11 @@ class Notification implements Renderable {
   const INFORMATION = 'msg_info';
   const WARNING     = 'msg_warn';
   const ERROR       = 'msg_error';
+
+  /**
+   * The key to use for storing notification data in the redirector state.
+   */
+  const DATA_KEY = '__notification';
 
   /**
    * The message to be output.
@@ -158,6 +162,46 @@ class Notification implements Renderable {
     }
 
     $this->type = $type;
+  }
+
+  /**
+   * Redirects with saved state containing a message.  The notification is
+   * automatically added to the extra state data.
+   *
+   * @see  Redirector::redirect()
+   *
+   * @param  string  $url         Where to redirect to.
+   * @param  mixed   $extra_data  Extra data to preserve across redirect.
+   *
+   * @throws  RedirectorException
+   */
+  public function doRedirect($url = null, $extra_data = null) {
+    $notification = array(self::DATA_KEY => serialize($this));
+    if (is_null($extra_data)) {
+      $extra_data = $notification;
+    } else {
+      $extra_data = array_merge($extra_data, $notification);
+    }
+    Redirector::redirectWithState($url, $extra_data);
+  }
+
+  /**
+   * Gets the current notification object which was set via redirection. This
+   * is used to get the notification that should be displayed after we have
+   * been redirected.
+   *
+   * @see Notification::doRedirect()
+   *
+   * @return  Notification | null
+   */
+  public static function getCurrent() {
+    $extra_data = Redirector::getExtraData();
+    if (!is_null($extra_data)) {
+      if (isset($extra_data[self::DATA_KEY])) {
+        return unserialize($extra_data[self::DATA_KEY]);
+      }
+    }
+    return null;
   }
 
 }
