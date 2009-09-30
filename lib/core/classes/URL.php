@@ -31,6 +31,8 @@ class URL {
 
   protected static $current = null;
 
+  protected static $ignore_query_parameters = array();
+
   /**
    * Creates a new URL object.
    *
@@ -89,10 +91,16 @@ class URL {
    * Returns the URL of the current page, and stores it statically.
    * This URL cannot be modified - you must clone it first.
    *
+   * It is possible to recreate the object, but this is probably only
+   * desirable if the ignored query string list has been modified after the
+   * first call to this method.
+   *
+   * @param  bool  $recreate  Recreates the current URL object.
+   *
    * @return  URL
    */
-  public static function getCurrent() {
-    if (is_null($current)) {
+  public static function getCurrent($recreate = false) {
+    if (is_null($current) || $recreate) {
       $url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://');
       $url .= $_SERVER['SERVER_NAME'];
       if (isset($_SERVER['HTTPS']) && $_SERVER['SERVER_PORT'] !== 443 || $_SERVER['SERVER_PORT'] !== 80) {
@@ -100,6 +108,9 @@ class URL {
       }
       $url .= '/'.ltrim($_SERVER['REQUEST_URI'], '/');
       self::$current = new self($url);
+      foreach (self::$ignored_query_parameters as $i) {
+        self::$current->removeFromQueryString($i);
+      }
     }
     return self::$current;
   }
@@ -569,6 +580,44 @@ class URL {
     $url .= (empty($query) ? '' : '?'.$this->combineQueryString($query));
     $url .= (empty($fragment) ? '' : $fragment);
     return $url;
+  }
+
+  /**
+   * Gets all of the query string parameters being ignored.
+   *
+   * @return  array
+   */
+  public static function getIgnoredQueryParameters($key) {
+    return self::$ignored_query_parameters;
+  }
+
+  /**
+   * Sets the query string parameters to be ignored.
+   *
+   * @param  array  $keys  The keys of the query string parameters to be
+   *                       ignored.
+   */
+  public static function setIgnoredQueryParameters($keys) {
+    self::$ignored_query_parameters = array_combine($keys, $keys);
+  }
+
+  /**
+   * Specify a query string parameter to ignore when fetching the current URL.
+   *
+   * @param  string  $key  The key of the query string parameter to ignore.
+   */
+  public static function ignoreQueryParameter($key) {
+    self::$ignored_query_parameters[$key] = $key;
+  }
+
+  /**
+   * Specify a query string parameter to unignore when fetching the current
+   * URL.
+   *
+   * @param  string  $key  The key of the query string parameter to unignore.
+   */
+  public static function unignoreQueryParameter($key) {
+    unset(self::$ignored_query_parameters[$key]);
   }
 
 }
