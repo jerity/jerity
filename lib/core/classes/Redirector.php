@@ -238,7 +238,7 @@ class Redirector {
     $item_key = self::generateKey();
     $_SESSION[self::DATA_KEY][$item_key] = array(
       'source'     => (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null),
-      'target'     => $url,
+      'target'     => $url->absolute(),
       'time'       => microtime(true),
       'post_data'  => $_POST,
       'extra_data' => $extra_data,
