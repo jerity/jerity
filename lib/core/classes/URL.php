@@ -105,14 +105,15 @@ class URL {
     if (is_null(self::$current) || $recreate) {
       $url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://');
       $url .= $_SERVER['SERVER_NAME'];
-      if (isset($_SERVER['HTTPS']) && $_SERVER['SERVER_PORT'] !== 443 || $_SERVER['SERVER_PORT'] !== 80) {
+      if (isset($_SERVER['HTTPS']) && $_SERVER['SERVER_PORT'] != 443 || $_SERVER['SERVER_PORT'] != 80) {
         $url .= ':'.$_SERVER['SERVER_PORT'];
       }
       $url .= '/'.ltrim($_SERVER['REQUEST_URI'], '/');
-      self::$current = new self($url);
+      $url = new self($url);
       foreach (self::$ignored_query_parameters as $i) {
-        self::$current->removeFromQueryString($i);
+        $url->removeFromQueryString($i);
       }
+      self::$current = $url;
     }
     return self::$current;
   }
