@@ -65,7 +65,7 @@ class URL {
    * @param  string  $shorthand  The shorthand modification
    */
   protected function processShorthand($shorthand) {
-    $this->components = self::getCurrent()->components;
+    $this->makeCloneOf(self::getCurrent());
     switch ($shorthand[0]) {
       case '#':
         $this->setFragment(ltrim($shorthand, '#'));
@@ -651,4 +651,12 @@ class URL {
     unset(self::$ignored_query_parameters[$key]);
   }
 
+  /**
+   * Make this object a clone of another URL.
+   *
+   * @param  URL  $url  The URL object to be cloned.
+   */
+  public function makeCloneOf(URL $url) {
+    $this->components = $url->components;
+  }
 }
