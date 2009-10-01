@@ -142,12 +142,15 @@ class URL {
    * @param  string  $scheme
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function setScheme($scheme) {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['scheme'] = $scheme;
+    return $this;
   }
 
   /**
@@ -165,12 +168,15 @@ class URL {
    * @param  string  $host
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function setHost($host) {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['host'] = $host;
+    return $this;
   }
 
   /**
@@ -189,6 +195,8 @@ class URL {
    *
    * @throws  InvalidArgumentException
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function setPort($port) {
     if ($this === self::$current) {
@@ -198,18 +206,22 @@ class URL {
       throw new InvalidArgumentException('Ports must be in the range [0-65535]');
     }
     $this->components['port'] = $port;
+    return $this;
   }
 
   /**
    * Clears the port.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function clearPort() {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['port'] = '';
+    return $this;
   }
 
   /**
@@ -227,24 +239,30 @@ class URL {
    * @param  string  $user  The user to connect with.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function setUser($user) {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['user'] = $user;
+    return $this;
   }
 
   /**
    * Clears the user.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function clearUser() {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['user'] = '';
+    return $this;
   }
 
   /**
@@ -262,24 +280,30 @@ class URL {
    * @param  string  $password  The password to authenticate with.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function setPassword($password) {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['pass'] = $password;
+    return $this;
   }
 
   /**
    * Clears the password.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function clearPassword() {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['pass'] = '';
+    return $this;
   }
 
   /**
@@ -288,6 +312,8 @@ class URL {
    * @param  string  $path  The string to add to the path.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function appendToPath($path) {
     if ($this === self::$current) {
@@ -295,6 +321,7 @@ class URL {
     }
     $this->components['path'] = rtrim($this->components['path'], '/') . '/'
                               . preg_replace('#/+#', '/', ltrim($path, '/'));
+    return $this;
   }
 
   /**
@@ -312,24 +339,30 @@ class URL {
    * @param  string  $path  The path to the resource.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function setPath($path) {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['path'] = preg_replace('#/+#', '/', ltrim($path, '/'));
+    return $this;
   }
 
   /**
    * Clears the path.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function clearPath() {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['path'] = '';
+    return $this;
   }
 
   /**
@@ -340,6 +373,8 @@ class URL {
    * @param  boolean  $overwrite  Whether to overwrite existing values.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function appendToQueryString($key, $value = null, $overwrite = true) {
     if ($this === self::$current) {
@@ -355,6 +390,7 @@ class URL {
     } else {
       $query[$key] = $value;
     }
+    return $this;
   }
 
   /**
@@ -366,6 +402,8 @@ class URL {
    *                         removed.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function removeFromQueryString($key, $value = null) {
     if ($this === self::$current) {
@@ -378,6 +416,7 @@ class URL {
     } else {
       unset($query[$key]);
     }
+    return $this;
   }
 
   /**
@@ -399,24 +438,30 @@ class URL {
    * @param  array  $query  An associative array.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function setQueryString(array $query) {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['query'] = $query;
+    return $this;
   }
 
   /**
    * Clears the current query string.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function clearQueryString() {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['query'] = array();
+    return $this;
   }
 
   /**
@@ -477,24 +522,30 @@ class URL {
    * @param  string  $fragment  The fragment to add after the hash.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function setFragment($fragment) {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['fragment'] = urlencode($fragment);
+    return $this;
   }
 
   /**
    * Clears the URL fragment.
    *
    * @throws  ImmutableObjectException
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function clearFragment() {
     if ($this === self::$current) {
       throw new ImmutableObjectException('Current URL object should be cloned.');
     }
     $this->components['fragment'] = '';
+    return $this;
   }
 
   /**
@@ -655,8 +706,11 @@ class URL {
    * Make this object a clone of another URL.
    *
    * @param  URL  $url  The URL object to be cloned.
+   *
+   * @return  URL  The current object, for fluent method chaining.
    */
   public function makeCloneOf(URL $url) {
     $this->components = $url->components;
+    return $this;
   }
 }
