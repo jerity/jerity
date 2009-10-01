@@ -137,7 +137,8 @@ class Redirector {
     }
     # Reverse sort, chunk into MAX_ITEMS and keep the initial set.
     krsort($_SESSION[self::DATA_KEY], SORT_NUMERIC);
-    $_SESSION[self::DATA_KEY] = array_shift(array_chunk($_SESSION[self::DATA_KEY], self::MAX_ITEMS, true));
+    $chunk = array_chunk($_SESSION[self::DATA_KEY], self::MAX_ITEMS, true);
+    $_SESSION[self::DATA_KEY] = array_shift($chunk);
   }
 
   /**
