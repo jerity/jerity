@@ -507,11 +507,38 @@ class URL {
     $url = '';
     $url .= (empty($scheme) ? '' : $scheme.'://'.($scheme === 'file' ? '/' : ''));
     $url .= (empty($user) ? '' : $user.(empty($pass) ? '' : ':'.$pass).'@');
-    $url .= (empty($host) ? '' : $host.(empty($port) ? '' : ':'.$port).'/');
-    $url .= (empty($path) ? '' : ((empty($host) ? '/' : '') . ltrim($path, '/')));
+    $url .= (empty($host) ? '' : $host);
+    if (!empty($port) && empty($scheme)) {
+      // don't know the scheme, so can't say what the default port is
+      $url .= ':'.$port;
+    } elseif (!empty($port) && !self::isStandardPort($port, $scheme)) {
+      $url .= ':'.$port;
+    }
+    $url .= '/' . (empty($path) ? '' : (ltrim($path, '/')));
     $url .= (empty($query) ? '' : '?'.$this->combineQueryString($query));
     $url .= (empty($fragment) ? '' : $fragment);
     return $url;
+  }
+
+  /**
+   * Checks whether the given port is the standard port for the given scheme.
+   *
+   * @param  int     $port    The port number to be checked.
+   * @param  string  $scheme  The URL scheme to be checked.
+   *
+   * @return  boolean  True/false, or null to mean "I don't know".
+   */
+  public static function isStandardPort($port, $scheme) {
+    $mapping = array(
+      'ftp'   => 21,
+      'http'  => 80,
+      'https' => 443,
+    );
+    if (isset($mapping[$scheme])) {
+      // not === just in case $port is not an int
+      return $mapping[$scheme] == $port;
+    }
+    return null;
   }
 
   /**
@@ -524,6 +551,7 @@ class URL {
   public function isValid() {
     if (!$this->components['scheme']) return false;
     if (!$this->components['host'])   return false;
+    if ($this->components['scheme'] === 'file' && $this->components['port']) return false;
     return true;
   }
 
