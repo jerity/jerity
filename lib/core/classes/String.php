@@ -243,12 +243,12 @@ class String {
     $ctx = RenderContext::get();
 
     $text = trim($text);
-    if (strlen($text) < $length) return $text;
+    if (mb_strlen($text) < $length) return $text;
     if ($extension) {
-      $pos = strrpos($text, '.');
+      $pos = mb_strrpos($text, '.');
       if ($pos !== false) {
-        $extn = substr($text, $pos);
-        $length -= strlen($extn);
+        $extn = mb_substr($text, $pos);
+        $length -= mb_strlen($extn);
       }
     }
 
@@ -267,10 +267,10 @@ class String {
       }
     }
 
-    $text = substr($text, 0, $length);
+    $text = mb_substr($text, 0, $length);
     if ($boundary) {
-      $pos = strrpos($text, ' ');
-      if ($pos !== false) $text = substr($text, 0, $pos);
+      $pos = mb_strrpos($text, ' ');
+      if ($pos !== false) $text = mb_substr($text, 0, $pos);
     }
 
     $text .= $tail;
