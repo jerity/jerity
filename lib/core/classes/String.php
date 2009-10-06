@@ -292,16 +292,7 @@ class String {
    * @return  array   The set of components, in order.
    */
   public static function splitCamelCase($str) {
-    $output[] = '';
-    $max = 0;
-    foreach (str_split($str) as $c) {
-      if ($c >= 'A' && $c <= 'Z' && $output[$max] !== '') {
-        $output[++$max] = $c;
-      } else {
-        $output[$max] .= $c;
-      }
-    }
-    return $output;
+    return preg_split('/(?<=\\w)(?=[A-Z])/', $str);
   }
 
   /**
