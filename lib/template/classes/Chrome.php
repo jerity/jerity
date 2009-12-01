@@ -268,6 +268,8 @@ class Chrome extends Template {
    *
    * @param  mixed  ...  The content item(s) to add.
    *
+   * @return  Chrome  The current object, for method chaining.
+   *
    * @throws  InvalidArgumentException
    */
   public function setContent() {
@@ -282,13 +284,17 @@ class Chrome extends Template {
     }
     $this->content = $items;
     $this->contentIterator = null;
+    return $this;
   }
 
   /**
    * Clears the content item list for this template.
+   *
+   * @return  Chrome  The current object, for method chaining.
    */
   public function clearContent() {
     $this->content = null;
+    return $this;
   }
 
   # }}} chrome content item management
