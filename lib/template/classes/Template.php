@@ -221,6 +221,7 @@ abstract class Template implements Renderable {
     } else {
       throw new InvalidArgumentException('Variable prefix must be a string.');
     }
+    return $this;
   }
 
   /**
@@ -234,6 +235,8 @@ abstract class Template implements Renderable {
    *
    * @param  callback  $callback  The function to execute.
    * @param  integer   $priority  The priority of the function [0-99]
+   *
+   * @return  Template  The current Template object, for method chaining.
    *
    * @throws  InvalidArgumentException
    * @throws  OutOfRangeException
@@ -250,12 +253,15 @@ abstract class Template implements Renderable {
       'priority' => $priority,
       'callback' => $callback,
     );
+    return $this;
   }
 
   /**
    * Removes a post render hook.
    *
    * @param  callback  $callback  The hook to remove.
+   *
+   * @return  Template  The current Template object, for method chaining.
    *
    * @throws  InvalidArgumentException
    */
@@ -265,6 +271,7 @@ abstract class Template implements Renderable {
     }
     $hash = $this->generateCallbackHash($callback);
     unset($this->post_render_hooks[$hash]);
+    return $this;
   }
 
   /**
@@ -278,9 +285,12 @@ abstract class Template implements Renderable {
 
   /**
    * Clears all current post render hooks associated with this template.
+   *
+   * @return  Template  The current Template object, for method chaining.
    */
   public function clearPostRenderHooks() {
     $this->post_render_hooks = array();
+    return $this;
   }
 
   /**
@@ -362,6 +372,8 @@ abstract class Template implements Renderable {
    * @param   mixed  $key    The variable name.
    * @param   mixed  $value  The variable content.
    *
+   * @return  Template  The current Template object, for method chaining.
+   *
    * @throws  InvalidArgumentException
    * @throws  LengthException
    */
@@ -382,6 +394,7 @@ abstract class Template implements Renderable {
     } else {
       throw new InvalidArgumentException('Could not set a template variable.');
     }
+    return $this;
   }
 
   /**
@@ -389,6 +402,8 @@ abstract class Template implements Renderable {
    * template so far.
    *
    * @param  mixed  $key  The variable(s) to clear; all if null.
+   *
+   * @return  Template  The current Template object, for method chaining.
    *
    * @throws  InvalidArgumentException
    */
@@ -402,6 +417,7 @@ abstract class Template implements Renderable {
     } else {
       throw new InvalidArgumentException('Could not clear a key from the template variables.');
     }
+    return $this;
   }
 
   # }}} template variable management
