@@ -82,6 +82,7 @@ class URL {
         break;
       case '/':
         $this->setPath(ltrim($shorthand, '/'));
+        $this->setQueryString(array());
         break;
       default:
         # Shouldn't get here...
@@ -230,7 +231,7 @@ class URL {
    * @return  string
    */
   public function getUser() {
-    return $this->components['user'];
+    return isset($this->components['user']) ? $this->components['user'] : null;
   }
 
   /**
@@ -649,6 +650,8 @@ class URL {
     $current = URL::getCurrent();
     $url = '';
     extract($this->components);
+    if (!isset($user    )) $user    =null;
+    if (!isset($password)) $password=null;
     switch (true) {
       case ($scheme   !== $current->getScheme()):
       case ($user     !== $current->getUser()):
