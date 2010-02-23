@@ -161,7 +161,7 @@ class Redirector {
    *   - <kbd>/^[a-z]*:\/\//</kbd> -- Redirects to absolute URL.
    *
    * There is also support for pausing redirects for debugging purposes.
-   * 
+   *
    * @see Debug::pauseOnRedirect()
    *
    * @param  string  $url        Where to redirect to.
@@ -251,6 +251,25 @@ class Redirector {
 
     # Perform redirect
     self::redirect($url);
+  }
+
+  /**
+   * Return to the previous URL, if we can, otherwise redirect to the given
+   * default URL. If the default is not given, then no redirect will be
+   * performed. If the default is given as null, we will redirect back to the
+   * current URL (but be careful not to cause an infinite loop).
+   *
+   * @param  string  $default  Default URL to redirect to if we have no state.
+   */
+  public static function returnToSource($default = false) {
+    $source_url = self::getSource();
+    if (!$source_url) {
+      if ($default === false) {
+        return false;
+      }
+      $source_url = $default;
+    }
+    self::redirect($source_url);
   }
 
 }
