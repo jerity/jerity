@@ -3,6 +3,7 @@
 class RestRequest {
   protected static $base_path = '';
   protected static $default_format = 'json';
+  protected static $constant_handlers = false;
   protected static $handlers = array(
     'GET'    => array(),
     'POST'   => array(),
@@ -23,6 +24,10 @@ class RestRequest {
     self::$base_path = $base_path;
   }
 
+  public static function setConstantHandlers($value=true) {
+    self::$constant_handlers = $value;
+  }
+
   protected static function _registerHandler($handler, array $methods = null) {
     if ($methods === null) {
       $methods = array('GET');
@@ -36,24 +41,42 @@ class RestRequest {
     }
   }
 
-  /**
-   * Register a handler for a given path.
-   */
-  public static function registerHandler($path, $handler, array $methods = null) {
-    self::_registerHandler(array(
-      'path'    => $path,
-      'handler' => $handler,
-    ), $methods);
+  protected static function mutateFunctionName($callable, $verb) {
+    $new_callable = $callable;
+    if (is_array($new_callable)) {
+      $new_callable[1] = strtolower($verb).ucfirst($new_callable[1]);
+    } else {
+      $new_callable = strtolower($verb).ucfirst($new_callable);
+    }
+    return is_callable($new_callable) ? $new_callable : $callable;
   }
 
   /**
    * Register a handler for a given path.
    */
-  public static function registerPatternHandler($pattern, $handler, array $methods = null) {
-    self::_registerHandler(array(
+  public static function registerHandler($path, $handler, array $methods = null, $mutate=null) {
+    $handler = array(
+      'path'    => $path,
+      'handler' => $handler,
+    );
+    if ($mutate !== null) {
+      $handler['mutate'] = (bool)$mutate;
+    }
+    self::_registerHandler($handler, $methods);
+  }
+
+  /**
+   * Register a handler for a given path.
+   */
+  public static function registerPatternHandler($pattern, $handler, array $methods = null, $mutate=null) {
+    $handler = array(
       'pattern' => '!'.str_replace('!', '\\!', $pattern).'!',
       'handler' => $handler,
-    ), $methods);
+    );
+    if ($mutate !== null) {
+      $handler['mutate'] = (bool)$mutate;
+    }
+    self::_registerHandler($handler, $methods);
   }
 
   protected static function getRequestHeaders() {
@@ -74,12 +97,22 @@ class RestRequest {
     foreach (self::$handlers[$verb] as $handler) {
       $matches = array();
       if (isset($handler['path']) && $url == $handler['path']) {
-        $retval = call_user_func_array($handler['handler'], $args);
+        $func = $handler['handler'];
+        if (( isset($handler['mutate']) && $handler['mutate']) ||
+            (!isset($handler['mutate']) && !self::$constant_handlers)) {
+          $func = self::mutateFunctionName($func, $verb);
+        }
+        $retval = call_user_func_array($func, $args);
         return headers_sent() || $retval;
       } elseif (isset($handler['pattern']) && preg_match_all($handler['pattern'], $url, $matches)) {
+        $func = $handler['handler'];
+        if (( isset($handler['mutate']) && $handler['mutate']) ||
+            (!isset($handler['mutate']) && !self::$constant_handlers)) {
+          $func = self::mutateFunctionName($func, $verb);
+        }
         $tmp_args = $args;
         $tmp_args[] = $matches;
-        $retval = call_user_func_array($handler['handler'], $tmp_args);
+        $retval = call_user_func_array($func, $tmp_args);
         return headers_sent() || $retval;
       }
     }
