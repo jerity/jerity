@@ -107,9 +107,10 @@ class RestRequest {
     }
   }
 
-  protected static function real_dispatch($url, $verb, $headers, $get_args, $body, $response_format) {
+  protected static function real_dispatch($url, $verb, $headers, $get_args, $body, $response_format, $handler_verb) {
     $args = func_get_args();
-    foreach (self::$handlers[$verb] as $handler) {
+    array_pop($args); // remove $handler_verb
+    foreach (self::$handlers[$handler_verb] as $handler) {
       $matches = array();
       if (isset($handler['path']) && $url == $handler['path']) {
         $func = $handler['handler'];
@@ -137,6 +138,7 @@ class RestRequest {
   public static function dispatch($url, $verb, $headers, $get_args, $body) {
     $response_format = self::getFormat($url, $headers);
     $url = self::cleanURL($url);
+    $handler_verb = $verb;
 
     if (!isset(self::$handlers[$verb])) {
       if (!count(self::$handlers[''])) {
@@ -146,14 +148,14 @@ class RestRequest {
         $resp->render();
         return;
       } else {
-        $verb = '';
+        $handler_verb = '';
       }
     }
-    if ($verb !== '' && self::real_dispatch($url, $verb, $headers, $get_args, $body, $response_format)) {
+    if ($handler_verb !== '' && self::real_dispatch($url, $verb, $headers, $get_args, $body, $response_format, $handler_verb)) {
       return;
     }
     // try multi-verb handlers
-    if (self::real_dispatch($url, '', $headers, $get_args, $body, $response_format)) {
+    if (self::real_dispatch($url, $verb, $headers, $get_args, $body, $response_format, '')) {
       return;
     }
     // could this be dispatched for any other verb?
