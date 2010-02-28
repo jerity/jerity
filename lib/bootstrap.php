@@ -23,6 +23,7 @@ require_once(JERITY_ROOT.'core/bootstrap.php');
 
 # Locate additional Jerity packages for autoloading:
 Jerity::addAutoloadDir(JERITY_ROOT.'form');
+Jerity::addAutoloadDir(JERITY_ROOT.'rest');
 Jerity::addAutoloadDir(JERITY_ROOT.'template');
 Jerity::addAutoloadDir(JERITY_ROOT.'ui');
 
