@@ -141,7 +141,8 @@ class RestRequest {
     if (!isset(self::$handlers[$verb])) {
       if (!count(self::$handlers[''])) {
         // error -- invalid verb
-        $resp = new RestResponseMethodNotAllowed('Could not find a handler for the given HTTP verb.');
+        $resp = new RestResponseMethodNotAllowed('Could not find a handler for the "'.$verb.'" HTTP verb.');
+        $resp->setFormat($response_format);
         $resp->render();
         return;
       } else {
@@ -159,11 +160,13 @@ class RestRequest {
     if (self::could_dispatch($url)) {
       // yes, so the verb is wrong
       $resp = new RestResponseMethodNotAllowed('The HTTP verb "'.$verb.'" cannot be used on the requested URL.');
+      $resp->setFormat($response_format);
       $resp->render();
       return;
     }
     // error -- no handler for URL
-    $resp = new RestResponseNotFound('Could not find a handler for the given URL.');
+    $resp = new RestResponseNotFound('Could not find a handler for the requested URL.');
+    $resp->setFormat($response_format);
     $resp->render();
     return;
   }
