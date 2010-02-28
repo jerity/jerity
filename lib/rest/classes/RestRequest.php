@@ -92,6 +92,21 @@ class RestRequest {
     return $headers;
   }
 
+  protected static function could_dispatch($url, $check_nonstandard=false) {
+    foreach (self::$handlers as $k => $handler_group) {
+      if (!$check_nonstandard && !in_array($verb, array('GET', 'POST', 'PUT', 'DELETE'))) {
+        continue;
+      }
+      foreach ($handler_group as $handler) {
+        if (isset($handler['path']) && $url == $handler['path']) {
+          return true;
+        } elseif (isset($handler['pattern']) && preg_match($handler['pattern'], $url)) {
+          return true;
+        }
+      }
+    }
+  }
+
   protected static function real_dispatch($url, $verb, $headers, $get_args, $body, $response_format) {
     $args = func_get_args();
     foreach (self::$handlers[$verb] as $handler) {
@@ -136,7 +151,15 @@ class RestRequest {
     if ($verb !== '' && self::real_dispatch($url, $verb, $headers, $get_args, $body, $response_format)) {
       return;
     }
+    // try multi-verb handlers
     if (self::real_dispatch($url, '', $headers, $get_args, $body, $response_format)) {
+      return;
+    }
+    // could this be dispatched for any other verb?
+    if (self::could_dispatch($url)) {
+      // yes, so the verb is wrong
+      $resp = new RestResponseMethodNotAllowed('The HTTP verb "'.$verb.'" cannot be used on the requested URL.');
+      $resp->render();
       return;
     }
     // error -- no handler for URL
