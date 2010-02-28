@@ -4,7 +4,10 @@ require_once(dirname(dirname(dirname(__FILE__))).'/setUp.php');
 class InflectorTest extends PHPUnit_Framework_TestCase {
 
   public static function getWordPairs() {
-    $pairs = array();
+    static $pairs = array();
+    if (count($pairs)) {
+      return $pairs;
+    }
 
     $fp = fopen(dirname(__FILE__).'/singular-plural-wordlist.txt', 'r');
     while (!feof($fp) && $data = fscanf($fp, '%s %s')) {
