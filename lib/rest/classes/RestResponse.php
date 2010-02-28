@@ -279,10 +279,10 @@ class RestResponse {
 
   protected function renderContentAsJSON() {
     header('Content-Type: application/json');
-    if (version_compare(PHP_VERSION, 5.3, '>=')) {
-      echo json_encode($this->content, count($this->content) ? 0 : JSON_FORCE_OBJECT);
-    } else {
+    if (count($this->content)) {
       echo json_encode($this->content);
+    } else {
+      echo '{}';
     }
   }
 
