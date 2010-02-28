@@ -75,7 +75,7 @@ mesh          meshes
 mess          messes
 money         monies
 mongoose      mongooses
-monkfish      monkfis
+monkfish      monkfish
 moose         moose
 moose         moose
 mouse         mice
