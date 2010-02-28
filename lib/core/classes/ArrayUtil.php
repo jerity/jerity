@@ -84,4 +84,20 @@ final class ArrayUtil {
     return $final;
   }
 
+  /**
+   * Check whether a given array only has numeric keys.
+   *
+   * @param   array  $array  The array to be checked
+   *
+   * @return  bool  Whether or not the array is only numerically keyed.
+   */
+  public static function isNumericallyKeyed(array $array) {
+    foreach (array_keys($array) as $key) {
+      if (!is_numeric($key)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 }
