@@ -261,7 +261,7 @@ class RestResponse {
   }
 
   protected function encodeToXML(array $data) {
-    $content = '<'.'?xml version="1.0" standalone="yes" encoding="utf-8" ?'.">\n";
+    $content = '<'.'?xml version="1.0" encoding="utf-8" standalone="yes" ?'.">\n";
     if (count($data)!=1 || $this->force_envelope) {
       $content .= '<response>';
       $content .= $this->encodeArrayToXML($data, 'responses');
