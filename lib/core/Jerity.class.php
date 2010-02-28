@@ -8,8 +8,6 @@
 /**
  * Jerity utility class
  *
- * @todo  Implement harder autoloading...
- *
  * @package    JerityCore
  * @author     Dave Ingram <dave@dmi.me.uk>
  * @copyright  Copyright (c) 2009 Dave Ingram
@@ -28,7 +26,7 @@ class Jerity {
    *
    * @var  boolean
    */
-  private static $autoload_harder = false;
+  private static $autoload_harder = true;
 
   /**
    * Private constructor; static-only class
@@ -40,7 +38,6 @@ class Jerity {
   /**
    * Autoload a class by name. <b>This function should not be called directly.</b>
    *
-   * @todo  Implement harder autoloading...
    * @internal
    *
    * @param   string  $name  The name of the class to load
@@ -50,18 +47,39 @@ class Jerity {
   public static function autoload($name) {
     $names = array($name);
     if (self::$autoload_harder) {
-      # TODO: Implement harder autoloading...
-      #       Break the class name up, so IterableRenderable will search for
-      #       Iterable and Renderable and MyFooClass will search for My, MyFoo,
-      #       FooClass and Class.
-      #       Additional complexity: 2 * (nComponents - 1)
+      if (!class_exists('String')) {
+        require_once(dirname(__FILE__).'/classes/String.php');
+      }
+      // Break the class name up, so IterableRenderable will search for
+      // Iterable and Renderable and MyFooClass will search for My, MyFoo,
+      // FooClass and Class.
+      // Additional complexity: 2 * (nComponents - 1)
+      $parts = String::splitCamelCase($name);
+      $the_parts = $parts;
+      array_pop($the_parts);
+      $accumulator = '';
+      foreach ($the_parts as $part) {
+        $accumulator .= $part;
+        $names[] = $accumulator;
+      }
+      $the_parts = array_reverse($parts);
+      array_pop($the_parts);
+      $accumulator = '';
+      $new_names = array();
+      foreach ($the_parts as $part) {
+        $accumulator = $part.$accumulator;
+        $new_names[] = $accumulator;
+      }
+      $names = array_merge($names, array_reverse($new_names));
     }
     foreach ($names as $name) {
       foreach (array_keys(self::$autoload_dirs) as $dir) {
         $target_file = $dir.'/'.$name.'.php';
         if (file_exists($target_file)) {
           include_once($target_file);
-          return true;
+          if (class_exists($name)) {
+            return true;
+          }
         }
       }
     }
