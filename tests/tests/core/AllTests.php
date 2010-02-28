@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(dirname(dirname(__FILE__))).'/setUp.php');
 require_once('ArrayUtilTest.php');
+require_once('InflectorTest.php');
 require_once('NumberTest.php');
 require_once('RenderContextTest.php');
 require_once('StringTest.php');
@@ -16,6 +17,7 @@ class Jerity_Core_AllTests {
     $suite->addTestSuite('NumberTest');
     $suite->addTestSuite('RenderContextTest');
     $suite->addTestSuite('StringTest');
+    $suite->addTestSuite('InflectorTest');
     $suite->addTestSuite('TagTestHTML401');
     $suite->addTestSuite('TagTestXHTML10');
 
