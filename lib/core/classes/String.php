@@ -333,4 +333,36 @@ class String {
     return ($str == (string)(float)$str);
   }
 
+  /**
+   * Returns a string with all spaces and non-word characters converted to hyphens
+   * (by default), accented characters converted to non-accented characters,
+   * and non-word characters removed.
+   *
+   * @param   string  $string       The string to convert to slug form
+   * @param   string  $replacement  The replacement for non-word characters
+   *
+   * @return  string
+   */
+  public static function slugify($string, $replacement = '-') {
+    $map = array(
+      '/à|á|å|â/'   => 'a',
+      '/è|é|ê|ẽ|ë/' => 'e',
+      '/ì|í|î/'     => 'i',
+      '/ò|ó|ô|ø/'   => 'o',
+      '/ù|ú|ů|û/'   => 'u',
+      '/ä|æ/'       => 'ae',
+      '/ö|œ|ø/'     => 'oe',
+      '/ü/'         => 'ue',
+      '/Ä|Æ/'       => 'Ae',
+      '/Ü/'         => 'Ue',
+      '/Ö|Œ|Ø/'     => 'Oe',
+      '/ß/'         => 'ss',
+      '/ç/'         => 'c',
+      '/ñ/'         => 'n',
+      '/[^\w]+/'    => $replacement,
+      '/(?:'.preg_quote($replacement, '/').'){2,}$/' => $replacement,
+    );
+    return preg_replace(array_keys($map), array_values($map), $string);
+  }
+
 }
