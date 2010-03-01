@@ -1,193 +1,162 @@
 <?php
 /**
  * @package    JerityCore
- * @author     Dave Ingram <dave@dmi.me.uk>
- * @copyright  Copyright (c) 2009 Dave Ingram
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2009 Nick Pope
  */
 
 /**
  * Pluralisation/singularisation rules for English words.
  *
- * Includes significant amounts of (modified) code from the CakePHP 1.2
- * Inflector, which is copyright 2005-2008, Cake Software Foundation, Inc.
- * (http://www.cakefoundation.org).
+ * Rewritten from scratch with better rules and implementation.
  *
  * @package    JerityCore
- * @author     Dave Ingram <dave@dmi.me.uk>
- * @copyright  Copyright (c) 2009 Dave Ingram
- * @copyright  Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2009 Nick Pope
  */
 class Inflector {
   /**
-   * Pluralized words cache.
+   * Inflector rules for pluralizing words.
    *
    * @var array
-   **/
-  protected static $pluralized = array();
-
-  /**
-   * List of pluralization rules in the form of pattern => replacement.
-   *
-   * @var array
-   **/
-  protected static $pluralRules = array(
-    'pluralRules' => array(
-      '/(s)tatus$/i' => '\1\2tatuses',
+   */
+  protected static $plural = array(
+    'rules' => array(
       '/(quiz)$/i' => '\1zes',
-      '/^(ox)$/i' => '\1\2en',
-      '/([m|l])ouse$/i' => '\1ice',
-      '/(matr|vert|ind)(ix|ex)$/i'  => '\1ices',
-      '/(x|ch|ss|sh)$/i' => '\1es',
-      '/([^aeiouy]|qu)y$/i' => '\1ies',
-      '/(hive)$/i' => '\1s',
-      '/(?:([^f])fe|([lr])f)$/i' => '\1\2ves',
-      '/sis$/i' => 'ses',
-      '/([ti])um$/i' => '\1a',
-      '/(p)erson$/i' => '\1eople',
-      '/(m)an$/i' => '\1en',
-      '/(c)hild$/i' => '\1hildren',
-      '/(buffal|tomat)o$/i' => '\1\2oes',
+      '/^(ox)$/i' => '\1en',
+      '/([lm])ouse$/i' => '\1ice',
+      '/(matr)ix$/i' => '\1ices',
+      '/(ap|cod|cort|ind|lat|sil|simpl|v[eo]rt)ex$/i' => '\1ices',
       '/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$/i' => '\1i',
-      '/us$/' => 'uses',
-      '/(alias)$/i' => '\1es',
-      '/(ax|cris|test)is$/i' => '\1es',
+      '/(alg|alumn|formul|vertebr)a$/i' => '\1ae',
+      '/(ali|atl|canv)as$/i' => '\1ases',
+      '/(ax|test)is$/i' => '\1es',
+      '/(ch|sh|ss|x|z)$/i' => '\1es',
+      '/(^[dg]|her|potat|tomat)o$/i' => '\1oes',
+      '/([^aeiouy]|qu)y$/i' => '\1ies',
+      '/(hoo|l[eo]a)f$/i' => '\1ves',
+      '/lf$/i' => 'lves',
+      '/([^afo])fe$/i' => '\1ves',
+      '/([dimrtv])um$/i' => '\1a',
+      '/person$/i' => 'people',
+      '/man$/i' => 'men',
+      '/child$/i' => 'children',
+      '/tooth$/i' => 'teeth',
+      '/us$/i' => 'uses',
+      '/sis$/i' => 'ses',
       '/s$/' => 's',
       '/^$/' => '',
-      '/$/' => 's'),
-    'uninflected' => array(
-      '.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', 'Amoyese',
-      'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
-      'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
-      'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
-      'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings', 'jackanapes', 'Kiplingese',
-      'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'media', 'mews', 'moose', 'mumps', 'Nankingese', 'news',
-      'nexus', 'Niasese', 'Pekingese', 'People', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese', 'proceedings',
-      'rabies', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors', 'sea[- ]bass', 'series', 'Shavese', 'shears',
-      'siemens', 'species', 'swine', 'testes', 'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese',
-      'whiting', 'wildebeest', 'Yengeese'),
+      '/$/' => 's',
+    ),
     'irregular' => array(
-      'atlas' => 'atlases',
-      'beef' => 'beefs',
-      'brother' => 'brothers',
-      'child' => 'children',
-      'corpus' => 'corpuses',
-      'cow' => 'cows',
-      'ganglion' => 'ganglions',
-      'genie' => 'genies',
+      'ascensor' => 'ascensores',
+      'criterion' => 'criteria',
+      'delouse' => 'delouses',
+      'dwarf' => 'dwarves',
       'genus' => 'genera',
+      'goose' => 'geese',
       'graffito' => 'graffiti',
-      'hoof' => 'hoofs',
-      'loaf' => 'loaves',
-      'man' => 'men',
+      'lease' => 'leases',
       'money' => 'monies',
-      'mongoose' => 'mongooses',
-      'move' => 'moves',
+      'murex' => 'murecis',
       'mythos' => 'mythoi',
       'numen' => 'numina',
-      'occiput' => 'occiputs',
-      'octopus' => 'octopuses',
-      'opus' => 'opuses',
-      'ox' => 'oxen',
+      'pannino' => 'pannini',
       'penis' => 'penises',
-      'person' => 'people',
-      'sex' => 'sexes',
-      'soliloquy' => 'soliloquies',
-      'testis' => 'testes',
       'trilby' => 'trilbys',
-      'turf' => 'turfs'),
+    ),
+    'uncountable' => array(
+      '.*media',
+    ),
+    'cache' => array(
+      'irregular'   => null,
+      'uncountable' => null,
+      'lookup'      => array(),
+    ),
   );
 
   /**
-   * Singularized words cache.
+   * Inflector rules for singularizing words.
    *
    * @var array
-   **/
-  protected static $singularized = array();
-
-  /**
-   * List of singularization rules in the form of pattern => replacement.
-   *
-   * @var array
-   **/
-  protected static $singularRules = array(
-    'singularRules' => array(
-      '/(s)tatuses$/i' => '\1\2tatus',
-      '/^(.*)(menu)s$/i' => '\1\2',
-      '/(quiz)zes$/i' => '\\1',
+   */
+  protected static $singular = array(
+    'rules' => array(
+      '/(quiz)zes$/i' => '\1',
+      '/^(ox)en$/i' => '\1',
+      '/([lm])ice$/i' => '\1ouse',
       '/(matr)ices$/i' => '\1ix',
-      '/(vert|ind)ices$/i' => '\1ex',
-      '/^(ox)en/i' => '\1',
-      '/(alias)(es)*$/i' => '\1',
+      '/(ap|cod|cort|ind|lat|sil|simpl|v[eo]rt)ices$/i' => '\1ex',
       '/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
-      '/([ftw]ax)es/' => '\1',
-      '/(cris|ax|test)es$/i' => '\1is',
-      '/(shoe)s$/i' => '\1',
-      '/(o)es$/i' => '\1',
-      '/ouses$/' => 'ouse',
-      '/uses$/' => 'us',
-      '/([m|l])ice$/i' => '\1ouse',
-      '/(x|ch|ss|sh)es$/i' => '\1',
-      '/(m)ovies$/i' => '\1\2ovie',
-      '/(s)eries$/i' => '\1\2eries',
+      '/(alg|alumn|formul|vertebr)ae$/i' => '\1a',
+      '/(ali|atl|canv)ases$/i' => '\1as',
+      '/([ftw]ax)es$/i' => '\1',
+      '/(ax|test)es$/i' => '\1is',
+      '/izes$/i' => 'ize',
+      '/(ch|sh|ss|x|z)es$/i' => '\1',
+      '/([dg]|her|potat|tomat)oes$/i' => '\1o',
+      '/(cook|gen|mov)ies$/i' => '\1ie',
       '/([^aeiouy]|qu)ies$/i' => '\1y',
+      '/([htr]ive)s$/i' => '\1',
+      '/(hoo|l[eo]a)ves$/i' => '\1f',
       '/([lr])ves$/i' => '\1f',
-      '/(tive)s$/i' => '\1',
-      '/(hive)s$/i' => '\1',
-      '/(drive)s$/i' => '\1',
-      '/([^fo])ves$/i' => '\1fe',
-      '/(^analy)ses$/i' => '\1sis',
-      '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
-      '/([ti])a$/i' => '\1um',
-      '/(p)eople$/i' => '\1\2erson',
-      '/(m)en$/i' => '\1an',
-      '/(c)hildren$/i' => '\1\2hild',
-      '/(n)ews$/i' => '\1\2ews',
-      '/^(.*us)$/' => '\\1',
-      '/s$/i' => ''),
-    'uninflected' => array(
-      '.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss', 'Amoyese',
-      'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
-      'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
-      'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
-      'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings', 'jackanapes', 'Kiplingese',
-      'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'media', 'mews', 'moose', 'mumps', 'Nankingese', 'news',
-      'nexus', 'Niasese', 'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese', 'proceedings',
-      'rabies', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors', 'sea[- ]bass', 'series', 'Shavese', 'shears',
-      'siemens', 'species', 'swine', 'testes', 'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese',
-      'whiting', 'wildebeest', 'Yengeese'
+      '/([^afo])ves$/i' => '\1fe',
+      '/([dimrtv])a$/i' => '\1um',
+      '/people$/i' => 'person',
+      '/men$/i' => 'man',
+      '/children$/i' => 'child',
+      '/teeth$/i' => 'tooth',
+      '/([ao])uses$/i' => '\1use',
+      '/([anpr])ses$/i' => '\1se',
+      '/uses$/i' => 'us',
+      '/ses$/i' => 'sis',
+      '/s$/' => '',
     ),
     'irregular' => array(
-      'atlases' => 'atlas',
-      'beefs' => 'beef',
-      'brothers' => 'brother',
-      'children' => 'child',
-      'corpuses' => 'corpus',
-      'cows' => 'cow',
-      'ganglions' => 'ganglion',
-      'genies' => 'genie',
+      'ascensores' => 'ascensor',
+      'caches' => 'cache',
+      'closes' => 'close',
+      'criteria' => 'criterion',
+      'geese' => 'goose',
       'genera' => 'genus',
       'graffiti' => 'graffito',
-      'hoofs' => 'hoof',
-      'loaves' => 'loaf',
-      'men' => 'man',
-      'monies' => 'money',
+      'leases' => 'lease',
       'mongooses' => 'mongoose',
-      'moves' => 'move',
+      'monies' => 'money',
+      'murecis' => 'murex',
       'mythoi' => 'mythos',
       'numina' => 'numen',
-      'occiputs' => 'occiput',
-      'octopuses' => 'octopus',
-      'opuses' => 'opus',
-      'oxen' => 'ox',
+      'pannini' => 'pannino',
       'penises' => 'penis',
-      'people' => 'person',
-      'sexes' => 'sex',
-      'soliloquies' => 'soliloquy',
-      'testes' => 'testis',
-      'trilbys' => 'trilby',
-      'turfs' => 'turf',
-      'waves' => 'wave'
+      'synopses' => 'synopsis',
     ),
+    'uncountable' => array(
+      '.*ss',
+      '.+media',
+    ),
+    'cache' => array(
+      'irregular'   => null,
+      'uncountable' => null,
+      'lookup'      => array(),
+    ),
+  );
+
+  /**
+   * A common list of words that are uncountable.
+   *
+   * @var array
+   */
+  protected static $uncountable = array(
+    '.*[lmnr]ese', '.*deer', '.*fish', '.*ois', '.*pox', '.*sheep', 
+    'analytics', 'bison', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 
+    'carp', 'chassis', 'clippers', 'cod', 'corps', 'debris', 'diabetes', 
+    'djinn', 'dynamo', 'elk', 'equipment', 'feedback', 'flounder', 'gallows', 
+    'gallows', 'headquarters', 'herpes', 'hijinks', 'homework', 'housework', 
+    'hubris', 'information', 'innings', 'jackanapes', 'junk', 'mackerel', 
+    'measles', 'moose', 'mumps', 'news', 'nexus', 'peoples', 'pincers', 
+    'pliers', 'proceedings', 'rabies', 'rhinoceros', 'rice', 'salmon', 
+    'scissors', 'sea-bass', 'series', 'shears', 'species', 'swine', 'trousers', 
+    'trout', 'tuna', 'wildebeest', 'contretemps',
   );
 
   /**
@@ -200,86 +169,69 @@ class Inflector {
   /**
    * Convert a word to its plural form.
    *
-   * @param   string  $word  Word in singular
-   * @return  string  Word in plural
+   * @param  string  $word  Word in singular form.
+   *
+   * @return  string  Word in plural form.
    */
   public static function pluralize($word) {
-    if (isset(self::$pluralized[$word])) {
-      return self::$pluralized[$word];
-    }
-    extract(self::$pluralRules);
-
-    if (!isset($regexUninflected) || !isset($regexIrregular)) {
-      $regexUninflected = self::_enclose(join( '|', $uninflected));
-      $regexIrregular = self::_enclose(join( '|', array_keys($irregular)));
-      self::$pluralRules['regexUninflected'] = $regexUninflected;
-      self::$pluralRules['regexIrregular'] = $regexIrregular;
-    }
-
-    if (preg_match('/^(' . $regexUninflected . ')$/i', $word, $regs)) {
-      self::$pluralized[$word] = $word;
-      return $word;
-    }
-
-    if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
-      self::$pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
-      return self::$pluralized[$word];
-    }
-
-    foreach ($pluralRules as $rule => $replacement) {
-      if (preg_match($rule, $word)) {
-        self::$pluralized[$word] = preg_replace($rule, $replacement, $word);
-        return self::$pluralized[$word];
-      }
-    }
+    return self::inflect($word, self::$plural);
   }
 
   /**
    * Convert a word to its singular form.
    *
-   * @param   string  $word  Word in plural
-   * @return  string  Word in singular
+   * @param  string  $word  Word in plural form.
+   *
+   * @return  string  Word in singular form.
    */
   public static function singularize($word) {
-    if (isset(self::$singularized[$word])) {
-      return self::$singularized[$word];
-    }
-    extract(self::$singularRules);
-
-    if (!isset($regexUninflected) || !isset($regexIrregular)) {
-      $regexUninflected = self::_enclose(join( '|', $uninflected));
-      $regexIrregular = self::_enclose(join( '|', array_keys($irregular)));
-      self::$singularRules['regexUninflected'] = $regexUninflected;
-      self::$singularRules['regexIrregular'] = $regexIrregular;
-    }
-
-    if (preg_match('/^(' . $regexUninflected . ')$/i', $word, $regs)) {
-      self::$singularized[$word] = $word;
-      return $word;
-    }
-
-    if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
-      self::$singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
-      return self::$singularized[$word];
-    }
-
-    foreach ($singularRules as $rule => $replacement) {
-      if (preg_match($rule, $word)) {
-        self::$singularized[$word] = preg_replace($rule, $replacement, $word);
-        return self::$singularized[$word];
-      }
-    }
-    self::$singularized[$word] = $word;
-    return $word;
+    return self::inflect($word, self::$singular);
   }
 
   /**
-   * Enclose a string for preg matching.
+   * Inflects a word according to the passed ruleset.
    *
-   * @param string $string String to enclose
-   * @return string Enclosed string
+   * @todo  Attempt to return inflected word in case matching the passed word.
+   *
+   * @param  string  $word     The word to inflect.
+   * @param  array   $ruleset  The rules to use for inflection.
+   *
+   * @return  string  The word inflected according to the ruleset.
    */
-  protected static function _enclose($string) {
-    return '(?:' . $string . ')';
+  protected static function inflect($word, array &$ruleset) {
+    extract($ruleset, EXTR_REFS);
+
+    // Build and cache regular expressions.
+    if (!isset($cache['uncountable']) || !isset($cache['irregular'])) {
+      $cache['uncountable'] = '(?:' . join( '|', array_merge(self::$uncountable, $uncountable)) . ')';
+      $cache['irregular']   = '(?:' . join( '|', array_keys($irregular)) . ')';
+    }
+
+    // Check to see if we've already inflected.
+    if (isset($cache['lookup'][$word])) return $cache['lookup'][$word];
+
+    // Check the uncountable list to see if word should not be altered.
+    if (!empty($uncountable) && preg_match('/^(' . $cache['uncountable'] . ')$/i', $word)) {
+      $cache['lookup'][$word] = $word;
+      return $cache['lookup'][$word];
+    }
+
+    // Check the irregular list to see if the word is a special case.
+    if (!empty($irregular) && preg_match('/^(.*)\\b(' . $cache['irregular'] . ')$/i', $word, $match)) {
+      $cache['lookup'][$word] = $match[1] . $irregular[strtolower($match[2])];
+      return $cache['lookup'][$word];
+    }
+
+    // Use standard rule list to perform inflection.
+    foreach ($rules as $rule => $replacement) {
+      if (!!preg_match($rule, $word)) {
+        $cache['lookup'][$word] = preg_replace($rule, $replacement, $word);
+        return $cache['lookup'][$word];
+      }
+    }
+
+    // Return the original word if we could apply a rule for some reason.
+    return $word;
   }
+
 }
