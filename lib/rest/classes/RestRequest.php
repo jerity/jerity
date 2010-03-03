@@ -204,12 +204,21 @@ class RestRequest {
     return $format;
   }
 
-  public static function dispatchFromCurrent() {
+  public static function getCurrentUrl($trim_base = true) {
     $url = $_SERVER['REQUEST_URI'];
-    $url = mb_substr($url, mb_strlen(self::$base_path));
+    if ($trim_base) {
+      $url = mb_substr($url, mb_strlen(self::$base_path));
+    }
+    return $url;
+  }
 
+  public static function getFormatFromCurrent() {
+    return self::getFormat(self::getCurrentUrl(), self::getRequestHeaders());
+  }
+
+  public static function dispatchFromCurrent() {
     return self::dispatch(
-      $url,
+      self::getCurrentUrl(),
       strtoupper($_SERVER['REQUEST_METHOD']),
       self::getRequestHeaders(),
       $_GET,
