@@ -93,7 +93,7 @@ class RestRequest {
   }
 
   protected static function could_dispatch($url, $check_nonstandard=false) {
-    foreach (self::$handlers as $k => $handler_group) {
+    foreach (self::$handlers as $verb => $handler_group) {
       if (!$check_nonstandard && !in_array($verb, array('GET', 'POST', 'PUT', 'DELETE'))) {
         continue;
       }
@@ -185,6 +185,7 @@ class RestRequest {
   public static function getFormat($url, $headers) {
     $cleaned_url = self::cleanURL($url);
     $url = self::cleanURL($url, false);
+    $format = self::$default_format;
     if ($cleaned_url != $url) {
       $format = substr($url, strrpos($url, '.')+1);
     } elseif (isset($headers['Accept'])) {
@@ -199,8 +200,6 @@ class RestRequest {
           break;
         }
       }
-    } else {
-      $format = self::$default_format;
     }
     return $format;
   }
