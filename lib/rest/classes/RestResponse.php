@@ -40,9 +40,10 @@ class RestResponse {
   protected $location = null;
   protected $force_envelope = false;
 
-  public function __construct($code, $content) {
+  public function __construct($code, $content, RestRequest $request) {
     $this->code = $code;
     $this->content = $content;
+    $this->setFormat($request->getResponseFormat());
   }
 
   public function setFormat($format) {
@@ -182,51 +183,49 @@ class RestResponse {
 }
 
 class RestResponseError extends RestResponse {
-  public function __construct($code, $errors) {
+  public function __construct($code, $errors, RestRequest $request) {
     if ($code < 400 || $code > 599) {
       throw new InvalidArgumentException('Invalid status code '.$code.'; only error codes accepted');
     }
     if (is_array($errors)) {
       $content = array('errors' => $errors);
     } else {
-      $content = func_get_args();
-      array_shift($content);
-      $content = array('errors' => $content);
+      $content = array('errors' => array($errors));
     }
-    parent::__construct($code, $content);
+    parent::__construct($code, $content, $request);
   }
 }
 
 class RestResponseBadRequest extends RestResponseError {
-  public function __construct($errors) {
-    if (!is_array($errors)) $errors = func_get_args();
-    parent::__construct(self::BAD_REQUEST, $errors);
+  public function __construct($errors, RestRequest $request) {
+    if (!is_array($errors)) $errors = array($errors);
+    parent::__construct(self::BAD_REQUEST, $errors, $request);
   }
 }
 
 class RestResponseNotFound extends RestResponseError {
-  public function __construct($errors) {
-    if (!is_array($errors)) $errors = func_get_args();
-    parent::__construct(self::NOT_FOUND, $errors);
+  public function __construct($errors, RestRequest $request) {
+    if (!is_array($errors)) $errors = array($errors);
+    parent::__construct(self::NOT_FOUND, $errors, $request);
   }
 }
 
 class RestResponseMethodNotAllowed extends RestResponseError {
-  public function __construct($errors) {
+  public function __construct($errors, RestRequest $request) {
     if (!is_array($errors)) $errors = func_get_args();
-    parent::__construct(self::METHOD_NOT_ALLOWED, $errors);
+    parent::__construct(self::METHOD_NOT_ALLOWED, $errors, $request);
   }
 }
 
 class RestResponseNotAcceptable extends RestResponseError {
-  public function __construct($errors) {
+  public function __construct($errors, RestRequest $request) {
     if (!is_array($errors)) $errors = func_get_args();
-    parent::__construct(self::NOT_ACCEPTABLE, $errors);
+    parent::__construct(self::NOT_ACCEPTABLE, $errors, $request);
   }
 }
 
 class RestResponseOk extends RestResponse {
-  public function __construct($content) {
-    parent::__construct(self::OK, $content);
+  public function __construct($content, RestRequest $request) {
+    parent::__construct(self::OK, $content, $request);
   }
 }
