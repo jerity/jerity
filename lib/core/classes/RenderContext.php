@@ -65,7 +65,7 @@ class RenderContext {
   /** HTML */
   const CONTENT_HTML     = 'text/html';
   /** JavaScript */
-  const CONTENT_JS       = 'text/javascript'; # application/javascript
+  const CONTENT_JS       = 'text/javascript';
   /** JavaScript Object Notation (JSON) */
   const CONTENT_JSON     = 'application/json';
   /** RSS (Rich Site Summary/Syndication) */
