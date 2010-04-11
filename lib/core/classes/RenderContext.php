@@ -107,6 +107,8 @@ class RenderContext {
   const TYPE_XHTML1_1_MOBILE     = 'xhtml-1.1-mobile';
   /** XHTML 1.2 mobile profile */
   const TYPE_XHTML1_2_MOBILE     = 'xhtml-1.2-mobile';
+  /** XHTML 5 */
+  const TYPE_XHTML5              = 'xhtml-5';
   /**#@-*/
 
   /**
@@ -320,6 +322,11 @@ class RenderContext {
         $ctx->setVersion(1.2);
         $ctx->setDialect(self::DIALECT_MOBILE);
         break;
+      case self::TYPE_XHTML5:
+        $ctx->setLanguage(self::LANG_XHTML);
+        $ctx->setVersion(5);
+        $ctx->setDialect('');
+        break;
       default:
         throw new InvalidArgumentException('Unrecognised context type: '.$type);
     }
@@ -387,6 +394,8 @@ class RenderContext {
             return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 '.ucfirst($this->dialect).'//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-'.$this->dialect.'.dtd">';
           case 1.1:
             return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+          case 5:
+            return ''; // DOCTYPE is optional...  Let's not use it.
           default:
             throw new InvalidArgumentException('Unrecognised XHTML version '.$this->version.'; cannot build doctype');
         }
