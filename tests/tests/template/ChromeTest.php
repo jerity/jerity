@@ -368,6 +368,83 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   ############################################################################
 
   ############################################################################
+  # HTTP header tests {{{
+
+  /**
+   * @covers  Chrome::clearHeaders()
+   * @covers  Chrome::getHeaders()
+   * @covers  Chrome::addHeader()
+   * @covers  Chrome::removeHeader()
+   */
+  public function testHTTPHeader1() {
+    Chrome::clearHeaders();
+    $this->assertEquals(0, count(Chrome::getHeaders()));
+    Chrome::addHeader('X-Test', '1, 2, 3.');
+    $h = Chrome::getHeaders();
+    $this->assertEquals(1, count($h));
+    $this->assertEquals(1, count($h['X-Test']));
+    Chrome::addHeader('X-Test', '4, 5, 6.');
+    $h = Chrome::getHeaders();
+    $this->assertEquals(1, count($h));
+    $this->assertEquals(1, count($h['X-Test']));
+    Chrome::addHeader('X-Test2', '1, 2, 3.');
+    $this->assertEquals(2, count(Chrome::getHeaders()));
+    Chrome::removeHeader('X-Test');
+    $this->assertEquals(1, count(Chrome::getHeaders()));
+    Chrome::removeHeader('X-Test2');
+    $this->assertEquals(0, count(Chrome::getHeaders()));
+  }
+
+  /**
+   * @covers  Chrome::clearHeaders()
+   * @covers  Chrome::getHeaders()
+   * @covers  Chrome::addHeader()
+   * @covers  Chrome::removeHeader()
+   */
+  public function testHTTPHeader2() {
+    Chrome::clearHeaders();
+    $this->assertEquals(0, count(Chrome::getHeaders()));
+    Chrome::addHeader('X-Test', '1, 2, 3.');
+    $h = Chrome::getHeaders();
+    $this->assertEquals(1, count($h));
+    $this->assertEquals(1, count($h['X-Test']));
+    Chrome::addHeader('X-Test', '4, 5, 6.', false);
+    $h = Chrome::getHeaders();
+    $this->assertEquals(1, count($h));
+    $this->assertEquals(2, count($h['X-Test']));
+    Chrome::addHeader('X-Test2', '1, 2, 3.');
+    $this->assertEquals(2, count(Chrome::getHeaders()));
+    Chrome::removeHeader('X-Test');
+    $this->assertEquals(1, count(Chrome::getHeaders()));
+    Chrome::removeHeader('X-Test2');
+    $this->assertEquals(0, count(Chrome::getHeaders()));
+  }
+
+  /**
+   * @covers  Chrome::clearHeaders()
+   * @covers  Chrome::getHeaders()
+   * @covers  Chrome::addHeader()
+   * @covers  Chrome::removeHeader()
+   */
+  public function testHTTPHeader3() {
+    Chrome::clearHeaders();
+    $this->assertEquals(0, count(Chrome::getHeaders()));
+    Chrome::addHeader('X-Test', '1, 2, 3.');
+    $h = Chrome::getHeaders();
+    $this->assertEquals(1, count($h));
+    $this->assertEquals(1, count($h['X-Test']));
+    Chrome::addHeader('X-Test', '4, 5, 6.', false);
+    $h = Chrome::getHeaders();
+    $this->assertEquals(1, count($h));
+    $this->assertEquals(2, count($h['X-Test']));
+    Chrome::removeHeader('X-Test', '1, 2, 3.');
+    $this->assertEquals(1, count(Chrome::getHeaders()));
+  }
+
+  # }}} HTTP header tests
+  ############################################################################
+
+  ############################################################################
   # Metadata tests {{{
 
   ############################################################################
