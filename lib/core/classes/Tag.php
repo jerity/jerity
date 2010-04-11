@@ -21,6 +21,13 @@
 class Tag {
 
   /**
+   * Used when adding metadata so that we know which key attribute to use.
+   */
+  const META_CHAR = 'charset';
+  const META_HTTP = 'http-equiv';
+  const META_NAME = 'name';
+
+  /**
    * Static helper class.  Non-instantiable.
    */
   // @codeCoverageIgnoreStart
@@ -213,25 +220,30 @@ class Tag {
    *
    * <b>Attributes:</b><ul>
    *   <li><b>Required:</b> content</li>
-   *   <li><b>Optional:</b> ( http-equiv | name, scheme )</li>
+   *   <li><b>Optional:</b> ( charset | http-equiv | name, scheme )</li>
    *   <li><b>Standard:</b> Partial (dir, lang, xml:lang)</li>
    *   <li><b>Event:</b>    No</li>
    * </ul>
    *
+   * @param   string   $type     Whether to use 'charset', 'http-equiv', or
+   *                             'name'.
    * @param   string   $name     The name of the metadata.
    * @param   string   $content  The meta content.
-   * @param   boolean  $http     Whether to take $name as 'http-equiv' (true) or
-   *                            'name' (false).
    * @param   array    $attrs    An associative array of additional attributes.
    *
    * @return  string
    */
-  public static function meta($name, $content, $http = false, array $attrs = array()) {
-    $key = ($http ? 'http-equiv' : 'name');
-    $attrs = array_merge(array(
-      $key      => $name,
-      'content' => $content,
-    ), $attrs);
+  public static function meta($type = self::META_NAME, $name = null, $content, array $attrs = array()) {
+    if ($type == self::META_CHAR) {
+      $attrs = array_merge(array(
+        $type => $content,
+      ), $attrs);
+    } else {
+      $attrs = array_merge(array(
+        $type     => $name,
+        'content' => $content,
+      ), $attrs);
+    }
     if (!isset($attrs['name'])) {
       unset($attrs['scheme']);
     }
