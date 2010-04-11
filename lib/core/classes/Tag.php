@@ -365,6 +365,10 @@ class Tag {
   public static function renderTag($tag, array $attrs = array(), $content = null) {
     $tag = strtolower($tag);
 
+    # Check for and warn about deprecated elements and attributes.
+    self::checkDeprecatedElements($tag);
+    self::checkDeprecatedAttributes($tag, array_keys($attrs));
+
     # Check whether we need to account for XML.
     $ctx = RenderContext::get();
     $is_xml = $ctx->isXMLSyntax();
@@ -402,9 +406,132 @@ class Tag {
   }
 
   /**
+   * Checks for deprecated elements and warns the developer - only displays a message if 
+   * debugging is enabled.
+   *
+   * @see  http://dev.w3.org/html5/html4-differences/#absent-elements
+   */
+  protected static function checkDeprecatedElements($tag) {
+    # Only display warnings if we are in debug mode.
+    if (!Debug::isEnabled()) return;
+
+    $deprecated[RenderContext::LANG_HTML]['5'] = array(
+      'basefont', 'big', 'center', 'font', 's', 'strike', 'tt', 'u', 'frame', 
+      'frameset', 'noframes', 'acronym', 'applet', 'isindex', 'dir'
+    );
+    $deprecated[RenderContext::LANG_XHTML]['5'] = array(
+      'basefont', 'big', 'center', 'font', 's', 'strike', 'tt', 'u', 'frame', 
+      'frameset', 'noframes', 'acronym', 'applet', 'isindex', 'dir', 'noscript'
+    );
+
+    $ctx = RenderContext::get();
+    $x = $deprecated;
+    if (array_key_exists($ctx->getLanguage(), $x)) {
+      $x = $x[$ctx->getLanguage()];
+      if (array_key_exists("{$ctx->getVersion()}", $x)) {
+        $x = $x[$ctx->getVersion()];
+        if (in_array($tag, $x)) {
+          $restore_xdebug = false;
+          if (extension_loaded('xdebug')) {
+            $restore_xebug = xdebug_is_enabled();
+            # A complete stack trace is overkill for a deprecation error
+            xdebug_disable();
+          }
+          # XXX: Use E_DEPRECATED when we have PHP 5.3 support.
+          trigger_error("'{$tag}' is deprecated or removed in {$ctx->getLanguage()} {$ctx->getVersion()}", E_USER_NOTICE);
+          if ($restore_xdebug) {
+            xdebug_enable();
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Checks for deprecated attributes and warns the developer - only displays a 
+   * message if debugging is enabled.
+   *
+   * @see  http://dev.w3.org/html5/html4-differences/#absent-attributes
+   */
+  protected static function checkDeprecatedAttributes($tag, $attrs) {
+    # Only display warnings if we are in debug mode.
+    if (!Debug::isEnabled()) return;
+
+    $deprecated[RenderContext::LANG_HTML]['5'] = array(
+      'a'        => array('charset', 'coords', 'rev', 'shape'),
+      'area'     => array('nohref'),
+      'body'     => array('alink', 'background', 'bgcolor', 'link', 'text', 'vlink'),
+      'br'       => array('clear'),
+      'caption'  => array('align'),
+      'col'      => array('align', 'char', 'charoff', 'valign', 'width'),
+      'colgroup' => array('align', 'char', 'charoff', 'valign', 'width'),
+      'div'      => array('align'),
+      'dl'       => array('compact'),
+      'h1'       => array('align'),
+      'h2'       => array('align'),
+      'h3'       => array('align'),
+      'h4'       => array('align'),
+      'h5'       => array('align'),
+      'h6'       => array('align'),
+      'head'     => array('profile'),
+      'hr'       => array('align', 'noshade', 'size', 'width'),
+      'html'     => array('version'),
+      'iframe'   => array('align', 'frameborder', 'marginheight', 'longdesc', 'marginwidth', 'scrolling'),
+      'img'      => array('align', 'hspace', 'longdesc', 'name', 'vspace'),
+      'input'    => array('align'),
+      'legend'   => array('align'),
+      'li'       => array('type'),
+      'link'     => array('charset', 'rev', 'target'),
+      'menu'     => array('compact'),
+      'meta'     => array('scheme'),
+      'object'   => array('align', 'archive', 'border', 'classid', 'codebase', 'codetype', 'declare', 'hspace', 'standby', 'vspace'),
+      'ol'       => array('compact', 'type'),
+      'p'        => array('align'),
+      'param'    => array('type', 'valuetype'),
+      'pre'      => array('width'),
+      'table'    => array('align', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'frame', 'rules', 'width'),
+      'tbody'    => array('align', 'char', 'charoff', 'valign'),
+      'td'       => array('abbr', 'align', 'axis', 'bgcolor', 'char', 'charoff', 'height', 'nowrap', 'scope', 'valign', 'width'),
+      'tfoot'    => array('align', 'char', 'charoff', 'valign'),
+      'th'       => array('abbr', 'align', 'axis', 'bgcolor', 'char', 'charoff', 'height', 'nowrap', 'valign', 'width'),
+      'thead'    => array('align', 'char', 'charoff', 'valign'),
+      'tr'       => array('align', 'bgcolor', 'char', 'charoff', 'valign'),
+      'ul'       => array('compact', 'type'),
+    );
+
+    $deprecated[RenderContext::LANG_XHTML]['5'] = &$deprecated[RenderContext::LANG_HTML]['5'];
+
+    $ctx = RenderContext::get();
+    $x = $deprecated;
+    if (array_key_exists($ctx->getLanguage(), $x)) {
+      $x = $x[$ctx->getLanguage()];
+      if (array_key_exists("{$ctx->getVersion()}", $x)) {
+        $x = $x[$ctx->getVersion()];
+        if (in_array($tag, array_keys($x))) {
+          $x = $x[$tag];
+          foreach ($attrs as $a) {
+            if (!in_array($a, $x)) continue;
+            $restore_xdebug = false;
+            if (extension_loaded('xdebug')) {
+              $restore_xebug = xdebug_is_enabled();
+              # A complete stack trace is overkill for a deprecation error
+              xdebug_disable();
+            }
+            # XXX: Use E_DEPRECATED when we have PHP 5.3 support.
+            trigger_error("'{$tag}[{$a}]' is deprecated or removed in {$ctx->getLanguage()} {$ctx->getVersion()}", E_USER_NOTICE);
+            if ($restore_xdebug) {
+              xdebug_enable();
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * Returns true if and only if a tag can never contain any data.
    *
-   * @param  string $tag  A tag name.
+   * @param  string  $tag  A tag name.
    *
    * @return  bool  Whether a tag is always empty.
    */
