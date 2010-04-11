@@ -148,6 +148,17 @@ class RenderContext {
   protected $contentType  = null;
 
   /**
+   * Whether to serve XHTML 1.0 documents in compatibility mode, i.e. with the
+   * text/html MIME type in place of the standard application/xhtml+xml MIME
+   * type.
+   *
+   * @see  http://www.w3.org/TR/xhtml1/#guidelines
+   *
+   * @var  boolean
+   */
+  protected $xhtml_1_0_compat = false;
+
+  /**
    * Create a new rendering context.
    *
    * @param  string  $language  The language for the new context.
@@ -413,7 +424,8 @@ class RenderContext {
    */
   public function renderPreContent() {
     $output = '';
-    if ($this->language == self::LANG_XML || $this->language == self::LANG_XHTML) {
+    if ($this->language == self::LANG_XML ||
+      ($this->language == self::LANG_XHTML && !$this->getXHTML1CompatibilityMode())) {
       $output .= '<'.'?xml version="1.0" encoding="utf-8" ?'.">\n";
     }
     if ($doctype = $this->getDoctype()) {
@@ -481,14 +493,18 @@ class RenderContext {
   }
 
   /**
-   * Return the content type appropriate for this rendering context. If we are
-   * in strict mode, we will return the correct MIME type for XHTML, otherwise
-   * we will use text/html. The default is "application/octet-stream".
+   * Return the content type appropriate for this rendering context.
    *
-   * @param   bool  $strict  Whether or not to be strict about content types.
+   * If we are using XHTML 1.0 in compatibility mode, we will return the
+   * text/html MIME type, otherwise we will use application/xhtml+xml.
+   *
+   * The default MIME type is application/octet-stream.
+   *
+   * @see  getXHTML1CompatibilityMode()
+   *
    * @return  string
    */
-  public function getContentType($strict = true) {
+  public function getContentType() {
     if ($this->contentType) {
       return $this->contentType;
     }
@@ -499,10 +515,10 @@ class RenderContext {
       case self::LANG_XHTML:
         if ($this->getDialect() == self::DIALECT_MOBILE) {
           $contentType = self::CONTENT_XHTML_MP;
-        } elseif ($strict) {
-          $contentType = self::CONTENT_XHTML;
-        } else {
+        } elseif ($this->getXHTML1CompatibilityMode()) {
           $contentType = self::CONTENT_HTML;
+        } else {
+          $contentType = self::CONTENT_XHTML;
         }
         break;
       case self::LANG_JS:
@@ -545,6 +561,36 @@ class RenderContext {
    */
   public function setContentType($type) {
     $this->contentType = $type;
+  }
+
+  /**
+   * Whether to serve XHTML 1.0 documents in compatibility mode, i.e. with the
+   * text/html MIME type in place of the standard application/xhtml+xml MIME
+   * type.
+   *
+   * @see  http://www.w3.org/TR/xhtml1/#guidelines
+   *
+   * @return  boolean
+   */
+  public function getXHTML1CompatibilityMode() {
+    return $this->xhtml_1_0_compat;
+  }
+
+  /**
+   * Whether to serve XHTML 1.0 documents in compatibility mode, i.e. with the
+   * text/html MIME type in place of the standard application/xhtml+xml MIME
+   * type.
+   *
+   * @see  http://www.w3.org/TR/xhtml1/#guidelines
+   *
+   * @var  boolean
+   */
+  public function setXHTML1CompatibilityMode($enabled = true) {
+    if ($this->getLanguage() == RenderContext::LANG_XHTML && $this->getVersion() == 1.0) {
+      $this->xhtml_1_0_compat = $enabled;
+    } else {
+      $this->xhtml_1_0_compat = false;
+    }
   }
 
   /**
