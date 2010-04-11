@@ -156,6 +156,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
       array(RenderContext::LANG_XHTML, 1.0 , RenderContext::DIALECT_MOBILE      , '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">'),
       array(RenderContext::LANG_XHTML, 1.1 , RenderContext::DIALECT_MOBILE      , '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.1//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile11.dtd">'),
       array(RenderContext::LANG_XHTML, 1.2 , RenderContext::DIALECT_MOBILE      , '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'),
+      array(RenderContext::LANG_XHTML, 5   , RenderContext::DIALECT_NONE        , ''),
       array(RenderContext::LANG_CSS  , 2   , RenderContext::DIALECT_NONE        , ''),
       array(RenderContext::LANG_FBJS , 0   , RenderContext::DIALECT_NONE        , ''),
       array(RenderContext::LANG_FBML , 0   , RenderContext::DIALECT_NONE        , ''),
@@ -193,28 +194,30 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
    *
    * @dataProvider  contentTypeProvider
    */
-  public function testContentTypeDetection($lang, $dialect, $strict, $expected) {
-    $ctx = new RenderContext($lang, null, $dialect);
-    $this->assertSame($expected, $ctx->getContentType($strict));
+  public function testContentTypeDetection($lang, $dialect, $xhtml_1_0_compat, $expected) {
+    # Cheat and set version to 1.0 if testing XHTML 1.0 compatibility
+    $ctx = new RenderContext($lang, ($xhtml_1_0_compat ? 1.0 : null), $dialect);
+    $ctx->setXHTML1CompatibilityMode($xhtml_1_0_compat);
+    $this->assertSame($expected, $ctx->getContentType());
   }
 
   public static function contentTypeProvider() {
     return array(
-      array(RenderContext::LANG_HTML,  RenderContext::DIALECT_NONE,   true,  RenderContext::CONTENT_HTML),
-      array(RenderContext::LANG_XHTML, RenderContext::DIALECT_MOBILE, true,  RenderContext::CONTENT_XHTML_MP),
-      array(RenderContext::LANG_XHTML, RenderContext::DIALECT_STRICT, true,  RenderContext::CONTENT_XHTML),
-      array(RenderContext::LANG_XHTML, RenderContext::DIALECT_STRICT, false, RenderContext::CONTENT_HTML),
-      array(RenderContext::LANG_JS   , RenderContext::DIALECT_NONE  , true , RenderContext::CONTENT_JS),
-      array(RenderContext::LANG_FBJS , RenderContext::DIALECT_NONE  , true , RenderContext::CONTENT_JS),
-      array(RenderContext::LANG_TEXT , RenderContext::DIALECT_NONE  , true , RenderContext::CONTENT_TEXT),
-      array(RenderContext::LANG_XML  , RenderContext::DIALECT_NONE  , true , RenderContext::CONTENT_XML),
-      array(RenderContext::LANG_FBML , RenderContext::DIALECT_NONE  , true , RenderContext::CONTENT_XML),
-      array(RenderContext::LANG_JSON , RenderContext::DIALECT_NONE  , true , RenderContext::CONTENT_JSON),
-      array(RenderContext::LANG_CSS  , RenderContext::DIALECT_NONE  , true , RenderContext::CONTENT_CSS),
-      array(RenderContext::LANG_MHTML, RenderContext::DIALECT_NONE  , true , RenderContext::CONTENT_XHTML_MP),
-      array(RenderContext::LANG_WML  , RenderContext::DIALECT_NONE  , true , RenderContext::CONTENT_WML),
-      array('binary'                 , RenderContext::DIALECT_NONE  , true , 'application/octet-stream'),
-      array(''                       , RenderContext::DIALECT_NONE  , true , 'application/octet-stream'),
+      array(RenderContext::LANG_HTML , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_HTML),
+      array(RenderContext::LANG_XHTML, RenderContext::DIALECT_MOBILE, false, RenderContext::CONTENT_XHTML_MP),
+      array(RenderContext::LANG_XHTML, RenderContext::DIALECT_STRICT, false, RenderContext::CONTENT_XHTML),
+      array(RenderContext::LANG_XHTML, RenderContext::DIALECT_STRICT, true , RenderContext::CONTENT_HTML),
+      array(RenderContext::LANG_JS   , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_JS),
+      array(RenderContext::LANG_FBJS , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_JS),
+      array(RenderContext::LANG_TEXT , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_TEXT),
+      array(RenderContext::LANG_XML  , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_XML),
+      array(RenderContext::LANG_FBML , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_XML),
+      array(RenderContext::LANG_JSON , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_JSON),
+      array(RenderContext::LANG_CSS  , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_CSS),
+      array(RenderContext::LANG_MHTML, RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_XHTML_MP),
+      array(RenderContext::LANG_WML  , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_WML),
+      array('binary'                 , RenderContext::DIALECT_NONE  , false, 'application/octet-stream'),
+      array(''                       , RenderContext::DIALECT_NONE  , false, 'application/octet-stream'),
     );
   }
 
