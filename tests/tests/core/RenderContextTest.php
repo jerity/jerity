@@ -108,31 +108,37 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
    * @covers  RenderContext::renderPreContent()
    * @covers  RenderContext::setLanguage()
    * @covers  RenderContext::setVersion()
+   * @covers  RenderCOntext::setXHTML1CompatibilityMode()
    * @covers  RenderContext::setDialect()
    * @covers  RenderContext::getLanguage()
    * @covers  RenderContext::getVersion()
+   * @covers  RenderCOntext::getXHTML1CompatibilityMode()
    * @covers  RenderContext::getDialect()
    *
    * @dataProvider  getDoctypeProvider
    */
-  public function testGetDoctype($lang, $ver, $dialect, $expected) {
+  public function testGetDoctype($lang, $ver, $xhtml_1_0_compat, $dialect, $expected) {
     $ctx = new RenderContext();
     $ctx->setLanguage($lang);
     $ctx->setVersion($ver);
+    $ctx->setXHTML1CompatibilityMode($xhtml_1_0_compat);
     $ctx->setDialect($dialect);
-    $this->assertSame($lang,     $ctx->getLanguage());
-    $this->assertEquals($ver,    $ctx->getVersion());
-    $this->assertSame($dialect,  $ctx->getDialect());
-    $this->assertSame($expected, $ctx->getDoctype());
+    $this->assertSame($lang,               $ctx->getLanguage());
+    $this->assertEquals($ver,              $ctx->getVersion());
+    $this->assertEquals($xhtml_1_0_compat, $ctx->getXHTML1CompatibilityMode());
+    $this->assertSame($dialect,            $ctx->getDialect());
+    $this->assertSame($expected,           $ctx->getDoctype());
 
     $ctx = new RenderContext($lang, $ver, $dialect);
     $this->assertSame($lang,     $ctx->getLanguage());
     $this->assertEquals($ver,    $ctx->getVersion());
     $this->assertSame($dialect,  $ctx->getDialect());
 
+    $ctx->setXHTML1CompatibilityMode($xhtml_1_0_compat);
     $preContent = $ctx->renderPreContent();
-    if ($lang == RenderContext::LANG_XML || $lang == RenderContext::LANG_XHTML) {
-      $this->assertContains('<'.'?xml version="1.0" encoding="utf-8" ?'.">\n", $preContent);
+    if ($ctx->getLanguage() == RenderContext::LANG_XML ||
+      ($ctx->getLanguage() == RenderContext::LANG_XHTML && !$ctx->getXHTML1CompatibilityMode())) {
+      $this->assertContains('<'.'?xml version="1.0" ?'.">\n", $preContent);
       if ($expected !== '') {
         $this->assertContains($expected, $preContent);
       }
@@ -143,29 +149,32 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
 
   public static function getDoctypeProvider() {
     return array(
-      array(RenderContext::LANG_HTML , 2   , RenderContext::DIALECT_NONE        , '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">'),
-      array(RenderContext::LANG_HTML , 3.2 , RenderContext::DIALECT_NONE        , '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'),
-      array(RenderContext::LANG_HTML , 4.01, RenderContext::DIALECT_STRICT      , '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">'),
-      array(RenderContext::LANG_HTML , 4.01, RenderContext::DIALECT_TRANSITIONAL, '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'),
-      array(RenderContext::LANG_HTML , 4.01, RenderContext::DIALECT_FRAMESET    , '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">'),
-      array(RenderContext::LANG_HTML , 5   , RenderContext::DIALECT_NONE        , '<!DOCTYPE html>'),
-      array(RenderContext::LANG_XHTML, 1.0 , RenderContext::DIALECT_STRICT      , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'),
-      array(RenderContext::LANG_XHTML, 1.0 , RenderContext::DIALECT_TRANSITIONAL, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'),
-      array(RenderContext::LANG_XHTML, 1.0 , RenderContext::DIALECT_FRAMESET    , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'),
-      array(RenderContext::LANG_XHTML, 1.1 , RenderContext::DIALECT_NONE        , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'),
-      array(RenderContext::LANG_XHTML, 1.0 , RenderContext::DIALECT_MOBILE      , '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">'),
-      array(RenderContext::LANG_XHTML, 1.1 , RenderContext::DIALECT_MOBILE      , '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.1//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile11.dtd">'),
-      array(RenderContext::LANG_XHTML, 1.2 , RenderContext::DIALECT_MOBILE      , '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'),
-      array(RenderContext::LANG_XHTML, 5   , RenderContext::DIALECT_NONE        , ''),
-      array(RenderContext::LANG_CSS  , 2   , RenderContext::DIALECT_NONE        , ''),
-      array(RenderContext::LANG_FBJS , 0   , RenderContext::DIALECT_NONE        , ''),
-      array(RenderContext::LANG_FBML , 0   , RenderContext::DIALECT_NONE        , ''),
-      array(RenderContext::LANG_JS   , 1.6 , RenderContext::DIALECT_NONE        , ''),
-      array(RenderContext::LANG_JSON , 0   , RenderContext::DIALECT_NONE        , ''),
-      array(RenderContext::LANG_MHTML, 0   , RenderContext::DIALECT_NONE        , ''),
-      array(RenderContext::LANG_TEXT , 0   , RenderContext::DIALECT_NONE        , ''),
-      array(RenderContext::LANG_WML  , 1   , RenderContext::DIALECT_NONE        , ''),
-      array(RenderContext::LANG_XML  , 1.0 , RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_HTML , 2   , false, RenderContext::DIALECT_NONE        , '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">'),
+      array(RenderContext::LANG_HTML , 3.2 , false, RenderContext::DIALECT_NONE        , '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'),
+      array(RenderContext::LANG_HTML , 4.01, false, RenderContext::DIALECT_STRICT      , '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">'),
+      array(RenderContext::LANG_HTML , 4.01, false, RenderContext::DIALECT_TRANSITIONAL, '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'),
+      array(RenderContext::LANG_HTML , 4.01, false, RenderContext::DIALECT_FRAMESET    , '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">'),
+      array(RenderContext::LANG_HTML , 5   , false, RenderContext::DIALECT_NONE        , '<!DOCTYPE html>'),
+      array(RenderContext::LANG_XHTML, 1.0 , false, RenderContext::DIALECT_STRICT      , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'),
+      array(RenderContext::LANG_XHTML, 1.0 , false, RenderContext::DIALECT_TRANSITIONAL, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'),
+      array(RenderContext::LANG_XHTML, 1.0 , false, RenderContext::DIALECT_FRAMESET    , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'),
+      array(RenderContext::LANG_XHTML, 1.0 , true , RenderContext::DIALECT_STRICT      , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'),
+      array(RenderContext::LANG_XHTML, 1.0 , true , RenderContext::DIALECT_TRANSITIONAL, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'),
+      array(RenderContext::LANG_XHTML, 1.0 , true , RenderContext::DIALECT_FRAMESET    , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'),
+      array(RenderContext::LANG_XHTML, 1.1 , false, RenderContext::DIALECT_NONE        , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'),
+      array(RenderContext::LANG_XHTML, 1.0 , false, RenderContext::DIALECT_MOBILE      , '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">'),
+      array(RenderContext::LANG_XHTML, 1.1 , false, RenderContext::DIALECT_MOBILE      , '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.1//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile11.dtd">'),
+      array(RenderContext::LANG_XHTML, 1.2 , false, RenderContext::DIALECT_MOBILE      , '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'),
+      array(RenderContext::LANG_XHTML, 5   , false, RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_CSS  , 2   , false, RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_FBJS , 0   , false, RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_FBML , 0   , false, RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_JS   , 1.6 , false, RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_JSON , 0   , false, RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_MHTML, 0   , false, RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_TEXT , 0   , false, RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_WML  , 1   , false, RenderContext::DIALECT_NONE        , ''),
+      array(RenderContext::LANG_XML  , 1.0 , false, RenderContext::DIALECT_NONE        , ''),
     );
   }
 
