@@ -38,12 +38,6 @@ class Chrome extends Template {
   # chrome general settings management {{{
 
   /**
-   * Used when adding metadata so that we know which key attribute to use.
-   */
-  const META_HTTP = 'http-equiv';
-  const META_NAME = 'name';
-
-  /**
    * MIME types for favourites icon (favicon).
    *
    * - Most browsers support .ico, .png, .gif
@@ -313,13 +307,13 @@ class Chrome extends Template {
    */
   public static function addMetadata($name, $value, $http_equiv = false) {
     # transition properties
-    if ($http_equiv === self::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
-    if ($http_equiv === self::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
+    if ($http_equiv === Tag::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
+    if ($http_equiv === Tag::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
     if ($http_equiv && strtolower($name) == 'content-type') {
       # munge "Content-Type" meta header so we can find it later
       $name = 'Content-Type';
     }
-    self::$metadata[$http_equiv ? self::META_HTTP : self::META_NAME][$name] = $value;
+    self::$metadata[$http_equiv ? Tag::META_HTTP : Tag::META_NAME][$name] = $value;
   }
 
   /**
@@ -329,13 +323,13 @@ class Chrome extends Template {
    * @param  string  $http_equiv  Whether this is HTTP header-equivalent metadata
    */
   public static function removeMetadata($name, $http_equiv = false) {
-    if ($http_equiv === self::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
-    if ($http_equiv === self::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
+    if ($http_equiv === Tag::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
+    if ($http_equiv === Tag::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
     if ($http_equiv && strtolower($name) == 'content-type') {
       # munge "Content-Type" meta header so we can find it later
       $name = 'Content-Type';
     }
-    unset(self::$metadata[$http_equiv ? self::META_HTTP : self::META_NAME][$name]);
+    unset(self::$metadata[$http_equiv ? Tag::META_HTTP : Tag::META_NAME][$name]);
   }
 
   /**
@@ -346,11 +340,11 @@ class Chrome extends Template {
    */
   public static function clearMetadata($http_equiv = null) {
     if (is_null($http_equiv)) {
-      self::$metadata = array(self::META_HTTP=>array(), self::META_NAME=>array());
+      self::$metadata = array(Tag::META_HTTP => array(), Tag::META_NAME => array());
     } elseif ($http_equiv) {
-      self::$metadata[self::META_HTTP] = array();
+      self::$metadata[Tag::META_HTTP] = array();
     } else {
-      self::$metadata[self::META_NAME] = array();
+      self::$metadata[Tag::META_NAME] = array();
     }
   }
 
@@ -365,11 +359,11 @@ class Chrome extends Template {
     if (is_null($http_equiv)) {
       return self::$metadata;
     } elseif ($http_equiv) {
-      if (!isset(self::$metadata[self::META_HTTP])) self::$metadata[self::META_HTTP] = array();
-      return self::$metadata[self::META_HTTP];
+      if (!isset(self::$metadata[Tag::META_HTTP])) self::$metadata[Tag::META_HTTP] = array();
+      return self::$metadata[Tag::META_HTTP];
     } else {
-      if (!isset(self::$metadata[self::META_NAME])) self::$metadata[self::META_NAME] = array();
-      return self::$metadata[self::META_NAME];
+      if (!isset(self::$metadata[Tag::META_NAME])) self::$metadata[Tag::META_NAME] = array();
+      return self::$metadata[Tag::META_NAME];
     }
   }
 
@@ -828,21 +822,21 @@ class Chrome extends Template {
   public static function outputMetaTags() {
     $metadata = self::getMetadata(null);
     # ensure content-type is output first, if we have one
-    if (isset($metadata[self::META_HTTP]['Content-Type'])) {
+    if (isset($metadata[Tag::META_HTTP]['Content-Type'])) {
       # stop ourselves processing it again
-      $content_type = $metadata[self::META_HTTP]['Content-Type'];
-      unset($metadata[self::META_HTTP]['Content-Type']);
+      $content_type = $metadata[Tag::META_HTTP]['Content-Type'];
+      unset($metadata[Tag::META_HTTP]['Content-Type']);
       # output the tag
-      echo Tag::meta('Content-Type', $content_type, true), PHP_EOL;
+      echo Tag::meta(Tag::META_HTTP, 'Content-Type', $content_type), PHP_EOL;
     }
     # render other metadata
     foreach ($metadata as $type => $a) {
       foreach ($a as $name => $content) {
-        echo Tag::meta($name, $content, ($type === self::META_HTTP)), PHP_EOL;
+        echo Tag::meta($type, $name, $content), PHP_EOL;
       }
     }
     if (isset($content_type)) {
-      $metadata[self::META_HTTP]['Content-Type'] = $content_type;
+      $metadata[Tag::META_HTTP]['Content-Type'] = $content_type;
     }
   }
 
