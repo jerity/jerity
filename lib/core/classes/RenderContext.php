@@ -159,6 +159,16 @@ class RenderContext {
   protected $xhtml_1_0_compat = false;
 
   /**
+   * The character encoding with which to render content.  This is set to null 
+   * by default which indicates that no encoding should be explicitly set.
+   *
+   * @see  http://www.iana.org/assignments/character-sets
+   *
+   * @var  string | null
+   */
+  protected $charset = null;
+
+  /**
    * Create a new rendering context.
    *
    * @param  string  $language  The language for the new context.
@@ -426,7 +436,11 @@ class RenderContext {
     $output = '';
     if ($this->language == self::LANG_XML ||
       ($this->language == self::LANG_XHTML && !$this->getXHTML1CompatibilityMode())) {
-      $output .= '<'.'?xml version="1.0" encoding="utf-8" ?'.">\n";
+        $output .= '<'.'?xml version="1.0"';
+        if (!is_null($this->getCharset())) {
+          $output .= ' encoding="'.$this->getCharset().'"';
+        }
+        $output .= ' ?'.">\n";
     }
     if ($doctype = $this->getDoctype()) {
       $output .= $doctype."\n";
@@ -591,6 +605,30 @@ class RenderContext {
     } else {
       $this->xhtml_1_0_compat = false;
     }
+  }
+
+  /**
+   * Gets the default character set to use when rendering.
+   *
+   * @see  http://www.iana.org/assignments/character-sets
+   *
+   * @return  string | null
+   */
+  public function getCharset() {
+    return $this->charset;
+  }
+
+  /**
+   * Sets a default character set to use when rendering.  If set to null then 
+   * no encoding will be explicitly set.  A valid IANA assigned character set 
+   * must be used.
+   *
+   * @see  http://www.iana.org/assignments/character-sets
+   *
+   * @param  string | null  $charset  The character set to use.
+   */
+  public function setCharset($charset) {
+    $this->charset = $charset;
   }
 
   /**
