@@ -108,6 +108,13 @@ class Chrome extends Template {
   );
 
   /**
+   * Store for HTTP headers.
+   *
+   * @var  array
+   */
+  protected static $headers = array();
+
+  /**
    * Store for metadata.
    *
    * @var  array
@@ -296,6 +303,61 @@ class Chrome extends Template {
 
   ##############################################################################
   # chrome general settings management {{{
+
+  /**
+   * Adds an HTTP header to the page which will be output when the Chrome is 
+   * renderered.
+   *
+   * @param  string          $header   The header to set.
+   * @param  string | array  $content  The content to set.
+   * @param  boolean         $replace  Whether to replace all previously 
+   *                                   defined headers of this type.
+   */
+  public static function addHeader($header, $content, $replace = true) {
+    if ($replace) {
+      self::$headers[$header] = $content;
+    } else {
+      if (!is_array(self::$headers[$header])) self::$headers[$header] = array(self::$headers[$header]);
+      if (!is_array($content)) $content = array($content);
+      self::$headers[$header] = array_unique(array_merge(self::$headers[$header], $content));
+    }
+  }
+
+  /**
+   * Removes an HTTP header from the page.
+   *
+   * @param  string  $header   The header to remove.
+   * @param  string  $content  If null remove all headers of type, else only 
+   *                           remove the one specified.
+   */
+  public static function removeHeader($header, $content = null) {
+    if (!isset(self::$headers[$header])) return;
+    if (is_null($content)) {
+      unset(self::$headers[$header]);
+    } else {
+      if (is_array(self::$headers[$header])) {
+        self::$headers[$header] = array_diff(self::$headers[$header], array($content));
+      } else if (self::$headers[$header] == $content) {
+        unset(self::$headers[$header]);
+      }
+    }
+  }
+
+  /**
+   * Clears all HTTP headers set on the page.
+   */
+  public static function clearHeaders() {
+    self::$headers = array();
+  }
+
+  /**
+   * Returns the HTTP headers set on the page.
+   *
+   * @return  array  HTTP headers set on the page.
+   */
+  public static function getHeaders() {
+    return self::$headers;
+  }
 
   /**
    * Adds some metadata to the page.  HTTP header equivalent metadata is stored
@@ -775,6 +837,26 @@ class Chrome extends Template {
   }
 
   /**
+   * Outputs HTTP headers.  If the values are arrays, we automatically output 
+   * multiple times and do not replace the previous header.
+   */
+  public static function outputHeaders() {
+    foreach (self::getHeaders() as $k => $v) {
+      if (is_array($v)) {
+        header("{$k}: {$v[0]}");
+        if (count($v) > 1) {
+          $r = array_slice($v, 1);
+          foreach ($r as $i) {
+            header("{$k}: {$i}", false);
+          }
+        }
+      } else {
+        header("{$k}: {$v}");
+      }
+    }
+  }
+
+  /**
    * Render the opening HTML and HEAD tags, with namespaces and profiles as
    * appropriate.
    *
@@ -903,6 +985,9 @@ class Chrome extends Template {
    * Outputs the HTML head of the page.
    */
   public static function outputHead() {
+    # HTTP Headers
+    self::outputHeaders();
+
     $ctx = RenderContext::get();
     echo $ctx->renderPreContent();
 
