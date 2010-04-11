@@ -739,12 +739,19 @@ class Chrome extends Template {
   /**
    * Gets the default namespace based on the render context.
    *
+   * @see  http://wiki.whatwg.org/wiki/HTML_vs._XHTML
+   *
    * @return  array  A key-value pair.
    */
   protected static function getDefaultXMLNamespace() {
     $ns = array();
     $ctx = RenderContext::get();
     switch ($ctx->getLanguage()) {
+      case RenderContext::LANG_HTML:
+        if ($ctx->getVersion() == 5) {
+          $ns['xmlns'] = self::XMLNS_XHTML;
+        }
+        break;
       case RenderContext::LANG_XHTML:
         $ns['xmlns'] = self::XMLNS_XHTML;
         break;
@@ -776,6 +783,10 @@ class Chrome extends Template {
   /**
    * Render the opening HTML and HEAD tags, with namespaces and profiles as
    * appropriate.
+   *
+   * HTML5 can have a default XML namespace for XHTML to aid migration.
+   *
+   * @see  http://wiki.whatwg.org/wiki/HTML_vs._XHTML
    */
   public static function outputOpeningTags() {
     $ctx = RenderContext::get();
@@ -792,11 +803,19 @@ class Chrome extends Template {
       foreach (self::getXMLNamespaces() as $k => $v) {
         $namespaces .= ' '.$k.'="'.$v.'"';
       }
+    } elseif ($ctx->getLanguage() == RenderContext::LANG_HTML && $ctx->getVersion() == 5) {
+      $ns = self::getDefaultXMLNamespace();
+      list($k, $v) = each($ns);
+      $namespaces .= ' '.$k.'="'.$v.'"';
     }
     if (self::getIcons()) {
       # If we have favicons then add in a profile as defined by W3.
       # See: http://www.w3.org/2005/10/howto-favicon
       $profiles = ' profile="http://www.w3.org/2005/10/profile"';
+    }
+    if ($ctx->getVersion() == 5) {
+      # head[profile] is no longer allowed in (X)HTML5.
+      $profiles = '';
     }
     echo '<html', $languages, $namespaces, '>', PHP_EOL;
     echo '<head', $profiles, '>', PHP_EOL;
