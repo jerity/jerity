@@ -438,7 +438,7 @@ class RenderContext {
       ($this->language == self::LANG_XHTML && !$this->getXHTML1CompatibilityMode())) {
         $output .= '<'.'?xml version="1.0"';
         if (!is_null($this->getCharset())) {
-          $output .= ' encoding="'.$this->getCharset().'"';
+          $output .= ' encoding="'.strtolower($this->getCharset()).'"';
         }
         $output .= ' ?'.">\n";
     }
