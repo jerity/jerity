@@ -28,6 +28,27 @@ class Tag {
   const META_NAME = 'name';
 
   /**
+   * The default content type for scripts.
+   *
+   * @var  string
+   */
+  private static $default_script_content_type = RenderContext::CONTENT_JS;
+
+  /**
+   * The default content type for styles.
+   *
+   * @var  string
+   */
+  private static $default_style_content_type = RenderContext::CONTENT_CSS;
+
+  /**
+   * The default media type for styles.
+   *
+   * @var  string
+   */
+  private static $default_style_media_type = null;
+
+  /**
    * Static helper class.  Non-instantiable.
    */
   // @codeCoverageIgnoreStart
@@ -323,7 +344,7 @@ class Tag {
    */
   public static function style($content = null, array $attrs = array()) {
     if (!isset($attrs['type'])) {
-      $attrs = array_merge(array('type' => RenderContext::CONTENT_CSS), $attrs);
+      $attrs = array_merge(array('type' => self::getDefaultStyleContentType()), $attrs);
     }
     return self::renderTag('style', $attrs, $content);
   }
@@ -358,6 +379,89 @@ class Tag {
   }
 
   # }}} Internet Explorer conditional comments
+
+  /**
+   * Gets the default content type for scripts.
+   *
+   * If null, then do not specify and let the browser decide.
+   *
+   * @return  string | null  The content type
+   */
+  public static function getDefaultScriptContentType() {
+    return self::$default_script_content_type;
+  }
+
+  /**
+   * Sets the default content type for scripts.
+   *
+   * If null, then do not specify and let the browser decide.
+   *
+   * @param  string | null  $content_type  The content type
+   */
+  public static function setDefaultScriptContentType($content_type) {
+    self::$default_script_content_type = $content_type;
+  }
+
+  /**
+   * Gets the default content type for styles.
+   *
+   * If null, then do not specify and let the browser decide.
+   *
+   * @return  string | null  The content type
+   */
+  public static function getDefaultStyleContentType() {
+    return self::$default_style_content_type;
+  }
+
+  /**
+   * Sets the default content type for styles.
+   *
+   * If null, then do not specify and let the browser decide.
+   *
+   * @param  string  $content_type  The content type
+   */
+  public static function setDefaultStyleContentType($content_type) {
+    self::$default_style_content_type = $content_type;
+  }
+
+  /**
+   * Gets the default media type for styles.
+   *
+   * If null, then do not specify and let the browser decide.
+   *
+   * @return  string | null  The media type
+   */
+  public static function getDefaultStyleMediaType() {
+    return self::$default_style_media_type;
+  }
+
+  /**
+   * Sets the default media type for styles.
+   *
+   * If null, then do not specify and let the browser decide.
+   *
+   * This should be the value 'all' or a comma separated string of any of the 
+   * following values:
+   *
+   *     aural, braille, handheld, print, projection, screen, tty, tv
+   *
+   * @see  http://www.w3.org/TR/html401/types.html#type-media-descriptors
+   *
+   * @param  string | null  $media_type  The media type
+   */
+  public static function setDefaultStyleMediaType($media_type) {
+    if (!is_null($media_type)) {
+      $media_type = strtolower(str_replace(' ', '', $media_type));
+      if ($media_type != 'all') {
+        $mts = split(',', $media_type);
+        $mts = array_diff($mts, array(
+          'aural', 'braille', 'handheld', 'print', 'projection', 'screen', 'tty', 
+          'tv'));
+        if (count($mts)) trigger_error('Invalid media type specified.');
+      }
+    }
+    self::$default_style_media_type = $media_type;
+  }
 
   /**
    * Renders a tag according the the current render context.
