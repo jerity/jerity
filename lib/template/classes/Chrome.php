@@ -474,18 +474,20 @@ class Chrome extends Template {
    *
    * @param  string  $href      The href of the file.
    * @param  int     $priority  Defines the order that scripts are loaded
-   * @param  string  $type      The type of script.
    * @param  array   $attrs     An array of additional attributes.
    *
    * @throws  OutOfRangeException
    */
-  public static function addScript($href, $priority = 50, $type = RenderContext::CONTENT_JS, array $attrs = array()) {
+  public static function addScript($href, $priority = 50, array $attrs = array()) {
     if ($priority < 0) {
       throw new OutOfRangeException('Script priority must be zero or greater');
     }
-    $attrs['type'] = $type;
-    $attrs['src']  = $href;
-    self::$scripts[$type][$href] = array(
+    $attrs['src'] = $href;
+    $attrs = array_merge(
+      array('type' => Tag::getDefaultScriptContentType()),
+      $attrs
+    );
+    self::$scripts[$attrs['type']][$href] = array(
       'priority' => $priority,
       'attrs'    => $attrs,
     );
@@ -559,8 +561,12 @@ class Chrome extends Template {
     if ($priority < 0) {
       throw new OutOfRangeException('Stylesheet priority must be zero or greater');
     }
+    if (!isset($attrs['media'])) {
+      $media = Tag::getDefaultStyleMediaType();
+      if (!is_null($media)) $attrs['media'] = $media;
+    }
     $attrs = array_merge(
-      array('rel' => 'stylesheet', 'type' => RenderContext::CONTENT_CSS),
+      array('rel' => 'stylesheet', 'type' => Tag::getDefaultStyleContentType()),
       $attrs,
       array('href' => $href)
     );
@@ -944,7 +950,7 @@ class Chrome extends Template {
    */
   public static function outputStylesheetTags() {
     foreach (self::getStylesheets() as $href => $attrs) {
-      echo Tag::link($href, RenderContext::CONTENT_CSS, $attrs), PHP_EOL;
+      echo Tag::link($href, Tag::getDefaultStyleContentType(), $attrs), PHP_EOL;
     }
   }
 
@@ -954,7 +960,7 @@ class Chrome extends Template {
   public static function outputExternalScriptTags() {
     foreach (self::getScripts(null) as $type => $a) {
       foreach ($a as $href => $attrs) {
-        echo Tag::script($type, '', $attrs), PHP_EOL;
+        echo Tag::script('', $attrs), PHP_EOL;
       }
     }
   }
