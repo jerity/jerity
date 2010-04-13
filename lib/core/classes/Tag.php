@@ -320,15 +320,16 @@ class Tag {
    * and not the head.  Thus it can take in content for an inline script or a
    * source attribute.  The source attribute will take precedence.
    *
-   * @param   string  $type     The MIME type of the script.
    * @param   string  $content  The inline content.
    * @param   array   $attrs    An associative array of addional attributes.
    *
    * @return  string
    */
-  public static function script($type, $content = null, array $attrs = array()) {
-    $attrs = array_merge(array('type' => $type), $attrs);
-    if (isset($attrs['src'])) $content = '';
+  public static function script($content = null, array $attrs = array()) {
+    if (!isset($attrs['type'])) {
+      $attrs = array_merge(array('type' => self::getDefaultScriptContentType()), $attrs);
+    }
+    if (isset($attrs['src']) && is_null($content)) $content = '';
     return self::renderTag('script', $attrs, $content);
   }
 
