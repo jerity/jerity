@@ -372,8 +372,8 @@ class Chrome extends Template {
     if ($http_equiv === Tag::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
     if ($http_equiv === Tag::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
     if ($http_equiv && strtolower($name) == 'content-type') {
-      # munge "Content-Type" meta header so we can find it later
-      $name = 'Content-Type';
+      trigger_error('Content-Type should be set by changing render context.');
+      return;
     }
     self::$metadata[$http_equiv ? Tag::META_HTTP : Tag::META_NAME][$name] = $value;
   }
@@ -388,8 +388,8 @@ class Chrome extends Template {
     if ($http_equiv === Tag::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
     if ($http_equiv === Tag::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
     if ($http_equiv && strtolower($name) == 'content-type') {
-      # munge "Content-Type" meta header so we can find it later
-      $name = 'Content-Type';
+      trigger_error('Content-Type should be set by changing render context.');
+      return;
     }
     unset(self::$metadata[$http_equiv ? Tag::META_HTTP : Tag::META_NAME][$name]);
   }
@@ -482,6 +482,10 @@ class Chrome extends Template {
     if ($priority < 0) {
       throw new OutOfRangeException('Script priority must be zero or greater');
     }
+    if (!isset($attrs['charset'])) {
+      $charset = RenderContext::get()->getCharset();
+      if (!is_null($charset)) $attrs['charset'] = strtolower($charset);
+    }
     $attrs['src'] = $href;
     $attrs = array_merge(
       array('type' => Tag::getDefaultScriptContentType()),
@@ -560,6 +564,12 @@ class Chrome extends Template {
   public static function addStylesheet($href, $priority = 50, array $attrs = array()) {
     if ($priority < 0) {
       throw new OutOfRangeException('Stylesheet priority must be zero or greater');
+    }
+    if (RenderContext::get()->getVersion() < 5) {
+      if (!isset($attrs['charset'])) {
+        $charset = RenderContext::get()->getCharset();
+        if (!is_null($charset)) $attrs['charset'] = strtolower($charset);
+      }
     }
     if (!isset($attrs['media'])) {
       $media = Tag::getDefaultStyleMediaType();
@@ -908,16 +918,20 @@ class Chrome extends Template {
    * tag is rendered first if present.
    */
   public static function outputMetaTags() {
-    $metadata = self::getMetadata(null);
-    # ensure content-type is output first, if we have one
-    if (isset($metadata[Tag::META_HTTP]['Content-Type'])) {
-      # stop ourselves processing it again
-      $content_type = $metadata[Tag::META_HTTP]['Content-Type'];
-      unset($metadata[Tag::META_HTTP]['Content-Type']);
-      # output the tag
-      echo Tag::meta(Tag::META_HTTP, 'Content-Type', $content_type), PHP_EOL;
+    # If a charset is specified in the render context, set it in the
+    # content-type. This is a special case - the charset should come before any
+    # other data in the head.
+    $ctx = RenderContext::get();
+    if ($ctx->getCharset()) {
+      $charset = strtolower($ctx->getCharset());
+      if ($ctx->getVersion() == 5) { # only if (X)HTML5
+        echo Tag::meta(Tag::META_CHAR, null, $charset), PHP_EOL;
+      }
+      echo Tag::meta(Tag::META_HTTP, 'Content-Type', "{$ctx->getContentType()};charset={$charset}"), PHP_EOL;
     }
-    # render other metadata
+    # Render other metadata
+    $metadata = self::getMetadata(null);
+    ksort($metadata);
     foreach ($metadata as $type => $a) {
       foreach ($a as $name => $content) {
         echo Tag::meta($type, $name, $content), PHP_EOL;
