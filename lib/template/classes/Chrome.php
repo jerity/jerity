@@ -305,12 +305,12 @@ class Chrome extends Template {
   # chrome general settings management {{{
 
   /**
-   * Adds an HTTP header to the page which will be output when the Chrome is 
+   * Adds an HTTP header to the page which will be output when the Chrome is
    * renderered.
    *
    * @param  string          $header   The header to set.
    * @param  string | array  $content  The content to set.
-   * @param  boolean         $replace  Whether to replace all previously 
+   * @param  boolean         $replace  Whether to replace all previously
    *                                   defined headers of this type.
    */
   public static function addHeader($header, $content, $replace = true) {
@@ -327,7 +327,7 @@ class Chrome extends Template {
    * Removes an HTTP header from the page.
    *
    * @param  string  $header   The header to remove.
-   * @param  string  $content  If null remove all headers of type, else only 
+   * @param  string  $content  If null remove all headers of type, else only
    *                           remove the one specified.
    */
   public static function removeHeader($header, $content = null) {
@@ -855,7 +855,7 @@ class Chrome extends Template {
   }
 
   /**
-   * Outputs HTTP headers.  If the values are arrays, we automatically output 
+   * Outputs HTTP headers.  If the values are arrays, we automatically output
    * multiple times and do not replace the previous header.
    */
   public static function outputHeaders() {
@@ -1010,8 +1010,8 @@ class Chrome extends Template {
     # HTTP Headers
     self::outputHeaders();
 
-    $ctx = RenderContext::get();
-    echo $ctx->renderPreContent();
+    # XML declaration and doctype (if required).
+    echo RenderContext::get()->renderPreContent();
 
     # Opening <html> and <head> tags
     self::outputOpeningTags();
