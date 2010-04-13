@@ -850,6 +850,8 @@ class Chrome extends Template {
    */
   public static function setLanguage($language) {
     self::$language = $language;
+    self::addHeader('Content-Language', $language);
+    self::addMetadata('Content-Language', $language, true);
   }
 
   /**
