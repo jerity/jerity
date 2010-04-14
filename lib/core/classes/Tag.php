@@ -483,8 +483,10 @@ class Tag {
     $tag = strtolower($tag);
 
     # Check for and warn about deprecated elements and attributes.
-    self::checkDeprecatedElements($tag);
-    self::checkDeprecatedAttributes($tag, array_keys($attrs));
+    if (Debug::isEnabled()) {
+      self::checkDeprecatedElements($tag);
+      self::checkDeprecatedAttributes($tag, array_keys($attrs));
+    }
 
     # Check whether we need to account for XML.
     $ctx = RenderContext::get();
@@ -529,9 +531,6 @@ class Tag {
    * @see  http://dev.w3.org/html5/html4-differences/#absent-elements
    */
   protected static function checkDeprecatedElements($tag) {
-    # Only display warnings if we are in debug mode.
-    if (!Debug::isEnabled()) return;
-
     $deprecated[RenderContext::LANG_HTML]['5'] = array(
       'basefont', 'big', 'center', 'font', 's', 'strike', 'tt', 'u', 'frame', 
       'frameset', 'noframes', 'acronym', 'applet', 'isindex', 'dir'
@@ -571,9 +570,6 @@ class Tag {
    * @see  http://dev.w3.org/html5/html4-differences/#absent-attributes
    */
   protected static function checkDeprecatedAttributes($tag, $attrs) {
-    # Only display warnings if we are in debug mode.
-    if (!Debug::isEnabled()) return;
-
     $deprecated[RenderContext::LANG_HTML]['5'] = array(
       'a'        => array('charset', 'coords', 'rev', 'shape'),
       'area'     => array('nohref'),
