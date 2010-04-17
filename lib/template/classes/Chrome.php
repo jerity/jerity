@@ -10,8 +10,6 @@
  * and can be manipulated using various methods provided to make it easier to
  * add general styling, scripting and metadata to a page.
  *
- * @todo  Support IE conditional comments for various chrome items.
- *
  * @package    JerityTemplate
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
@@ -176,6 +174,23 @@ class Chrome extends Template {
    * @var  string
    */
   protected static $language = null;
+
+  /**
+   * Used when matching filenames of external resources for wrapping in 
+   * Internet Explorer conditional comments.
+   *
+   * @var  string
+   */
+  protected static $resource_iecc_regex = '/\.ie(?:\.([gl]te?)?([_\d]+))?\./S';
+
+  /**
+   * Whether to group linked resources that are wrapped in Internet Explorer
+   * conditional comments (true), or to only use priority sorting on resources 
+   * (false).
+   *
+   * @var  boolean
+   */
+  protected static $resource_iecc_group = true;
 
   # }}} chrome general settings management
   ##############################################################################
@@ -470,7 +485,13 @@ class Chrome extends Template {
    * order of ascending priority (i.e. priority 5 will be loaded before
    * priority 15).
    *
+   * Files that have names targeted at specific versions of Internet Explorer
+   * will be wrapped in conditional comments.  If external resource grouping
+   * is enabled, then the files will be grouped to reduce excess markup.
+   *
    * Note that 'charset' and 'defer' attributes can be passed into $attrs.
+   *
+   * @see  setExternalResourceGrouping()
    *
    * @param  string  $href      The href of the file.
    * @param  int     $priority  Defines the order that scripts are loaded
@@ -520,27 +541,39 @@ class Chrome extends Template {
    * all scripts will be returned, indexed by type and then ordered by
    * priority.
    *
-   * @param  string  $type  The type of script, or null for all scripts.
+   * Files that have names targeted at specific versions of Internet Explorer
+   * will be wrapped in conditional comments.  If external resource grouping
+   * is enabled, then the files will be grouped to reduce excess markup.
+   *
+   * @see setExternalResourceGrouping()
+   *
+   * @param  string   $type   The type of script, or null for all scripts.
+   * @param  boolean  $group  Whether to group scripts by browser specific 
+   *                          information provided in filename.
    *
    * @return  array  The scripts for the current page.
    */
-  public static function getScripts($type = RenderContext::CONTENT_JS) {
+  public static function getScripts($type = RenderContext::CONTENT_JS, $group = false) {
+    # Check if there are any scripts of any type at all and if not return an 
+    # empty array.
+    if (empty(self::$scripts)) return array();
+    # Check if there are any scripts of the specified type to retrieve and if 
+    # not return an empty array.
+    if (!is_null($type) && empty(self::$scripts[$type])) return array();
+    # Use either the entire script array, or just a specific type.
     if (is_null($type)) {
-      $s = self::$scripts;
-      foreach ($s as $t => $a) {
-        uasort($a, create_function('$a,$b', 'return Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
-        $s[$t] = array_values(array_map(create_function('$a', 'return $a[\'attrs\'];'), $a));
-      }
-
-    } elseif (!isset(self::$scripts[$type])) {
-      $s = array();
-
+      $scripts = self::$scripts;
     } else {
-      $a = self::$scripts[$type];
-      uasort($a, create_function('$a,$b', 'return Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
-      $s = array_values(array_map(create_function('$a', 'return $a[\'attrs\'];'), $a));
+      $scripts = array($type => self::$scripts[$type]);
     }
-    return $s;
+    # Perform the sorting.
+    foreach ($scripts as $t => $a) {
+      self::sortExternalsByPriority($a);
+      if ($group) self::sortExternalsByGroup($a);
+      $scripts[$t] = $a;
+    }
+    # If we are only expecting one type, return that type only.
+    return (is_null($type) ? $scripts : array_shift($scripts));
   }
 
   /**
@@ -554,6 +587,12 @@ class Chrome extends Template {
    *
    * Note that if alternate stylesheets are defined, stylesheets added by this
    * method will always be applied.
+   *
+   * Files that have names targeted at specific versions of Internet Explorer
+   * will be wrapped in conditional comments.  If external resource grouping
+   * is enabled, then the files will be grouped to reduce excess markup.
+   *
+   * @see setExternalResourceGrouping()
    *
    * @param  string  $href      The href of the file.
    * @param  int     $priority  Defines the order that stylesheets are loaded.
@@ -630,13 +669,27 @@ class Chrome extends Template {
    * Gets the array of stylesheets for the page.  The stylesheets are returned
    * in ascending priority order.
    *
+   * Files that have names targeted at specific versions of Internet Explorer
+   * will be wrapped in conditional comments.  If external resource grouping
+   * is enabled, then the files will be grouped to reduce excess markup.
+   *
+   * @see setExternalResourceGrouping()
+   *
+   * @param  boolean  $group  Whether to group scripts by browser specific 
+   *                          information provided in filename.
+   *
    * @return  array  The stylesheets for the current page.
    */
-  public static function getStylesheets() {
-    $s = self::$stylesheets;
-    uasort($s, create_function('$a,$b', 'return Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
-    $s = array_map(create_function('$a', 'return $a[\'attrs\'];'), $s);
-    return $s;
+  public static function getStylesheets($group = false) {
+    # Check if there are any stylesheets and if not return an empty array.
+    if (empty(self::$stylesheets)) return array();
+    # Use either the entire stylesheet array.
+    $stylesheets = self::$stylesheets;
+    # Perform the sorting.
+    self::sortExternalsByPriority($stylesheets);
+    if ($group) self::sortExternalsByGroup($stylesheets);
+    # If we are only expecting one type, return that type only.
+    return $stylesheets;
   }
 
   /**
@@ -961,23 +1014,22 @@ class Chrome extends Template {
   }
 
   /**
-   * Renders any stylesheets attached to the page, taking their priorities into
-   * account.
+   * Renders any stylesheets attached to the page, taking their priorities and
+   * (optionally) groupings into account.
    */
   public static function outputStylesheetTags() {
-    foreach (self::getStylesheets() as $href => $attrs) {
-      echo Tag::link($href, Tag::getDefaultStyleContentType(), $attrs), PHP_EOL;
-    }
+    $stylesheets = self::getStylesheets(self::getExternalResourceGrouping());
+    self::outputExternalResources($stylesheets, 'style');
   }
 
   /**
-   * Renders the script tags that reference an external file.
+   * Renders the script tags that reference an external file, taking their 
+   * priorities and (optionally) groupings into account.
    */
   public static function outputExternalScriptTags() {
-    foreach (self::getScripts(null) as $type => $a) {
-      foreach ($a as $href => $attrs) {
-        echo Tag::script('', $attrs), PHP_EOL;
-      }
+    $scripts = self::getScripts(null, self::getExternalResourceGrouping());
+    foreach ($scripts as $type => $items) {
+      self::outputExternalResources($items, 'script');
     }
   }
 
@@ -1045,6 +1097,202 @@ class Chrome extends Template {
   }
 
   # }}} chrome general settings management
+  ##############################################################################
+
+  ##############################################################################
+  # external resource helper functions {{{
+
+  /**
+   * Sorts the given array by priority and then strips the priority information.
+   *
+   * @param  &array  $items  The array to sort.
+   */
+  protected static function sortExternalsByPriority(array &$items) {
+    uasort($items, create_function('$a,$b', 'return Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
+    $items = array_map(create_function('$a', 'return $a[\'attrs\'];'), $items);
+  }
+
+  /**
+   * Sorts the given array into groups by matching components of the filename.  
+   * The main purpose of this is to automatically group various styles or 
+   * scripts specific to Internet Explorer so that they can be wrapped in 
+   * conditional comments as a single block.
+   *
+   * Groupings are ordered to be most general first, most specific last. The 
+   * order of sorting is:
+   *  - Scripts for all browsers
+   *  - Scripts for any version of IE
+   *  - Scripts for any IE <=, < VERSION (interleaved, descending)
+   *  - Scripts for any IE >=, > VERSION (interleaved, ascending)
+   *  - Scripts for any IE ==    VERSION (ascending)
+   *
+   * @param  &array  $items  The array to sort.
+   */
+  protected static function sortExternalsByGroup(array &$items) {
+    $sorted = array(
+      '**' => array(),
+      'ie' => array(),
+      'lt' => array(),
+      'gt' => array(),
+      'eq' => array(),
+    );
+    foreach ($items as $href => $item) {
+      if (preg_match(self::$resource_iecc_regex, $href, $m)) {
+        # no version
+        if (empty($m[2])) {
+          $sorted['ie'][$href] = $item;
+        } else {
+          $version = strtr($m[2], '_', '.');
+          # ranged version
+          if (!empty($m[1])) {
+            $x = $m[1][0].'t';
+            if (!isset($sorted[$x][$version])) {
+              $sorted[$x][$version] = array($x.'e' => array(), $x => array());
+            }
+            $sorted[$x][$version][$m[1]][$href] = $item;
+          # exact version
+          } else {
+            $sorted['eq'][$version][$href] = $item;
+          }
+        }
+      } else {
+        $sorted['**'][$href] = $item;
+      }
+    }
+    # perform numerical sorting
+    krsort($sorted['lt']);
+    ksort($sorted['gt']);
+    ksort($sorted['eq']);
+    # return in original array
+    $items = $sorted;
+  }
+
+  /**
+   * A helper function to output grouped external resources wrapped in the 
+   * appropriate conditional comment for the group.
+   *
+   * @param  &array  $items  List of external resource links to be output.
+   * @param  array   $expr   The expression parts for the conditional comment.
+   * @param  strong  $type   Used to determine the tag function (style, script)
+   */
+  protected static function outputGroupedExternalResources(array &$items, array $expr, $type) {
+    switch ($type) {
+      case 'script':
+        $function = array('Tag', 'script');
+        $parameters = array(null);
+        break;
+      case 'style':
+        $function = array('Tag', 'link');
+        $parameters = array(Tag::getDefaultStyleContentType());
+        break;
+      default:
+        throw new InvalidArgumentException('Unrecognised external resource type: '.$type);
+    }
+    $content = array();
+    foreach ($items as $href => $item) {
+      $params = $parameters;
+      if ($type == 'style') array_unshift($params, $href);
+      $params[] = $item;
+      $content[] = call_user_func_array($function, $params);
+    }
+    $expression = join(' ', $expr);
+    $content = join(PHP_EOL, $content);
+    $newline = (count($items) > 1);
+    echo Tag::ieConditionalComment($expression, $content, $newline);
+  }
+
+  /**
+   * Outputs tags for external resources based on the type passed in.  If we 
+   * have a resource that should be grouped within conditional comments, then 
+   * the rendering is handed off to a helper function.
+   *
+   * @see outputGroupedExternalResources()
+   * 
+   * @param  &array  $items  List of external resource groups to be output.
+   * @param  strong  $type   Used to determine the tag function (style, script)
+   */
+  protected static function outputExternalResources(&$items, $type) {
+    switch ($type) {
+      case 'script':
+        $function = array('Tag', 'script');
+        $parameters = array(null);
+        break;
+      case 'style':
+        $function = array('Tag', 'link');
+        $parameters = array(Tag::getDefaultStyleContentType());
+        break;
+      default:
+        throw new InvalidArgumentException('Unrecognised external resource type: '.$type);
+    }
+    if (self::getExternalResourceGrouping()) {
+      foreach ($items as $key => $items1) {
+        switch ($key) {
+          case 'lt':
+          case 'gt':
+            foreach ($items1 as $version => $items2) {
+              foreach ($items2 as $operator => $items3) {
+                self::outputGroupedExternalResources($items3, array($operator, 'IE', $version), $type);
+              }
+            }
+            break;
+          case 'eq':
+            foreach ($items1 as $version => $items2) {
+              self::outputGroupedExternalResources($items2, array('IE', $version), $type);
+            }
+            break;
+          case 'ie':
+            self::outputGroupedExternalResources($items1, array('IE'), $type);
+            break;
+          case '**':
+          default:
+            foreach ($items1 as $href => $attrs) {
+              $params = $parameters;
+              if ($type == 'style') array_unshift($params, $href);
+              $params[] = $attrs;
+              echo call_user_func_array($function, $params), PHP_EOL;
+            }
+        }
+      }
+    } else {
+      foreach ($items as $href => $attrs) {
+        $params = $parameters;
+        if ($type == 'style') array_unshift($params, $href);
+        $params[] = $attrs;
+        $content = call_user_func_array($function, $params);
+        if (preg_match(self::$resource_iecc_regex, $content, $m)) {
+          $expression = (!empty($m[1]) ? $m[1].' ' : '');
+          $expression .= 'IE';
+          $expression .= (!empty($m[2]) ? ' '.strtr($m[2], '_', '.') : '');
+          $content = Tag::ieConditionalComment($expression, $content);
+        } else {
+          $content .= PHP_EOL;
+        }
+        echo $content;
+      }
+    }
+  }
+
+  /**
+   * Whether to group linked resources that are wrapped in Internet Explorer
+   * conditional comments, or to only use priority sorting on resources.
+   *
+   * @return  boolean  Whether to enable grouping.
+   */
+  public static function getExternalResourceGrouping() {
+    return self::$resource_iecc_group;
+  }
+
+  /**
+   * Whether to group linked resources that are wrapped in Internet Explorer
+   * conditional comments, or to only use priority sorting on resources.
+   *
+   * @param  boolean  $b  Whether to enable grouping.
+   */
+  public static function setExternalResourceGrouping($b) {
+    self::$resource_iecc_group = $b;
+  }
+
+  # }}} external resource helper functions
   ##############################################################################
 
 }
