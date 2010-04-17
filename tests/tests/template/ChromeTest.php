@@ -722,8 +722,14 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $s = Chrome::getScripts(null);
     $this->assertEquals($s[RenderContext::CONTENT_JS], Chrome::getScripts());
     $scriptArr = array(
-      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/prototype.js'),
-      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/scriptaculous.js'),
+      '/js/prototype.js' => array(
+        'type' => RenderContext::CONTENT_JS,
+        'src' => '/js/prototype.js'
+      ),
+      '/js/scriptaculous.js' => array(
+        'type' => RenderContext::CONTENT_JS,
+        'src' => '/js/scriptaculous.js'
+      ),
     );
     $this->assertEquals($scriptArr, Chrome::getScripts());
     Chrome::clearScripts();
@@ -745,9 +751,18 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     $s = Chrome::getScripts(null);
     $this->assertEquals($s[RenderContext::CONTENT_JS], Chrome::getScripts());
     $scriptArr = array(
-      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/prototype.js'),
-      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/misc.js'),
-      array('type'=>RenderContext::CONTENT_JS, 'src'=>'/js/scriptaculous.js'),
+      '/js/prototype.js' => array(
+        'type' => RenderContext::CONTENT_JS,
+        'src' => '/js/prototype.js'
+      ),
+      '/js/misc.js' => array(
+        'type' => RenderContext::CONTENT_JS,
+        'src' => '/js/misc.js'
+      ),
+      '/js/scriptaculous.js' => array(
+        'type' => RenderContext::CONTENT_JS,
+        'src' => '/js/scriptaculous.js'
+      ),
     );
     $this->assertEquals($scriptArr, Chrome::getScripts(), 'Expected array');
     Chrome::clearScripts();
