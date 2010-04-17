@@ -1231,16 +1231,19 @@ class Chrome extends Template {
           case 'gt':
             foreach ($items1 as $version => $items2) {
               foreach ($items2 as $operator => $items3) {
+                if (empty($items3)) continue;
                 self::outputGroupedExternalResources($items3, array($operator, 'IE', $version), $type);
               }
             }
             break;
           case 'eq':
             foreach ($items1 as $version => $items2) {
+              if (empty($items2)) continue;
               self::outputGroupedExternalResources($items2, array('IE', $version), $type);
             }
             break;
           case 'ie':
+            if (empty($items1)) continue;
             self::outputGroupedExternalResources($items1, array('IE'), $type);
             break;
           case '**':
