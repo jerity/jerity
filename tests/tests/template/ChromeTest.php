@@ -312,7 +312,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     Chrome::setLanguage('en-gb');
     Chrome::setTitle('Test title');
     Chrome::clearMetadata();
-    Chrome::addMetadata('Content-Type', 'text/html; charset=utf-8', true);
     Chrome::addMetadata('generator', 'Jerity');
     Chrome::addMetadata('description', 'Jerity test case page');
     Chrome::clearStylesheets();
@@ -533,11 +532,8 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
     Chrome::addMetadata('refresh', '60', true);
-    Chrome::addMetadata('content-type', 'text/html; charset=utf-8', true);
     $this->assertEquals(0, count(Chrome::getMetadata()));
-    $this->assertEquals(2, count(Chrome::getMetadata(true)));
-    Chrome::removeMetadata('content-type', true);
-    $this->assertEquals(1, count(Chrome::getMetadata(true)), 'Removing Content-Type');
+    $this->assertEquals(1, count(Chrome::getMetadata(true)));
     Chrome::removeMetadata('refresh', true);
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
   }
@@ -551,9 +547,8 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
     Chrome::addMetadata('refresh', '60', true);
-    Chrome::addMetadata('content-type', 'text/html; charset=utf-8', true);
     $this->assertEquals(0, count(Chrome::getMetadata()));
-    $this->assertEquals(2, count(Chrome::getMetadata(true)));
+    $this->assertEquals(1, count(Chrome::getMetadata(true)));
     Chrome::clearMetadata();
     $this->assertEquals(0, count(Chrome::getMetadata(true)));
   }
