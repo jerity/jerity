@@ -226,8 +226,8 @@ class FormGenerator {
       $props = $this->formProperties;
       if (!is_null($action))            $props['action'] = $action;
       elseif (!isset($props['action'])) $props['action'] = URL::getCurrent();
-      if (!is_null($method))            $props['method'] = strtoupper($method);
-      elseif (!isset($props['method'])) $props['method'] = 'POST';
+      if (!is_null($method))            $props['method'] = strtolower($method);
+      elseif (!isset($props['method'])) $props['method'] = 'post';
       $out .= '<form';
       foreach ($props as $k=>$v) {
         $out .= ' '.$k.'="'.String::escape($v, true).'"';
