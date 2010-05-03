@@ -285,6 +285,19 @@ class Chrome extends Template {
   }
 
   /**
+   * Returns true if there are more content items.
+   *
+   * @return  boolean
+   */
+  public function hasNextContent() {
+    if (!$this->contentIterator instanceof Iterator) {
+      return (boolean) count($this->content);
+    } else {
+      return $this->contentIterator->valid();
+    }
+  }
+
+  /**
    * Adds one or more content items to this template.
    * You may add content in the following ways:
    *   $c->setContent($content);
