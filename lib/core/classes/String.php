@@ -374,4 +374,19 @@ class String {
     return preg_replace(array_keys($map), array_values($map), $string);
   }
 
+  /**
+   * Wraps a string in paragraphs.  Wraps double line breaks with <p> and </p>,
+   * and replaces single line breaks with <br>.
+   *
+   * @param   string  $string  The string to convert to paragraphs
+   *
+   * @return  string
+   */
+  public static function nl2p($string) {
+    $string = '<p>' . $string . '</p>';
+    $string = preg_replace("/\r\n\r\n/", "</p>\n<p>", $string);
+    $string = preg_replace("/\r\n/", Tag::br(), $string);
+    return $string;
+  }
+
 }
