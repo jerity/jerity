@@ -129,4 +129,60 @@ class FormHelper {
     }
   }
 
+  /**
+   * Checks whether the length of a form field fits in a specified range.
+   *
+   * @param  string          $field   The field to check.
+   * @param  integer | null  $min     The method to check for.
+   * @param  integer | null  $max     The method to check for.
+   * @param  integer | null  $method  The method to check for.
+   *
+   * @return  boolean
+   *
+   * @throws  InvalidArgumentException
+   */
+  public static function isLengthInRange($field, $min = null, $max = null, $method = null) {
+    if (is_null($method)) $method = self::$method;
+    $length = 0;
+    switch ($method) {
+      case self::METHOD_POST:
+        if (!isset($_POST[$field])) return false;
+        $length = strlen($_POST[$field]);
+        break;
+      case self::METHOD_GET:
+        if (!isset($_GET[$field])) return false;
+        $length = strlen($_GET[$field]);
+        break;
+      default:
+        throw new InvalidArgumentException('Invalid method.');
+    }
+    return ((is_null($min) || $length >= $min) && (is_null($max) || $length <= $max));
+  }
+
+  /**
+   * Checks whether the form field contains a valid date.
+   *
+   * @param  string          $field   The field to check.
+   * @param  integer | null  $method  The method to check for.
+   *
+   * @return  boolean
+   *
+   * @throws  InvalidArgumentException
+   */
+  public static function isValidDate($field, $method = null) {
+    if (is_null($method)) $method = self::$method;
+    switch ($method) {
+      case self::METHOD_POST:
+        if (!isset($_POST[$field])) return false;
+        $a = date_parse($_POST[$field]);
+        return !$a['error_count'];
+      case self::METHOD_GET:
+        if (!isset($_GET[$field])) return false;
+        $a = date_parse($_GET[$field]);
+        return !$a['error_count'];
+      default:
+        throw new InvalidArgumentException('Invalid method.');
+    }
+  }
+
 }
