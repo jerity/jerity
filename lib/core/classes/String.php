@@ -343,6 +343,41 @@ class String {
   }
 
   /**
+   * Checks whether the string given is lowercase (i.e. has no uppercase 
+   * characters).
+   *
+   * @param  string  $str  The string to check.
+   *
+   * @return  bool
+   */
+  public static function isLower($str) {
+    return !preg_match('/\p{Lu}/', $str);
+  }
+
+  /**
+   * Checks whether the string given is uppercase (i.e. has no lowercase 
+   * characters).
+   *
+   * @param  string  $str  The string to check.
+   *
+   * @return  bool
+   */
+  public static function isUpper($str) {
+    return !preg_match('/\p{Ll}/', $str);
+  }
+
+  /**
+   * Checks whether the string given is in title case.
+   *
+   * @param  string  $str  The string to check.
+   *
+   * @return  bool
+   */
+  public static function isTitleCase($str) {
+    return !preg_match('/\b\p{Ll}/', $str);
+  }
+
+  /**
    * Returns a string with all spaces and non-word characters converted to hyphens
    * (by default), accented characters converted to non-accented characters,
    * and non-word characters removed.
