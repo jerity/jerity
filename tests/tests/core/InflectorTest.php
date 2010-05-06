@@ -19,7 +19,7 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
     }
 
     $fp = fopen(dirname(__FILE__).'/singular-plural-wordlist.txt', 'r');
-    while (!feof($fp) && $data = fscanf($fp, '%s %s')) {
+    while (!feof($fp) && $data = fscanf($fp, '%s %s %d')) {
       $pairs[] = $data;
     }
     fclose($fp);
@@ -32,11 +32,11 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
   }
 
   public static function singularWordProvider() {
-    return array_map(create_function('$a', 'return array($a[0]);'), self::getWordPairs());
+    return array_map(create_function('$a', 'return array($a[0], $a[2]);'), self::getWordPairs());
   }
 
   public static function pluralWordProvider() {
-    return array_map(create_function('$a', 'return array($a[1]);'), self::getWordPairs());
+    return array_map(create_function('$a', 'return array($a[1], $a[2]);'), self::getWordPairs());
   }
 
   /**
@@ -44,8 +44,8 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
    *
    * @dataProvider  wordPairProvider()
    */
-  public function testSingularize($singular, $plural) {
-    $our_singular = Inflector::singularize($plural);
+  public function testSingularize($singular, $plural, $fix_case) {
+    $our_singular = Inflector::singularize($plural, $fix_case);
     $this->assertSame($singular, $our_singular, 'Singular form of "'.$plural.'" differs');
   }
 
@@ -54,8 +54,8 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
    *
    * @dataProvider  wordPairProvider()
    */
-  public function testPluralize($singular, $plural) {
-    $our_plural = Inflector::pluralize($singular);
+  public function testPluralize($singular, $plural, $fix_case) {
+    $our_plural = Inflector::pluralize($singular, $fix_case);
     $this->assertSame($plural, $our_plural, 'Plural form of "'.$singular.'" differs');
   }
 
@@ -65,8 +65,8 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
    *
    * @dataProvider  pluralWordProvider()
    */
-  public function testSingularReverses($plural) {
-    $replural = Inflector::pluralize(Inflector::singularize($plural));
+  public function testSingularReverses($plural, $fix_case) {
+    $replural = Inflector::pluralize(Inflector::singularize($plural, $fix_case), $fix_case);
     $this->assertSame($plural, $replural, 'Plural and replural form of "'.$plural.'" differ');
   }
 
@@ -76,8 +76,8 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
    *
    * @dataProvider  singularWordProvider()
    */
-  public function testPluralReverses($singular) {
-    $resingular = Inflector::singularize(Inflector::pluralize($singular));
+  public function testPluralReverses($singular, $fix_case) {
+    $resingular = Inflector::singularize(Inflector::pluralize($singular, $fix_case), $fix_case);
     $this->assertSame($singular, $resingular, 'Singular and resingular form of "'.$singular.'" differ');
   }
 
