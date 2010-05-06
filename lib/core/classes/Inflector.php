@@ -17,7 +17,14 @@
 /**
  * Pluralisation/singularisation rules for English words.
  *
- * Rewritten from scratch with better rules and implementation.
+ * Rewritten from scratch with better rules and implementation:
+ * - Supports standard and irregular rules for pluralisation/singularisation.
+ * - Supports many uncountable words.
+ * - Attempts to detect original letter case of word and return in same case.
+ * - Can disable letter case fixing such as for abbreviations: URL --> URLs.
+ * - Useful for code generation:
+ *  - Splits on ' ' and '_' by default, and
+ *  - Splits camel-cased words for correctness, e.g. getGoose --> getGeese
  *
  * @package    JerityCore
  * @author     Nick Pope <nick@nickpope.me.uk>
@@ -27,7 +34,7 @@ class Inflector {
   /**
    * Inflector rules for pluralizing words.
    *
-   * @var array
+   * @var  array
    */
   protected static $plural = array(
     'rules' => array(
@@ -38,10 +45,10 @@ class Inflector {
       '/(ap|cod|cort|ind|lat|sil|simpl|v[eo]rt)ex$/i' => '\1ices',
       '/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$/i' => '\1i',
       '/(alg|alumn|formul|vertebr)a$/i' => '\1ae',
-      '/(ali|atl|canv)as$/i' => '\1ases',
+      '/(ali|atl|canv)(as)$/i' => '\1\2es',
       '/(ax|test)is$/i' => '\1es',
       '/(ch|sh|ss|x|z)$/i' => '\1es',
-      '/(^[dg]|her|potat|tomat)o$/i' => '\1oes',
+      '/(^[dg]|her|potat|tomat)(o)$/i' => '\1\2es',
       '/([^aeiouy]|qu)y$/i' => '\1ies',
       '/(hoo|l[eo]a)f$/i' => '\1ves',
       '/lf$/i' => 'lves',
@@ -49,11 +56,15 @@ class Inflector {
       '/([dimrtv])um$/i' => '\1a',
       '/person$/i' => 'people',
       '/man$/i' => 'men',
-      '/child$/i' => 'children',
+      '/(child)$/i' => '\1ren',
+      '/(zo)on$/i' => '\1a',
+      '/(ar)f$/i' => '\1ves',
+      '/foot$/i' => 'feet',
       '/tooth$/i' => 'teeth',
-      '/us$/i' => 'uses',
-      '/sis$/i' => 'ses',
-      '/s$/' => 's',
+      '/(us)$/i' => '\1es',
+      '/(itis)$/i' => '\1',
+      '/(sc?)is$/i' => '\1es',
+      '/(s)$/i' => '\1',
       '/^$/' => '',
       '/$/' => 's',
     ),
@@ -61,7 +72,6 @@ class Inflector {
       'ascensor' => 'ascensores',
       'criterion' => 'criteria',
       'delouse' => 'delouses',
-      'dwarf' => 'dwarves',
       'genus' => 'genera',
       'goose' => 'geese',
       'graffito' => 'graffiti',
@@ -87,7 +97,7 @@ class Inflector {
   /**
    * Inflector rules for singularizing words.
    *
-   * @var array
+   * @var  array
    */
   protected static $singular = array(
     'rules' => array(
@@ -113,13 +123,16 @@ class Inflector {
       '/([dimrtv])a$/i' => '\1um',
       '/people$/i' => 'person',
       '/men$/i' => 'man',
-      '/children$/i' => 'child',
+      '/(child)ren$/i' => '\1',
+      '/(zo)a$/i' => '\1on',
+      '/feet$/i' => 'foot',
       '/teeth$/i' => 'tooth',
       '/([ao])uses$/i' => '\1use',
       '/([anpr])ses$/i' => '\1se',
-      '/uses$/i' => 'us',
-      '/ses$/i' => 'sis',
-      '/s$/' => '',
+      '/(us)es$/i' => '\1',
+      '/(itis)$/i' => '\1',
+      '/(sc?)es$/i' => '\1is',
+      '/s$/i' => '',
     ),
     'irregular' => array(
       'ascensores' => 'ascensor',
@@ -153,20 +166,27 @@ class Inflector {
   /**
    * A common list of words that are uncountable.
    *
-   * @var array
+   * @var  array
    */
   protected static $uncountable = array(
-    '.*[lmnr]ese', '.*deer', '.*fish', '.*ois', '.*pox', '.*sheep', 
-    'analytics', 'bison', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 
-    'carp', 'chassis', 'clippers', 'cod', 'corps', 'debris', 'diabetes', 
-    'djinn', 'dynamo', 'elk', 'equipment', 'feedback', 'flounder', 'gallows', 
-    'gallows', 'headquarters', 'herpes', 'hijinks', 'homework', 'housework', 
-    'hubris', 'information', 'innings', 'jackanapes', 'junk', 'mackerel', 
-    'measles', 'moose', 'mumps', 'news', 'nexus', 'peoples', 'pincers', 
-    'pliers', 'proceedings', 'rabies', 'rhinoceros', 'rice', 'salmon', 
-    'scissors', 'sea-bass', 'series', 'shears', 'species', 'swine', 'trousers', 
+    '.*[lmnr]ese', '.*deer', '.*fish', '.*ois', '.*pox', '.*sheep',
+    'analytics', 'bison', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
+    'carp', 'chassis', 'clippers', 'cod', 'corps', 'debris', 'diabetes',
+    'djinn', 'dynamo', 'elk', 'equipment', 'feedback', 'flounder', 'gallows',
+    'gallows', 'headquarters', 'herpes', 'hijinks', 'homework', 'housework',
+    'hubris', 'information', 'innings', 'jackanapes', 'junk', 'mackerel',
+    'measles', 'moose', 'mumps', 'news', 'nexus', 'peoples', 'pincers',
+    'pliers', 'proceedings', 'rabies', 'rhinoceros', 'rice', 'salmon',
+    'scissors', 'sea-bass', 'series', 'shears', 'species', 'swine', 'trousers',
     'trout', 'tuna', 'wildebeest', 'contretemps',
   );
+
+  /**
+   * A list of characters to split the string on to simplify it for inflection.
+   *
+   * @var  array
+   */
+  protected static $separators = array(' ', '_');
 
   /**
    * This is a non-instantiable utility class.
@@ -176,31 +196,95 @@ class Inflector {
   // @codeCoverageIgnoreEnd
 
   /**
-   * Convert a word to its plural form.
+   * Convert a word to its plural form.  Pass \t false to \t $fix if you do not
+   * want to convert the letter case of the output based on the letter case of
+   * the input word.  An example of this is pluralisation of an abbreviation
+   * where it is usual to want "URL" to become "URLs" and not "URLS".
    *
-   * @param  string  $word  Word in singular form.
+   * @param  string   $word  Word in singular form.
+   * @param  boolean  $fix   Whether to fix the letter case.
    *
    * @return  string  Word in plural form.
    */
-  public static function pluralize($word) {
-    return self::inflect($word, self::$plural);
+  public static function pluralize($word, $fix = true) {
+    list($stub, $word) = self::simplify($word);
+    if (!$word) return $stub;
+    $inflected = self::inflect($word, self::$plural);
+    if ($fix) $inflected = self::fixLetterCase($word, $inflected);
+    return $stub.$inflected;
   }
 
   /**
-   * Convert a word to its singular form.
+   * Convert a word to its singular form.  Pass \t false to \t $fix if you do
+   * not want to convert the letter case of the output based on the letter case
+   * of the input word.
    *
-   * @param  string  $word  Word in plural form.
+   * @param  string   $word  Word in plural form.
+   * @param  boolean  $fix   Whether to fix the letter case.
    *
    * @return  string  Word in singular form.
    */
-  public static function singularize($word) {
-    return self::inflect($word, self::$singular);
+  public static function singularize($word, $fix = true) {
+    list($stub, $word) = self::simplify($word);
+    if (!$word) return $stub;
+    $inflected = self::inflect($word, self::$singular);
+    if ($fix) $inflected = self::fixLetterCase($word, $inflected);
+    return $stub.$inflected;
+  }
+
+  /**
+   * Fixes the letter case of the inflected word to match that of the original
+   * if possible.
+   *
+   * @param  string  $original   The word before inflection.
+   * @param  string  $inflected  The word after inflection.
+   *
+   * @return  string  The inflected word with the letter case fixed.
+   */
+  protected static function fixLetterCase($original, $inflected) {
+    switch (true) {
+      case String::isLower($original):
+        return strtolower($inflected);
+      case String::isUpper($original):
+        return strtoupper($inflected);
+      case String::isTitleCase($original):
+        return strtoupper($inflected[0]).substr($inflected, 1);
+      default:
+        return $inflected;
+    }
+  }
+
+  /**
+   * Splits a string up into two parts with the second part being a word that
+   * can be pluralised.
+   *
+   * @param  string  $word  The word to simplify for pluralisation.
+   *
+   * @return  array  The split word.
+   */
+  protected static function simplify($word) {
+    $stub = $join = '';
+    foreach (self::$separators as $separator) {
+      $a = explode($separator, $word);
+      $word = array_pop($a);
+      if (count($a)) {
+        $stub = $stub.$join.implode($separator, $a);
+        $join = $separator;
+      }
+    }
+    if (!String::isLower($word) && !String::isUpper($word)) {
+      $a = String::splitCamelCase($word);
+      $word = array_pop($a);
+      if (count($a)) {
+        $stub = $stub.$join.implode('', $a);
+        $join = '';
+      }
+    }
+    return array($stub.$join, $word);
   }
 
   /**
    * Inflects a word according to the passed ruleset.
-   *
-   * @todo  Attempt to return inflected word in case matching the passed word.
    *
    * @param  string  $word     The word to inflect.
    * @param  array   $ruleset  The rules to use for inflection.
