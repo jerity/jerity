@@ -193,6 +193,7 @@ class Redirector {
         Debug::out(Error::getLast());
       }
       echo '</div>';
+      exit();
     }
 
     # Write and close session to avoid losing changes:
