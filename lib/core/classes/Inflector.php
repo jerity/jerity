@@ -26,6 +26,30 @@
  *  - Splits on ' ' and '_' by default, and
  *  - Splits camel-cased words for correctness, e.g. getGoose --> getGeese
  *
+ * Some awkward cases where there are multiple pluralised forms:
+ * - brother --> brothers/bretheren
+ * - cow     --> cows/kine
+ * - dominatrix --> dominatri(ce|x)s
+ * - iris    --> irises/iris/irides
+ * - octopus --> octopodes/octopuses
+ * - sister  --> sisters/sistren
+ * - virus   --> viri/virii
+ * - *arf --> *ar(f|ve)s
+ * - *eau --> *eau(x|s)
+ * - (dogm|schem)a --> $1(as|ata)
+ * - (archipelag|buffal|carg|hal|innuend|mosquit|mott|n|tornad|toped|volcan|zer)o --> $1(os|oes)
+ *
+ * See the following sites for alternative pluralizer implementations:
+ *
+ * @see http://kuwamoto.org/2007/12/17/improved-pluralizing-in-php-actionscript-and-ror/
+ * @see http://dev.rubyonrails.org/browser/trunk/activesupport/lib/active_support/inflections.rb
+ *
+ * See the following sites for grammar rules and irregular plurals:
+ *
+ * @see http://www2.gsu.edu/~wwwesl/egw/crump.htm
+ * @see http://www2.gsu.edu/~wwwesl/egw/pluralsl.htm
+ * @see http://www.fortunecity.com/bally/durrus/153/gramch13.html
+ *
  * @package    JerityCore
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
@@ -41,23 +65,27 @@ class Inflector {
       '/(quiz)$/i' => '\1zes',
       '/^(ox)$/i' => '\1en',
       '/([lm])ouse$/i' => '\1ice',
-      '/(matr)ix$/i' => '\1ices',
+      '/(automat|phenomen|polyhedr)on$/i' => '\1a',
+      '/(append|aviatr|cerv|hel|dominatr|matr)ix$/i' => '\1ices',
       '/(ap|cod|cort|ind|lat|sil|simpl|v[eo]rt)ex$/i' => '\1ices',
       '/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$/i' => '\1i',
       '/(alg|alumn|formul|vertebr)a$/i' => '\1ae',
       '/(ali|atl|canv)(as)$/i' => '\1\2es',
+      '/(ma)$/i' => '\1ta',
+      '/([blnv]a)$/i' => '\1e',
+      '/(it?a)$/i' => '\1e',
       '/(ax|test)is$/i' => '\1es',
       '/(ch|sh|ss|x|z)$/i' => '\1es',
-      '/(^[dg]|her|potat|tomat)(o)$/i' => '\1\2es',
+      '/(archipelag|buffal|carg|ech|embarg|hal|her|innuend|mosquit|mott|^n|potat|tomat|tornad|torped|vet|volcan|zer)(o)$/i' => '\1\2es',
       '/([^aeiouy]|qu)y$/i' => '\1ies',
-      '/(hoo|l[eo]a)f$/i' => '\1ves',
-      '/lf$/i' => 'lves',
+      '/(hoo|l[eo]a|l)f$/i' => '\1ves',
       '/([^afo])fe$/i' => '\1ves',
-      '/([dimrtv])um$/i' => '\1a',
+      '/(eau)$/' => '\1x',
+      '/([dilmrtv])um$/i' => '\1a',
       '/person$/i' => 'people',
       '/man$/i' => 'men',
       '/(child)$/i' => '\1ren',
-      '/(zo)on$/i' => '\1a',
+      '/(x|zo)on$/i' => '\1a',
       '/(ar)f$/i' => '\1ves',
       '/foot$/i' => 'feet',
       '/tooth$/i' => 'teeth',
@@ -65,17 +93,22 @@ class Inflector {
       '/(itis)$/i' => '\1',
       '/(sc?)is$/i' => '\1es',
       '/(s)$/i' => '\1',
+      '/(cherub|seraph)$/i' => '\1im',
+      '/(-in-law|-up)$/i' => 's\1',
       '/^$/' => '',
-      '/$/' => 's',
+      '/(\D)$/' => '\1s',
     ),
     'irregular' => array(
       'ascensor' => 'ascensores',
+      'blouse' => 'blouses',
       'criterion' => 'criteria',
       'delouse' => 'delouses',
+      'die' => 'dice',
       'genus' => 'genera',
       'goose' => 'geese',
       'graffito' => 'graffiti',
       'lease' => 'leases',
+      'madame' => 'mesdames',
       'money' => 'monies',
       'murex' => 'murecis',
       'mythos' => 'mythoi',
@@ -104,52 +137,67 @@ class Inflector {
       '/(quiz)zes$/i' => '\1',
       '/^(ox)en$/i' => '\1',
       '/([lm])ice$/i' => '\1ouse',
-      '/(matr)ices$/i' => '\1ix',
+      '/(automat|phenomen|polyhedr)a$/i' => '\1on',
+      '/(append|aviatr|cerv|hel|dominatr|matr)ices$/i' => '\1ix',
       '/(ap|cod|cort|ind|lat|sil|simpl|v[eo]rt)ices$/i' => '\1ex',
       '/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
       '/(alg|alumn|formul|vertebr)ae$/i' => '\1a',
       '/(ali|atl|canv)ases$/i' => '\1as',
+      '/(ma)ta$/i' => '\1',
+      '/(a)e$/i' => '\1',
+      #'/(it?a)e$/i' => '\1',
       '/([ftw]ax)es$/i' => '\1',
       '/(ax|test)es$/i' => '\1is',
       '/izes$/i' => 'ize',
       '/(ch|sh|ss|x|z)es$/i' => '\1',
-      '/([dg]|her|potat|tomat)oes$/i' => '\1o',
+      '/(archipelag|buffal|carg|ech|embarg|hal|her|innuend|mosquit|mott|^n|potat|tomat|tornad|torped|vet|volcan|zer)(o)e?s$/i' => '\1\2',
       '/(cook|gen|mov)ies$/i' => '\1ie',
       '/([^aeiouy]|qu)ies$/i' => '\1y',
       '/([htr]ive)s$/i' => '\1',
       '/(hoo|l[eo]a)ves$/i' => '\1f',
-      '/([lr])ves$/i' => '\1f',
+      '/([lr])(f|ve)s$/i' => '\1f',
       '/([^afo])ves$/i' => '\1fe',
-      '/([dimrtv])a$/i' => '\1um',
+      '/(eau)[xs]$/' => '\1',
+      '/([dilmrtv])a$/i' => '\1um',
       '/people$/i' => 'person',
       '/men$/i' => 'man',
       '/(child)ren$/i' => '\1',
-      '/(zo)a$/i' => '\1on',
+      '/(x|zo)a$/i' => '\1on',
       '/feet$/i' => 'foot',
       '/teeth$/i' => 'tooth',
       '/([ao])uses$/i' => '\1use',
-      '/([anpr])ses$/i' => '\1se',
+      '/([anr]|ap)ses$/i' => '\1se',
       '/(us)es$/i' => '\1',
       '/(itis)$/i' => '\1',
       '/(sc?)es$/i' => '\1is',
+      '/(cherub|seraph)im$/i' => '\1',
+      '/s(-in-law|-up)$/i' => '\1',
       '/s$/i' => '',
     ),
     'irregular' => array(
       'ascensores' => 'ascensor',
+      'bretheren' => 'brother',
       'caches' => 'cache',
       'closes' => 'close',
       'criteria' => 'criterion',
+      'dice' => 'die',
+      'emphases' => 'emphasis',
       'geese' => 'goose',
       'genera' => 'genus',
       'graffiti' => 'graffito',
+      'kine' => 'cow',
       'leases' => 'lease',
+      'mesdames' => 'madame',
       'mongooses' => 'mongoose',
       'monies' => 'money',
       'murecis' => 'murex',
       'mythoi' => 'mythos',
       'numina' => 'numen',
+      'oases' => 'oasis',
+      'octopodes' => 'octopus',
       'pannini' => 'pannino',
       'penises' => 'penis',
+      'sistren' => 'sister',
       'synopses' => 'synopsis',
     ),
     'uncountable' => array(
@@ -170,7 +218,7 @@ class Inflector {
    */
   protected static $uncountable = array(
     '.*[lmnr]ese', '.*deer', '.*fish', '.*ois', '.*pox', '.*sheep',
-    'analytics', 'bison', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
+    'analytics', 'bison', 'bream', 'breeches', 'britches', 'cantus',
     'carp', 'chassis', 'clippers', 'cod', 'corps', 'debris', 'diabetes',
     'djinn', 'dynamo', 'elk', 'equipment', 'feedback', 'flounder', 'gallows',
     'gallows', 'headquarters', 'herpes', 'hijinks', 'homework', 'housework',
@@ -178,7 +226,8 @@ class Inflector {
     'measles', 'moose', 'mumps', 'news', 'nexus', 'peoples', 'pincers',
     'pliers', 'proceedings', 'rabies', 'rhinoceros', 'rice', 'salmon',
     'scissors', 'sea-bass', 'series', 'shears', 'species', 'swine', 'trousers',
-    'trout', 'tuna', 'wildebeest', 'contretemps',
+    'trout', 'tuna', 'wildebeest', 'contretemps', 'crossroads', 'barracks',
+    'perch', 'halibut', 'offspring', 'music', 'means', 'pasta'
   );
 
   /**
