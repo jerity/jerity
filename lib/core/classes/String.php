@@ -424,4 +424,37 @@ class String {
     return $string;
   }
 
+  /**
+   * Takes a string or phrase, and pluralizes the last word.  If there is a 
+   * number in the phrase, conditionally pluralize the last word based on the 
+   * number.
+   *
+   * @see http://thecodingway.com/blog/robs-tips-and-tricks/php-pluralizing-with-style/
+   *
+   * @param   string  $string  The string to pluralize.
+   *
+   * @return  string
+   */
+  public static function pluralize($string) {
+    # Regular expression for matching textual number.
+    static $regex0 = '/(?:^|)((?:minus )?one).*?(\pL+)\PL*$/';
+    # Regular expression for matching normal number.
+    static $regex1 = '/(?:^|)(-?1(?:\.0+)?)?\PN*?(\pL+)\PL*$/';
+    # Reguular expression for word replacement.
+    static $regex2 = '/(\PL|one |^)(\pL+)(\PL*)$/';
+    if (!preg_match($regex0, $string, $match)) {
+      if (!preg_match($regex1, $string, $match)) {
+        # We had an error matching the phrase, assume we cannot pluralize it.
+        return $string;
+      }
+    }
+    array_shift($match);
+    list($amount, $word) = $match;
+    if ($word && !$amount) {
+      $word = Inflector::pluralize($word);
+      $string = preg_replace($regex2, "$1$word$3", $string);
+    }
+    return $string;
+  }
+
 }
