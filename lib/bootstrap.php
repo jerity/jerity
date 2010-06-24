@@ -25,7 +25,7 @@ if (!is_readable(JERITY_ROOT.'core/bootstrap.php')) {
 require_once(JERITY_ROOT.'core/bootstrap.php');
 
 # Set up strict error reporting
-$_jerity_er = error_reporting(E_ALL | E_STRICT | E_NOTICE);
+$_jerity_er = error_reporting(E_ALL | E_STRICT);
 
 # Pull in Jerity core
 require_once(JERITY_ROOT.'core/bootstrap.php');

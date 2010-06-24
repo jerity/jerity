@@ -9,7 +9,7 @@
 ##############################################################################
 
 # Set up strict error reporting
-error_reporting(E_ALL | E_STRICT | E_NOTICE);
+error_reporting(E_ALL | E_STRICT);
 
 # check for Jerity core being available
 $jerity_top = null;
