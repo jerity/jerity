@@ -187,7 +187,7 @@ class Redirector {
     # Check whether we should suspend redirects
     if (Debug::isEnabled() && (Debug::pauseOnRedirect() || Error::hasErred())) {
       echo '<div>';
-      printf('<p><strong>Paused Redirect:</strong> <a href="%s">%s</a></p>.', $url, String::escapeHTML($url));
+      printf('<p><strong>Paused Redirect:</strong> <a href="%s">%s</a></p>', $url, String::escapeHTML($url));
       if (Error::hasErred()) {
         echo '<p><strong>Last Error:</strong></p>';
         Debug::out(Error::getLast());
