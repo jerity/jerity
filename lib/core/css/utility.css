@@ -1,0 +1,15 @@
+/******************************************************************************
+ * Description: Utility CSS
+ * Package:     JerityCore
+ * Author:      Nick Pope <nick [at] nickpope [dot] me [dot] uk>
+ * Copyright:   Copyright (c) 2009 Nick Pope
+ ******************************************************************************/
+
+.clearfix:after {
+  clear: both;
+  content: ".";
+  display: block;
+  font-size: 1px;
+  height: 0;
+  visibility: hidden;
+}
