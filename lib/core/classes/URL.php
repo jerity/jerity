@@ -487,7 +487,11 @@ class URL {
     $q = array();
     if (!empty($query)) {
       foreach(explode('&', $query) as $i) {
-        list($k, $v) = explode('=', $i);
+        if (strpos($i, '=') !== false) {
+          list($k, $v) = explode('=', $i);
+        } else {
+          list($k, $v) = array($i, 1);
+        }
         $q[$k] = $v;
       }
     }
