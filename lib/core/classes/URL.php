@@ -725,4 +725,21 @@ class URL {
     $this->components = $url->components;
     return $this;
   }
+
+  /**
+   * Checks whether the current URL matches the regular expression provided.
+   *
+   * @param  string  $regex      The regular expression to test.
+   * @param  bool    $path_only  If true, only match path part.
+   *
+   * @return  bool  True if the regular expression matches, false otherwise.
+   */
+  public static function match($regex, $path_only = true) {
+    if ($path_only) {
+      $url = URL::getCurrent()->getPath();
+    } else {
+      $url = URL::cloneCurrent()->clearQueryString()->clearFragment()->absolute();
+    }
+    return preg_match($regex, $url);
+  }
 }
