@@ -418,9 +418,9 @@ class String {
    * @return  string
    */
   public static function nl2p($string) {
-    $string = '<p>' . $string . '</p>';
-    $string = preg_replace("/\r\n\r\n/", "</p>\n<p>", $string);
-    $string = preg_replace("/\r\n/", Tag::br(), $string);
+    $string = '<p>' . trim($string) . '</p>';
+    $string = preg_replace("/(?<![\n\r])(?:\r|\n|\r\n)(?![\n\r])/", Tag::br(), $string);
+    $string = preg_replace("/(?<![\n\r])[\n\r]{2,}(?![\n\r])/", "</p>\n<p>", $string);
     return $string;
   }
 
