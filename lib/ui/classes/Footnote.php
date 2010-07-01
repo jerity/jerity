@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityUI
+ * @package    jerity.ui
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -22,7 +22,7 @@
  * @todo  Accessors/mutators for CSS classes.
  * @todo  Support for re-use of a footnote.
  *
- * @package    JerityUI
+ * @package    jerity.ui
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */

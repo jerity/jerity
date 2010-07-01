@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityForm
+ * @package    jerity.form
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -17,7 +17,7 @@
 /**
  * Utility functions for Form checking, etc.
  *
- * @package    JerityForm
+ * @package    jerity.form
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */

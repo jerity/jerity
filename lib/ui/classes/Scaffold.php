@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityUI
+ * @package    jerity.ui
  * @author     Dave Ingram <dave@dmi.me.uk>
  * @copyright  Copyright (c) 2009 Dave Ingram
  */
@@ -59,7 +59,7 @@
  *    )
  *  );
  *
- * @package    JerityUI
+ * @package    jerity.ui
  * @author     Dave Ingram <dave@dmi.me.uk>
  * @copyright  Copyright (c) 2009 Dave Ingram
  */

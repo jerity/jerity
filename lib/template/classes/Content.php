@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityTemplate
+ * @package    jerity.template
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -19,7 +19,7 @@
  * provide an object that can be taken in by a Chrome template which will
  * identify it as a main content block.
  *
- * @package    JerityTemplate
+ * @package    jerity.template
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */

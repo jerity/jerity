@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -18,7 +18,7 @@
  * Debugging class providing useful methods for diagnosing problems and
  * performance.
  *
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */

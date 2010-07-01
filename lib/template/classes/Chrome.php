@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityTemplate
+ * @package    jerity.template
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -19,7 +19,7 @@
  * and can be manipulated using various methods provided to make it easier to
  * add general styling, scripting and metadata to a page.
  *
- * @package    JerityTemplate
+ * @package    jerity.template
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
