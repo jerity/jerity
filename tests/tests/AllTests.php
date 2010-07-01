@@ -8,7 +8,7 @@
 # San Francisco, California 94105, USA.
 ##############################################################################
 
-require_once(dirname(dirname(__FILE__)).'/setUp.php');
+require_once(dirname(dirname(__FILE__)).'/Configure.php');
 require_once(dirname(__FILE__).'/core/AllTests.php');
 require_once(dirname(__FILE__).'/template/AllTests.php');
 

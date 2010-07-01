@@ -8,7 +8,7 @@
 # San Francisco, California 94105, USA.
 ##############################################################################
 
-require_once(dirname(dirname(dirname(__FILE__))).'/setUp.php');
+require_once(dirname(dirname(dirname(__FILE__))).'/Configure.php');
 
 if (!class_exists('TemplateT')) {
   // Template is an abstract class, so we need aa simple concrete implementation for testing
