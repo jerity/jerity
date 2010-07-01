@@ -8,14 +8,8 @@
 # San Francisco, California 94105, USA.
 ##############################################################################
 
-require_once(dirname(__FILE__).'/Configure.php');
-require_once('tests/AllTests.php');
+# Pull in all Jerity packages.
+require_once '../lib/bootstrap.php';
 
-class AllTests {
-  public static function suite() {
-    PHPUnit_Util_Filter::addDirectoryToFilter(dirname(__FILE__));
-    $suite = new PHPUnit_Framework_TestSuite();
-    $suite->addTestSuite(Jerity_AllTests::suite());
-    return $suite;
-  }
-}
+# Define required paths.
+define('DATA_DIR', dirname(__FILE__).'/data/');
