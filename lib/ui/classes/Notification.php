@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package  JerityCore
+ * @package  jerity.ui
  * @author  Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -18,7 +18,7 @@
  * Notification class for standard formatting of messages. Also provides the
  * ability to send notifications over redirects.
  *
- * @package  JerityCore
+ * @package  jerity.ui
  * @author  Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */

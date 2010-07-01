@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -50,7 +50,7 @@
  * @see http://www2.gsu.edu/~wwwesl/egw/pluralsl.htm
  * @see http://www.fortunecity.com/bally/durrus/153/gramch13.html
  *
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */

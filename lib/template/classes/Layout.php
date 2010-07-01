@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityTemplate
+ * @package    jerity.template
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2010 Nick Pope
  */
@@ -17,7 +17,7 @@
 /**
  * A layout class that handles creation of columns.
  *
- * @package    JerityTemplate
+ * @package    jerity.template
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2010 Nick Pope
  */

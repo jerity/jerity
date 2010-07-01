@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -19,7 +19,7 @@
  * can preserve state by passing POST data and any extra information
  * as required in the session.
  *
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */

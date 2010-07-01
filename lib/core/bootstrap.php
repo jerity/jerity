@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Dave Ingram <dave@dmi.me.uk>
  * @copyright  Copyright (c) 2009 Dave Ingram
  */

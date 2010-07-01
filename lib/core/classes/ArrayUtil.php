@@ -11,7 +11,7 @@
 /**
  * @todo  [PHP 5.3] Rename file to Array.php when namespaced.
  *
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -21,7 +21,7 @@
  *
  * @todo  [PHP 5.3] Rename class to Array when namespaced.
  *
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */

@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -17,7 +17,7 @@
 /**
  * Exception to throw if object has been deemed immutable.
  *
- * @package    JerityCore
+ * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */

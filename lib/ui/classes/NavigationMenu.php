@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityUI
+ * @package    jerity.ui
  * @author     Dave Ingram <dave@dmi.me.uk>
  * @copyright  Copyright (c) 2009 Dave Ingram
  */
@@ -21,7 +21,7 @@
  * has the capability to automatically highlight the current or "best match"
  * item.
  *
- * @package    JerityUI
+ * @package    jerity.ui
  * @author     Dave Ingram <dave@dmi.me.uk>
  * @copyright  Copyright (c) 2009 Dave Ingram
  */

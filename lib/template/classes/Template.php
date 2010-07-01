@@ -9,7 +9,7 @@
 ##############################################################################
 
 /**
- * @package    JerityTemplate
+ * @package    jerity.template
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
@@ -20,7 +20,7 @@
  *
  * @todo  Support multiple paths for template lookup.
  *
- * @package    JerityTemplate
+ * @package    jerity.template
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2009 Nick Pope
  */
