@@ -8,10 +8,7 @@
 # San Francisco, California 94105, USA.
 ##############################################################################
 
-require_once(dirname(dirname(dirname(__FILE__))).'/core/bootstrap.php');
-Jerity::addAutoloadDir(dirname(dirname(dirname(__FILE__))).'/form');
-Jerity::addAutoloadDir(dirname(dirname(dirname(__FILE__))).'/template');
-Jerity::addAutoloadDir(dirname(dirname(dirname(__FILE__))).'/ui');
+require_once dirname(dirname(dirname(__FILE__))).'/bootstrap.php';
 
 $a = new FormGenerator();
 
