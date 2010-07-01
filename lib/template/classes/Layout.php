@@ -59,6 +59,13 @@ class Layout implements Renderable {
   protected $current_column = 1;
 
   /**
+   * The ID to use for the layout element.
+   *
+   * @var  string
+   */
+  protected $layout_id = '';
+
+  /**
    * The CSS class to use for the layout.
    *
    * @var  string
@@ -214,6 +221,24 @@ class Layout implements Renderable {
   }
 
   /**
+   * Gets the ID for the layout element.
+   *
+   * @return  string
+   */
+  public function getLayoutId() {
+    return $this->layout_id;
+  }
+
+  /**
+   * Sets the ID for the layout element.
+   *
+   * @param  string  $v  The ID to use.
+   */
+  public function setLayoutId($v) {
+    $this->layout_id = $v;
+  }
+
+  /**
    * Gets the CSS class for the layout.
    *
    * @return  string
@@ -277,7 +302,10 @@ class Layout implements Renderable {
         trigger_error('Invalid column unit.', E_USER_NOTICE);
     }
 
-    # Check CSS classes are valid.
+    # Check CSS classes and IDs are valid.
+    if ($this->layout_id) {
+      if (!preg_match('/^-?[_a-z][-\w]*$/i', $this->layout_id))    return false;
+    }
     if ($this->layout_class) {
       if (!preg_match('/^-?[_a-z][-\w]*$/i', $this->layout_class)) return false;
     }
@@ -305,11 +333,10 @@ class Layout implements Renderable {
     if (!$this->validate()) {
       trigger_error('Failed to validate the layout.', E_USER_NOTICE);
     }
-    if ($this->layout_class) {
-      $output = '<div class="'.$this->layout_class.'">';
-    } else {
-      $output = '<div>';
-    }
+    $output = '<div';
+    if ($this->layout_id)    $output .= " id=\"{$this->layout_id}\"";
+    if ($this->layout_class) $output .= " class=\"{$this->layout_class}\"";
+    $output .= '>' . PHP_EOL;
     for ($i = 0; $i < count($this->columns); $i++) {
       $column  = &$this->columns[$i];
       $content = &$this->content[$i];
@@ -345,7 +372,7 @@ class Layout implements Renderable {
       }
       $output .= '</div>' . PHP_EOL;
     }
-    $output .= '</div>';
+    $output .= '</div>' . PHP_EOL;
     return $output;
   }
 
