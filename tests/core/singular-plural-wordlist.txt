@@ -245,7 +245,6 @@ dissertation    dissertations    1
 ditto           dittos           1
 djinn           djinn            1
 dynamo          dynamo           1
-do              does             1
 doctorate       doctorates       1
 document        documents        1
 domain          domains          1
@@ -347,7 +346,6 @@ genus           genera           1
 geometry        geometries       1
 ghetto          ghettos          1
 glove           gloves           1
-go              goes             1
 goose           geese            1
 grace           graces           1
 graffito        graffiti         1
