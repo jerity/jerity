@@ -8,11 +8,10 @@
 # San Francisco, California 94105, USA.
 ##############################################################################
 
-require_once(dirname(dirname(dirname(__FILE__))).'/Configure.php');
 
-class TagTestHTML401 extends PHPUnit_Framework_TestCase {
+class TagTestXHTML10 extends PHPUnit_Framework_TestCase {
   public function setUp() {
-    RenderContext::set(RenderContext::create(RenderContext::TYPE_HTML4_STRICT));
+    RenderContext::set(RenderContext::create(RenderContext::TYPE_XHTML1_STRICT));
   }
 
   /**
@@ -20,28 +19,28 @@ class TagTestHTML401 extends PHPUnit_Framework_TestCase {
    */
   public function testBase() {
     $href = 'http://www.example.com/';
-    $this->assertSame('<base href="'.$href.'">', Tag::base($href));
+    $this->assertSame('<base href="'.$href.'" />', Tag::base($href));
   }
 
   /**
    * @covers  Tag::br()
    */
   public function testBr() {
-    $this->assertSame('<br>', Tag::br());
+    $this->assertSame('<br />', Tag::br());
   }
 
   /**
    * @covers  Tag::hr()
    */
   public function testHr() {
-    $this->assertSame('<hr>', Tag::hr());
+    $this->assertSame('<hr />', Tag::hr());
   }
 
   /**
    * @covers  Tag::wbr()
    */
   public function testWbr() {
-    $this->assertSame('<wbr>', Tag::wbr());
+    $this->assertSame('<wbr />', Tag::wbr());
   }
 
   /**
@@ -50,7 +49,7 @@ class TagTestHTML401 extends PHPUnit_Framework_TestCase {
   public function testIsImpliedCData() {
     $data = array('script', 'style');
     foreach ($data as $tag) {
-      $this->assertFalse(Tag::isImpliedCData($tag));
+      $this->assertTrue(Tag::isImpliedCData($tag));
     }
   }
 
@@ -69,8 +68,8 @@ class TagTestHTML401 extends PHPUnit_Framework_TestCase {
    */
   public function testGetContentMaskOpen() {
     $data = array(
-      'script' => '<!--',
-      'style'  => '<!--',
+      'script' => '<!--//--><![CDATA[//><!--',
+      'style'  => '<!--/*--><![CDATA[/*><!--*/',
     );
     foreach ($data as $tag => $mask) {
       $this->assertSame($mask, Tag::getContentMask($tag, true));
@@ -82,8 +81,8 @@ class TagTestHTML401 extends PHPUnit_Framework_TestCase {
    */
   public function testGetContentMaskClose() {
     $data = array(
-      'script' => '//-->',
-      'style'  => '-->',
+      'script' => '//--><!]]>',
+      'style'  => '/*]]>*/-->',
     );
     foreach ($data as $tag => $mask) {
       $this->assertSame($mask, Tag::getContentMask($tag, false));
