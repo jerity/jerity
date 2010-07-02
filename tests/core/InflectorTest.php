@@ -8,7 +8,6 @@
 # San Francisco, California 94105, USA.
 ##############################################################################
 
-require_once(dirname(dirname(dirname(__FILE__))).'/Configure.php');
 
 class InflectorTest extends PHPUnit_Framework_TestCase {
 

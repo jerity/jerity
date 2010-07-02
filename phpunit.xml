@@ -1,0 +1,36 @@
+<phpunit bootstrap="tests/bootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         syntaxCheck="true">
+
+<testsuites>
+  <testsuite name="jerity.core">
+    <directory suffix=".php">tests/core</directory>
+  </testsuite>
+  <testsuite name="jerity.template">
+    <directory suffix=".php">tests/template</directory>
+  </testsuite>
+</testsuites>
+
+<filter>
+  <whitelist addUncoveredFilesFromWhitelist="true">
+    <directory suffix=".php">lib/core/classes</directory>
+    <directory suffix=".php">lib/core/exceptions</directory>
+    <directory suffix=".php">lib/core/interfaces</directory>
+    <directory suffix=".php">lib/form/classes</directory>
+    <directory suffix=".php">lib/rest/classes</directory>
+    <directory suffix=".php">lib/template/classes</directory>
+    <directory suffix=".php">lib/ui/classes</directory>
+  </whitelist>
+</filter>
+
+<logging>
+  <!--log type="coverage-html" target="build/coverage"
+    charset="UTF-8" yui="true" highlight="false"
+    lowUpperBound="35" highLowerBound="70" /-->
+  <log type="plain" target="build/logs/plain.txt" />
+</logging>
+
+</phpunit>

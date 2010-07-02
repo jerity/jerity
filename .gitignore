@@ -9,3 +9,6 @@ Thumbs.db
 
 # Mac OS X Metadata Files
 .DS_Store
+
+# Project Specific
+build
