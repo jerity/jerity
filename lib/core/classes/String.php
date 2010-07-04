@@ -459,4 +459,96 @@ class String {
     return $string;
   }
 
+  /**
+   * Converts the value provided into a formatted string specifying the value 
+   * in the desired multiples of bits.
+   *
+   * @param  mixed  $n       The value to format.
+   * @param  bool   $si      Whether to output SI units.
+   * @param  int    $dp      How many decimal places to output.
+   * @param  int    $prefix  Force a prefix, e.g. 'K', 'M' (null = automatic)
+   * @param  bool   $symbol  Whether to output symbols or names of unit.
+   *
+   * @return  string  The formatted bit value.
+   */
+  public static function formatBits($n, $si = false, $dp = 0, $prefix = null, $symbol = true) {
+    return self::formatBytesOrBits(false, $n, $si, $dp, $prefix, $symbol);
+  }
+
+  /**
+   * Converts the value provided into a formatted string specifying the value 
+   * in the desired multiples of bytes.
+   *
+   * To force a specific prefix to be returned, and because they vary depending
+   * on whether SI units are used or not, the $prefix parameter must be one of 
+   * the following values: '', 'K', 'M', 'G', 'T', 'P', 'E', 'Z'.
+   *
+   * @param  mixed   $n       The value to format.
+   * @param  bool    $si      Whether to output SI units.
+   * @param  int     $dp      How many decimal places to output.
+   * @param  string  $prefix  Force a prefix, e.g. 'K', 'M' (null = automatic)
+   * @param  bool    $symbol  Whether to output symbols or names of unit.
+   *
+   * @return  string  The formatted byte value.
+   */
+  public static function formatBytes($n, $si = false, $dp = 0, $prefix = null, $symbol = true) {
+    return self::formatBytesOrBits(true, $n, $si, $dp, $prefix, $symbol);
+  }
+
+  /**
+   * Converts the value provided into a formatted string specifying the value 
+   * in the desired multiples of bytes or bits.
+   *
+   * To force a specific prefix to be returned, and because they vary depending
+   * on whether SI units are used or not, the $prefix parameter must be one of 
+   * the following values: '', 'K', 'M', 'G', 'T', 'P', 'E', 'Z'.
+   *
+   * @param  bool    $bytes   Whether to format as bytes or bits.
+   * @param  mixed   $n       The value to format.
+   * @param  bool    $si      Whether to output SI units.
+   * @param  int     $dp      How many decimal places to output.
+   * @param  string  $prefix  Force a prefix, e.g. 'K', 'M' (null = automatic)
+   * @param  bool    $symbol  Whether to output symbols or names of unit.
+   *
+   * @return  string  The formatted byte value.
+   */
+  protected static function formatBytesOrBits($bytes, $n, $si = false, $dp = 0, $prefix = null, $symbol = true) {
+    $s = '';
+    $exponent = null;
+    # Parse the value provided first.
+    $n = ($bytes ? Number::parseBytes($n) : Number::parseBits($n));
+    # Check decimal place is valid.
+    $dp = min(max(0, $dp), ini_get('precision'));
+    # Get unit prefix list.
+    $prefixes = ($si
+      ? ($symbol ? Number::$SI_PREFIX_SYMBOL  : Number::$SI_PREFIX_NAME)
+      : ($symbol ? Number::$IEC_PREFIX_SYMBOL : Number::$IEC_PREFIX_NAME)
+    );
+    # Get unit postfix.
+    $postfix = ($bytes ? ($symbol ? 'B' : 'byte') : ($symbol ? 'b' : 'bit'));
+    # Determine whether to automatically determine the prefix.
+    if (!is_null($prefix)) {
+      $exponent = array_search(strtoupper($prefix), array('', 'K', 'M', 'G', 'T', 'P', 'E', 'Z'));
+      if ($exponent === false) {
+        $exponent = null; # Invalid, so just automatically choose.
+      }
+    }
+    # Calculate the correct numeric value.
+    $base = $si ? 1000 : 1024;
+    if (!is_null($exponent)) {
+      $n /= pow($base, $exponent);
+    } else {
+      $exponent = 0;
+      while ($n >= $base && $exponent < count($prefixes)-1) {
+        $n /= $base;
+        $exponent++;
+      }
+    }
+    # Generate string.
+    $n = number_format($n, $dp, nl_langinfo(RADIXCHAR), nl_langinfo(THOUSEP));
+    $s = sprintf('%s %s', $n, $prefixes[$exponent].$postfix);
+    if (!$symbol) $s = self::pluralize($s);
+    return $s;
+  }
+
 }
