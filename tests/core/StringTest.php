@@ -346,6 +346,142 @@ class StringTest extends PHPUnit_Framework_TestCase {
     );
   }
 
+  /**
+   * @dataProvider  formatBitsProvider()
+   * @depends       NumberTest::parseBits()
+   */
+  public function testFormatBits($n, $si, $dp, $prefix, $symbol, $expected) {
+    $this->assertSame($expected, String::formatBits($n, $si, $dp, $prefix, $symbol));
+  }
+
+  public static function formatBitsProvider() {
+    return array(
+      # Test automatic prefix.
+      array('1',          true,  0, null, true, '8 b'),
+      array('1000',       true,  0, null, true, '8 kb'),
+      array('1000000',    true,  0, null, true, '8 Mb'),
+      array('1000000000', true,  0, null, true, '8 Gb'),
+      array('1',          false, 0, null, true, '8 b'),
+      array('1024',       false, 0, null, true, '8 Kib'),
+      array('1048576',    false, 0, null, true, '8 Mib'),
+      array('1073741824', false, 0, null, true, '8 Gib'),
+      # Test fixed prefix.
+      array('1',          true,  0, 'K', true, '0 kb'),
+      array('1000',       true,  0, 'K', true, '8 kb'),
+      array('1000000',    true,  0, 'K', true, '8000 kb'),
+      array('1000000000', true,  0, 'K', true, '8000000 kb'),
+      array('1',          false, 0, 'K', true, '0 Kib'),
+      array('1024',       false, 0, 'K', true, '8 Kib'),
+      array('1048576',    false, 0, 'K', true, '8192 Kib'),
+      array('1073741824', false, 0, 'K', true, '8388608 Kib'),
+      # Test non-symbol prefix.
+      array('1 b',          true,  0, null, false, '1 bit'),
+      array('1000 b',       true,  0, null, false, '1 kilobit'),
+      array('1000000 b',    true,  0, null, false, '1 megabit'),
+      array('1000000000 b', true,  0, null, false, '1 gigabit'),
+      array('1 b',          false, 0, null, false, '1 bit'),
+      array('1024 b',       false, 0, null, false, '1 kibibit'),
+      array('1048576 b',    false, 0, null, false, '1 mebibit'),
+      array('1073741824 b', false, 0, null, false, '1 gibibit'),
+      array('1',          true,  0, null, false, '8 bits'),
+      array('1000',       true,  0, null, false, '8 kilobits'),
+      array('1000000',    true,  0, null, false, '8 megabits'),
+      array('1000000000', true,  0, null, false, '8 gigabits'),
+      array('1',          false, 0, null, false, '8 bits'),
+      array('1024',       false, 0, null, false, '8 kibibits'),
+      array('1048576',    false, 0, null, false, '8 mebibits'),
+      array('1073741824', false, 0, null, false, '8 gibibits'),
+      array('2',          true,  0, null, false, '16 bits'),
+      array('2000',       true,  0, null, false, '16 kilobits'),
+      array('2000000',    true,  0, null, false, '16 megabits'),
+      array('2000000000', true,  0, null, false, '16 gigabits'),
+      array('2',          false, 0, null, false, '16 bits'),
+      array('2048',       false, 0, null, false, '16 kibibits'),
+      array('2097152',    false, 0, null, false, '16 mebibits'),
+      array('2147483648', false, 0, null, false, '16 gibibits'),
+      # Test decimal places.
+      array('1',          false, 2, null, false, '8.00 bits'),
+      array('1000',       false, 2, null, false, '7.81 kibibits'),
+      array('1000000',    false, 2, null, false, '7.63 mebibits'),
+      array('1000000000', false, 2, null, false, '7.45 gibibits'),
+      array('1',          true,  2, null, false, '8.00 bits'),
+      array('1024',       true,  2, null, false, '8.19 kilobits'),
+      array('1048576',    true,  2, null, false, '8.39 megabits'),
+      array('1073741824', true,  2, null, false, '8.59 gigabits'),
+      # Miscellaneous tests.
+      array('1.44 MB',    false, 2, null, true, '10.99 Mib'),
+      array('1.37 MiB',   true,  2, null, true, '11.49 Mb'),
+      array('250 GB',     false, 0, 'M',  true, '1907349 Mib'),
+      array('250 GiB',    false, 0, 'M',  true, '2048000 Mib'),
+      array('250 GB',     true,  0, 'M',  true, '2000000 Mb'),
+      array('250 GiB',    true,  0, 'M',  true, '2147484 Mb'),
+    );
+  }
+
+  /**
+   * @dataProvider  formatBytesProvider()
+   * @depends       NumberTest::parseBytes()
+   */
+  public function testFormatBytes($n, $si, $dp, $prefix, $symbol, $expected) {
+    $this->assertSame($expected, String::formatBytes($n, $si, $dp, $prefix, $symbol));
+  }
+
+  public static function formatBytesProvider() {
+    return array(
+      # Test automatic prefix.
+      array('1',          true,  0, null, true, '1 B'),
+      array('1000',       true,  0, null, true, '1 kB'),
+      array('1000000',    true,  0, null, true, '1 MB'),
+      array('1000000000', true,  0, null, true, '1 GB'),
+      array('1',          false, 0, null, true, '1 B'),
+      array('1024',       false, 0, null, true, '1 KiB'),
+      array('1048576',    false, 0, null, true, '1 MiB'),
+      array('1073741824', false, 0, null, true, '1 GiB'),
+      # Test fixed prefix.
+      array('1',          true,  0, 'K', true, '0 kB'),
+      array('1000',       true,  0, 'K', true, '1 kB'),
+      array('1000000',    true,  0, 'K', true, '1000 kB'),
+      array('1000000000', true,  0, 'K', true, '1000000 kB'),
+      array('1',          false, 0, 'K', true, '0 KiB'),
+      array('1024',       false, 0, 'K', true, '1 KiB'),
+      array('1048576',    false, 0, 'K', true, '1024 KiB'),
+      array('1073741824', false, 0, 'K', true, '1048576 KiB'),
+      # Test non-symbol prefix.
+      array('1',          true,  0, null, false, '1 byte'),
+      array('1000',       true,  0, null, false, '1 kilobyte'),
+      array('1000000',    true,  0, null, false, '1 megabyte'),
+      array('1000000000', true,  0, null, false, '1 gigabyte'),
+      array('1',          false, 0, null, false, '1 byte'),
+      array('1024',       false, 0, null, false, '1 kibibyte'),
+      array('1048576',    false, 0, null, false, '1 mebibyte'),
+      array('1073741824', false, 0, null, false, '1 gibibyte'),
+      array('2',          true,  0, null, false, '2 bytes'),
+      array('2000',       true,  0, null, false, '2 kilobytes'),
+      array('2000000',    true,  0, null, false, '2 megabytes'),
+      array('2000000000', true,  0, null, false, '2 gigabytes'),
+      array('2',          false, 0, null, false, '2 bytes'),
+      array('2048',       false, 0, null, false, '2 kibibytes'),
+      array('2097152',    false, 0, null, false, '2 mebibytes'),
+      array('2147483648', false, 0, null, false, '2 gibibytes'),
+      # Test decimal places.
+      array('1',          false, 2, null, false, '1.00 byte'),
+      array('1000',       false, 2, null, false, '1000.00 bytes'),
+      array('1000000',    false, 2, null, false, '976.56 kibibytes'),
+      array('1000000000', false, 2, null, false, '953.67 mebibytes'),
+      array('1',          true,  2, null, false, '1.00 byte'),
+      array('1024',       true,  2, null, false, '1.02 kilobytes'),
+      array('1048576',    true,  2, null, false, '1.05 megabytes'),
+      array('1073741824', true,  2, null, false, '1.07 gigabytes'),
+      # Miscellaneous tests.
+      array('1.44 MB',    false, 2, null, true, '1.37 MiB'),
+      array('1.37 MiB',   true,  2, null, true, '1.44 MB'),
+      array('250 GB',     false, 0, 'M',  true, '238419 MiB'),
+      array('250 GiB',    false, 0, 'M',  true, '256000 MiB'),
+      array('250 GB',     true,  0, 'M',  true, '250000 MB'),
+      array('250 GiB',    true,  0, 'M',  true, '268435 MB'),
+    );
+  }
+
 }
 
 # vim: encoding=utf-8 fileencoding=utf-8
