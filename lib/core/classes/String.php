@@ -416,6 +416,8 @@ class String {
    * @param   string  $string  The string to convert to paragraphs
    *
    * @return  string
+   *
+   * @todo  Correctly handle blank lines with horizontal whitespace!
    */
   public static function nl2p($string) {
     $string = '<p>' . trim($string) . '</p>';
