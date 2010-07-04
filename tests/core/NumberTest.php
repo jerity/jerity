@@ -149,4 +149,78 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     );
   }
 
+  /**
+   * @dataProvider  parseBitsProvider
+   * @covers        Number::parseBits()
+   */
+  public function testParseBits($a, $b, $c) {
+    $this->assertEquals(Number::parseBits($a, $b), $c);
+  }
+
+  public static function parseBitsProvider() {
+    $values          = array(1, 10, 12.34);
+    $prefix_symbol   = array('', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'K', 'M', 'G');
+    $prefix_name     = array('', 'kilo', 'mega', 'giga', 'tera', 'peta', 'exa', 'zetta', 'kibi', 'mebi', 'gibi', 'tebi', 'pebi', 'exbi', 'kilo', 'mega', 'giga');
+    $multiplier_base = array(10, 10, 10, 10, 10, 10, 10, 10, 2, 2, 2, 2, 2, 2, 2, 2, 2);
+    $multiplier_exp  = array(0, 3, 6, 9, 12, 15, 18, 21, 10, 20, 30, 40, 50, 60, 10, 20, 30);
+    $data = array();
+    foreach ($values as $value) {
+      for ($i = 0; $i < count($prefix_symbol); $i++) {
+        $v = $value * pow($multiplier_base[$i], $multiplier_exp[$i]);
+        $jedec = ($i >= count($prefix_symbol) - 4);
+        $data[] = array("{$value}{$prefix_symbol[$i]}B",    $jedec, $v * 8);
+        $data[] = array("{$value}{$prefix_symbol[$i]}Bps",  $jedec, $v * 8);
+        $data[] = array("{$value}{$prefix_symbol[$i]}b",    $jedec, $v);
+        $data[] = array("{$value}{$prefix_symbol[$i]}bps",  $jedec, $v);
+        $data[] = array("{$value} {$prefix_symbol[$i]}B",   $jedec, $v * 8);
+        $data[] = array("{$value} {$prefix_symbol[$i]}Bps", $jedec, $v * 8);
+        $data[] = array("{$value} {$prefix_symbol[$i]}b",   $jedec, $v);
+        $data[] = array("{$value} {$prefix_symbol[$i]}bps", $jedec, $v);
+        $postfix = ($value == 1 ? '' : 's');
+        $data[] = array("{$value}{$prefix_name[$i]}byte{$postfix}",  $jedec, $v * 8);
+        $data[] = array("{$value}{$prefix_name[$i]}bit{$postfix}",   $jedec, $v);
+        $data[] = array("{$value} {$prefix_name[$i]}byte{$postfix}", $jedec, $v * 8);
+        $data[] = array("{$value} {$prefix_name[$i]}bit{$postfix}",  $jedec, $v);
+      }
+    }
+    return $data;
+  }
+
+  /**
+   * @dataProvider  parseBytesProvider
+   * @covers        Number::parseBytes()
+   */
+  public function testParseBytes($a, $b, $c) {
+    $this->assertEquals(Number::parseBytes($a, $b), $c);
+  }
+
+  public static function parseBytesProvider() {
+    $values          = array(1, 10, 12.34);
+    $prefix_symbol   = array('', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'K', 'M', 'G');
+    $prefix_name     = array('', 'kilo', 'mega', 'giga', 'tera', 'peta', 'exa', 'zetta', 'kibi', 'mebi', 'gibi', 'tebi', 'pebi', 'exbi', 'kilo', 'mega', 'giga');
+    $multiplier_base = array(10, 10, 10, 10, 10, 10, 10, 10, 2, 2, 2, 2, 2, 2, 2, 2, 2);
+    $multiplier_exp  = array(0, 3, 6, 9, 12, 15, 18, 21, 10, 20, 30, 40, 50, 60, 10, 20, 30);
+    $data = array();
+    foreach ($values as $value) {
+      for ($i = 0; $i < count($prefix_symbol); $i++) {
+        $v = $value * pow($multiplier_base[$i], $multiplier_exp[$i]);
+        $jedec = ($i >= count($prefix_symbol) - 4);
+        $data[] = array("{$value}{$prefix_symbol[$i]}B",    $jedec, $v);
+        $data[] = array("{$value}{$prefix_symbol[$i]}Bps",  $jedec, $v);
+        $data[] = array("{$value}{$prefix_symbol[$i]}b",    $jedec, $v / 8);
+        $data[] = array("{$value}{$prefix_symbol[$i]}bps",  $jedec, $v / 8);
+        $data[] = array("{$value} {$prefix_symbol[$i]}B",   $jedec, $v);
+        $data[] = array("{$value} {$prefix_symbol[$i]}Bps", $jedec, $v);
+        $data[] = array("{$value} {$prefix_symbol[$i]}b",   $jedec, $v / 8);
+        $data[] = array("{$value} {$prefix_symbol[$i]}bps", $jedec, $v / 8);
+        $postfix = ($value == 1 ? '' : 's');
+        $data[] = array("{$value}{$prefix_name[$i]}byte{$postfix}",  $jedec, $v);
+        $data[] = array("{$value}{$prefix_name[$i]}bit{$postfix}",   $jedec, $v / 8);
+        $data[] = array("{$value} {$prefix_name[$i]}byte{$postfix}", $jedec, $v);
+        $data[] = array("{$value} {$prefix_name[$i]}bit{$postfix}",  $jedec, $v / 8);
+      }
+    }
+    return $data;
+  }
+
 }
