@@ -343,6 +343,7 @@ class Image {
     $this->outputHeader();
     $this->outputContent();
     $this->cleanup();
+    # TODO: Return status code.
   }
 
   /**
@@ -442,6 +443,9 @@ class Image {
    *
    */
   protected function outputHeader() {
+    if (headers_sent()) {
+      throw new ImageException('Headers already sent!');
+    }
     header('Content-Type: ' . $this->dst_mime);
     header('Content-Disposition: inline; filename=' . basename($this->cache_file));
     header('Content-Description: auto-generated image');
@@ -469,7 +473,7 @@ class Image {
   /**
    *
    */
-  public function outputContent() {
+  protected function outputContent() {
     if (!$this->generated) $this->generate();
     switch ($this->cache_mode) {
       case CACHE_MODE_RETRIEVE:
