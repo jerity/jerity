@@ -220,10 +220,11 @@ class Image {
    *
    */
   public function setHeight($h) {
-    if (is_int($h) && $h > 0)
+    if (is_int($h) && $h > 0) {
       $this->maxh = $h;
-    else
+    } else {
       throw new ImageException('Height must be a positive integer in pixels.', ImageException::INVALID_PARAMETER);
+    }
     return $this;
   }
 
@@ -238,10 +239,11 @@ class Image {
    *
    */
   public function setWidth($w) {
-    if (is_int($w) && $w > 0)
+    if (is_int($w) && $w > 0) {
       $this->maxw = $w;
-    else
+    } else {
       throw new ImageException('Width must be a positive integer in pixels.', ImageException::INVALID_PARAMETER);
+    }
     return $this;
   }
 
@@ -256,10 +258,11 @@ class Image {
    *
    */
   public function setQuality($q) {
-    if (is_int($q) && $q >= 0 && $q <= 100)
+    if (is_int($q) && $q >= 0 && $q <= 100) {
       $this->quality = $q;
-    else
+    } else {
       throw new ImageException('Quality must be an integer in the range 0-100.', ImageException::INVALID_PARAMETER);
+    }
     return $this;
   }
 
