@@ -195,6 +195,13 @@ class Image {
   /**
    *
    */
+  public static function create() {
+    return new self();
+  }
+
+  /**
+   *
+   */
   public function getHeight() {
     return $this->maxh;
   }
@@ -207,6 +214,7 @@ class Image {
       $this->maxh = $h;
     else
       throw new ImageException('Height must be a positive integer in pixels.', ImageException::INVALID_PARAMETER);
+    return $this;
   }
 
   /**
@@ -224,6 +232,7 @@ class Image {
       $this->maxw = $w;
     else
       throw new ImageException('Width must be a positive integer in pixels.', ImageException::INVALID_PARAMETER);
+    return $this;
   }
 
   /**
@@ -241,6 +250,7 @@ class Image {
       $this->quality = $q;
     else
       throw new ImageException('Quality must be an integer in the range 0-100.', ImageException::INVALID_PARAMETER);
+    return $this;
   }
 
   /**
@@ -262,6 +272,7 @@ class Image {
       default:
         throw new ImageException('Method could not be set.', ImageException::INVALID_PARAMETER);
     }
+    return $this;
   }
 
   /**
@@ -284,6 +295,7 @@ class Image {
       default:
         throw new ImageException('Behaviour could not be set.', ImageException::INVALID_PARAMETER);
     }
+    return $this;
   }
 
   /**
@@ -306,6 +318,7 @@ class Image {
       default:
         throw new ImageException('Cache mode could not be set.', ImageException::INVALID_PARAMETER);
     }
+    return $this;
   }
 
   /**
