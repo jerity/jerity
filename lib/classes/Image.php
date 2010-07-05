@@ -360,8 +360,8 @@ class Image {
    */
   protected function cleanup() {
     # Clean up outstanding resources.
-    if ($this->dst) imagedestroy($this->dst);
-    if ($this->src) imagedestroy($this->src);
+    if (is_resource($this->dst)) imagedestroy($this->dst);
+    if (is_resource($this->src)) imagedestroy($this->src);
     # Restore the original memory limit.
     ini_restore('memory_limit');
   }
@@ -393,7 +393,7 @@ class Image {
     $this->srcw = imagesx($this->src);
     $this->srch = imagesy($this->src);
     # Create destination image resource
-    if ($this->dst) imagedestroy($this->dst);
+    if (is_resource($this->dst)) imagedestroy($this->dst);
     switch ($this->behaviour) {
       case self::BEHAVOUR_NORMAL:
         switch ($this->method) {
