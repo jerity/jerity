@@ -182,6 +182,19 @@ class Image {
   /**
    *
    */
+  public function __construct() {
+  }
+
+  /**
+   *
+   */
+  public function __destruct() {
+    $this->cleanup();
+  }
+
+  /**
+   *
+   */
   public function getHeight() {
     return $this->maxh;
   }
