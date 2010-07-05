@@ -182,6 +182,16 @@ class Image {
   /**
    *
    */
+  protected $background = array();
+
+  /**
+   *
+   */
+  protected $generated = false;
+
+  /**
+   *
+   */
   public function __construct() {
   }
 
@@ -422,6 +432,7 @@ class Image {
       default: # [should not get here]
         throw new ImageException("Invalid output mime type: '{$this->dst_mime}'.");
     }
+    $this->generated = true;
   }
 
   /**
