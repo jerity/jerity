@@ -15,209 +15,378 @@
  * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
  * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
  * @package    jerity.core
+ *
+ * @todo  Add support for additional formats.
  */
-class Image {
+class Image implements Renderable {
+
+  ########################################
+  # Constants: Formats {{{
 
   /**
+   * The GIF image format extension.
    *
+   * @var  string
    */
-  const METHOD_SCALE = 0;
+  const EXT_GIF = '.gif';
 
   /**
+   * The JPEG image format extension.
    *
+   * @var  string
    */
-  const METHOD_CROP  = 1;
-
+  const EXT_JPG = '.jpg';
 
   /**
+   * The PNG image format extension.
    *
+   * @var  string
    */
-  const BEHAVIOUR_NORMAL  = 0;
+  const EXT_PNG = '.png';
 
   /**
+   * The GIF image format MIME-type.
    *
-   */
-  const BEHAVIOUR_EXPAND  = 1;
-
-  /**
-   *
-   */
-  const BEHAVIOUR_FIXED   = 2;
-
-
-  /**
-   *
-   */
-  const CACHE_MODE_IGNORE     = 0;
-
-  /**
-   *
-   */
-  const CACHE_MODE_RETRIEVE   = 1;
-
-  /**
-   *
-   */
-  const CACHE_MODE_REGENERATE = 2;
-
-
-  /**
-   *
+   * @var  string
    */
   const MIME_GIF = 'image/gif';
 
   /**
+   * The JPEG image format MIME-type.
    *
+   * @var  string
    */
   const MIME_JPG = 'image/jpeg';
 
   /**
+   * The PNG image format MIME-type.
    *
+   * @var  string
    */
   const MIME_PNG = 'image/png';
 
+  # }}} Constants: Formats
+  ########################################
+
+  ########################################
+  # Constants: Defaults {{{
 
   /**
+   * The default height.
    *
+   * @var  int
    */
-  const DEFAULT_HEIGHT     = 200;
+  const DEFAULT_HEIGHT = 200;
 
   /**
+   * The default width.
    *
+   * @var  int
    */
-  const DEFAULT_WIDTH      = 200;
+  const DEFAULT_WIDTH = 200;
 
   /**
+   * The default file extension.
    *
+   * @var  string
    */
-  const DEFAULT_QUALITY    = 80;
+  const DEFAULT_EXTENSION = self::EXT_PNG;
 
   /**
+   * The default file MIME-type.
    *
+   * @var  string
    */
-  const DEFAULT_METHOD     = self::METHOD_SCALE;
+  const DEFAULT_MIME = self::MIME_PNG;
+
+  # }}} Constants: Defaults
+  ########################################
+
+  ########################################
+  # Fields: Dimensions {{{
 
   /**
+   * The maximum image height.
    *
-   */
-  const DEFAULT_BEHAVIOUR  = self::BEHAVIOUR_NORMAL;
-
-  /**
-   *
-   */
-  const DEFAULT_CACHE_MODE = self::CACHE_RETRIEVE;
-
-
-  /**
-   *
-   */
-  const MAX_RESAMPLE_DIMENSION = 4000;
-
-
-  /**
-   *
-   */
-  protected $quality    = self::DEFAULT_QUALITY;
-
-  /**
-   *
-   */
-  protected $method     = self::DEFAULT_METHOD;
-
-  /**
-   *
-   */
-  protected $behaviour  = self::DEFAULT_BEHAVIOUR;
-
-  /**
-   *
-   */
-  protected $cache_mode = self::DEFAULT_CACHE_MODE;
-
-  /**
-   *
+   * @var  int
    */
   protected $maxh = self::DEFAULT_HEIGHT;
 
   /**
+   * The maximum image width.
    *
+   * @var  int
    */
   protected $maxw = self::DEFAULT_WIDTH;
 
   /**
+   * The source image height.
    *
+   * @var  int
    */
   protected $srch = self::DEFAULT_HEIGHT;
 
   /**
+   * The source image width.
    *
+   * @var  int
    */
   protected $srcw = self::DEFAULT_WIDTH;
 
   /**
+   * The destination image height.
    *
+   * @var  int
    */
   protected $dsth = self::DEFAULT_HEIGHT;
 
   /**
+   * The destination image width.
    *
+   * @var  int
    */
   protected $dstw = self::DEFAULT_WIDTH;
 
+  # }}} Fields: Dimensions
+  ########################################
+
+  ########################################
+  # Fields: Files {{{
+
   /**
+   * The destination image path.
    *
+   * @var  string
+   */
+  protected $dst_path = null;
+
+  /**
+   * The source image path.
+   *
+   * @var  string
+   */
+  protected $src_path = null;
+
+  /**
+   * The destination image extension.
+   *
+   * @var  string
+   */
+  protected $dst_ext = self::DEFAULT_EXTENSION;
+
+  /**
+   * The source image extension.
+   *
+   * @var  string
+   */
+  protected $src_ext = null;
+
+  /**
+   * The destination image MIME-type.
+   *
+   * @var  string
+   */
+  protected $dst_mime = self::DEFAULT_MIME;
+
+  /**
+   * The source image MIME-type.
+   *
+   * @var  string
+   */
+  protected $src_mime = null;
+
+  # }}} Fields: Files
+  ########################################
+
+  ########################################
+  # Fields: Resources {{{
+
+  /**
+   * A handle to the destination image resouce.
+   *
+   * @var  resource
    */
   protected $dst = null;
 
   /**
+   * A handle to the source image resouce.
    *
+   * @var  resource
    */
   protected $src = null;
 
-  /**
-   *
-   */
-  protected $cache_file = null;
+  # }}} Fields: Resources
+  ########################################
 
   /**
+   * The manipulation queue containing actions to be performed on the image.
    *
+   * @todo  Use PHP 5.3 SplQueue.
+   *
+   * @var  array
    */
-  protected $background = array();
+  protected $manipulations = array();
 
   /**
+   * Contains information about the supported features of image manipulation 
+   * libraries/extensions.
    *
+   * @var  array
    */
-  protected $generated = false;
+  protected static $support = array();
 
   /**
-   *
+   * Creates a new image manipulation object.
    */
   public function __construct() {
+    # Force support array to be populated.
+    self::checkSupport();
   }
 
   /**
+   * Destroys the image manipulation object.
    *
+   * Performs cleanup of allocated resources.
+   *
+   * @see  self::cleanup()
    */
   public function __destruct() {
     $this->cleanup();
   }
 
   /**
+   * Checks various image-related extensions to determine what is supported.
    *
+   * @param  bool  $recheck  Whether to recheck for support or not.  By default 
+   *                         we only look up data once.
+   *
+   * @return  array  Information about supported extensions.
+   */
+  public static function checkSupport($recheck = false) {
+    if (!$recheck && self::$support) return self::$support;
+    # Check GD extension
+    $gd = extension_loaded('gd');
+    if ($gd) {
+      $gd = array();
+      $v = gd_info();
+      $gd['bundled'] = (bool) GD_BUNDLED;
+      # Version
+      if (version_compare(PHP_VERSION, '5.2.4', '>=')) {
+        $gd['version']['string']  = GD_VERSION;
+        $gd['version']['major']   = GD_MAJOR_VERSION;
+        $gd['version']['minor']   = GD_MINOR_VERSION;
+        $gd['version']['release'] = GD_RELEASE_VERSION;
+        $gd['version']['extra']   = GD_EXTRA_VERSION;
+      } elseif (isset($v['GD Version'])) {
+        preg_match('/^.*\(((\d+)\.(\d+)\.(\d+)) .*\).*/', $v['GD Version'], $m);
+        $gd['version']['string']  = (isset($m[1]) ? $m[1] : null);
+        $gd['version']['major']   = (isset($m[2]) ? intval($m[2]) : null);
+        $gd['version']['minor']   = (isset($m[3]) ? intval($m[3]) : null);
+        $gd['version']['release'] = (isset($m[4]) ? intval($m[4]) : null);
+        $gd['version']['extra']   = null;
+      }
+      # Format Support
+      $gd['formats']['gif']  = (bool) (imagetypes() & IMG_GIF);
+      $gd['formats']['jpg']  = (bool) (imagetypes() & IMG_JPG);
+      $gd['formats']['png']  = (bool) (imagetypes() & IMG_PNG);
+      $gd['formats']['wbmp'] = (bool) (imagetypes() & IMG_WBMP);
+      $gd['formats']['xpm']  = (bool) (imagetypes() & IMG_XPM);
+      $gd['formats']['xbm']  = (isset($v['XBM Support']) ? $v['XBM Support'] : false);
+      # Font Support
+      $gd['fonts']['freetype'] = (isset($v['FreeType Support']) ? $v['FreeType Support'] : false);
+      $gd['fonts']['type1']    = (isset($v['T1Lib Support']) ? $v['T1Lib Support'] : false);
+      $gd['fonts']['jis']      = (isset($v['JIS-mapped Japanese Font Support']) ? $v['JIS-mapped Japanese Font Support'] : false);
+    }
+    # Check ImageMagick extension
+    $im = extension_loaded('imagick');
+    if ($im) {
+      $im = array();
+      $imagick = new Imagick();
+      $v = $imagick->getVersion();
+      preg_match('/^[^ ]* ((\d+)\.(\d+)\.(\d+)(?:-(\d+))?) .*/', $v['versionString'], $m);
+      $im['version']['string']  = (isset($m[1]) ? $m[1] : null);
+      $im['version']['major']   = (isset($m[2]) ? intval($m[2]) : null);
+      $im['version']['minor']   = (isset($m[3]) ? intval($m[3]) : null);
+      $im['version']['release'] = (isset($m[4]) ? intval($m[4]) : null);
+      $im['version']['extra']   = (isset($m[5]) ? intval($m[5]) : null);;
+      $v = $imagick->queryFormats();
+      $im['formats']['gif']  = in_array('GIF',  $v);
+      $im['formats']['jpg']  = in_array('JPG',  $v);
+      $im['formats']['png']  = in_array('PNG',  $v);
+      $im['formats']['wbmp'] = in_array('WBMP', $v);
+      $im['formats']['xpm']  = in_array('XPM',  $v);
+      $im['formats']['xbm']  = in_array('XBM',  $v);
+      # XXX: What about other formats?
+      if ($imagick) $imagick->destroy();
+    }
+    # Check ImageMagick extension
+    $exif = extension_loaded('exif');
+    # Done
+    self::$support = array('gd' => $gd, 'im' => $im, 'exif' => $exif);;
+    return self::$support;
+  }
+
+  /*
+   * Create a new image in a fluent API manner.
+   *
+   * @return  Image
+   * @see     self::__construct()
+   *
+   * @todo  Replace with PHP 5.3 late static binding support?
    */
   public static function create() {
-    return new self();
+    return new Image();
   }
 
   /**
+   * Clean up image resources and restore modified settings.
+   */
+  protected function cleanup() {
+    # Clean up outstanding resources.
+    if (is_resource($this->dst)) imagedestroy($this->dst);
+    if (is_resource($this->src)) imagedestroy($this->src);
+    # Restore the original memory limit.
+    ini_restore('memory_limit');
+  }
+
+  ########################################
+  # Functions: Configuration {{{
+
+  /**
+   * Gets the desired format of the image.
+   */
+  public function getFormat() {
+    return $this->dst_mime;
+  }
+
+  /**
+   * Sets the desired format of the image.
    *
+   * @return  Image  Fluent API
+   *
+   * @todo
+   */
+  public function setFormat($f) {
+    //if () {
+    //  $this->dst_ext =;
+    //  $this->dst_mime =;
+    //} else {
+    //  throw new ImageException('Invalid or unsupported file format.', ImageException::INVALID_PARAMETER);
+    //}
+    return $this;
+  }
+
+  /**
+   * Gets the desired height of the image.
    */
   public function getHeight() {
     return $this->maxh;
   }
 
   /**
+   * Sets the desired height of the image.
    *
+   * @return  Image  Fluent API
    */
   public function setHeight($h) {
     if (is_int($h) && $h > 0) {
@@ -229,14 +398,15 @@ class Image {
   }
 
   /**
-   *
+   * Gets the desired width of the image.
    */
   public function getWidth() {
-    return $this->maxw;
   }
 
   /**
+   * Sets the desired width of the image.
    *
+   * @return  Image  Fluent API
    */
   public function setWidth($w) {
     if (is_int($w) && $w > 0) {
@@ -247,253 +417,138 @@ class Image {
     return $this;
   }
 
-  /**
-   *
-   */
-  public function getQuality() {
-    return $this->quality;
-  }
+  # }}} Functions: Configuration
+  ########################################
+
+  ########################################
+  # Functions: Manipulation {{{
 
   /**
+   * Adds a resize operation to the manipulation queue.
    *
+   * @return  Image  Fluent API
+   *
+   * @todo
    */
-  public function setQuality($q) {
-    if (is_int($q) && $q >= 0 && $q <= 100) {
-      $this->quality = $q;
-    } else {
-      throw new ImageException('Quality must be an integer in the range 0-100.', ImageException::INVALID_PARAMETER);
-    }
+  public function resize() {
+    //$this->manipulations[] =;
     return $this;
   }
 
   /**
+   * Adds a crop operation to the manipulation queue.
    *
-   */
-  public function getMethod() {
-    return $this->method;
-  }
-
-  /**
+   * @return  Image  Fluent API
    *
+   * @todo
    */
-  public function setMethod($m) {
-    switch ($m) {
-      case self::METHOD_SCALE:
-      case self::METHOD_CROP:
-        $this->method = $m;
-        break;
-      default:
-        throw new ImageException('Method could not be set.', ImageException::INVALID_PARAMETER);
-    }
+  public function crop() {
+    //$this->manipulations[] =;
     return $this;
   }
 
   /**
+   * Adds a rotate operation to the manipulation queue.
    *
-   */
-  public function getBehaviour() {
-    return $this->behaviour;
-  }
-
-  /**
+   * @return  Image  Fluent API
    *
+   * @todo
    */
-  public function setBehaviour($b) {
-    switch ($b) {
-      case self::BEHAVIOUR_NORMAL:
-      case self::BEHAVIOUR_EXPAND:
-      case self::BEHAVIOUR_FIXED:
-        $this->behaviour = $b;
-        break;
-      default:
-        throw new ImageException('Behaviour could not be set.', ImageException::INVALID_PARAMETER);
-    }
+  public function rotate() {
+    //$this->manipulations[] =;
     return $this;
   }
 
+  # }}} Functions: Manipulation
+  ########################################
+
+  ########################################
+  # Functions: Output {{{
+
   /**
+   * Causes the image to be generated and saves the image to a file.
    *
+   * @param  string  $f  The path to save the file at.
+   *
+   * @todo
    */
-  public function getCacheMode() {
-    return $this->cache_mode;
+  public function save($f) {
   }
 
   /**
+   * Causes the image to be generated and outputs the file to the current 
+   * output buffer.
    *
+   * @todo
    */
-  public function setCacheMode($c) {
-    switch ($c) {
-      case self::CACHE_MODE_IGNORE:
-      case self::CACHE_MODE_RETRIEVE:
-      case self::CACHE_MODE_REGENERATE:
-        $this->cache_mode = $c;
-        break;
-      default:
-        throw new ImageException('Cache mode could not be set.', ImageException::INVALID_PARAMETER);
-    }
-    return $this;
-  }
-
-  /**
-   *
-   */
-  public function output() {
-    $this->initialise();
-    $this->generate();
-    $this->outputHeader();
+  public function render() {
+    $this->outputHeaders();
     $this->outputContent();
-    $this->cleanup();
-    # TODO: Return status code.
   }
 
   /**
+   * Outputs the HTTP headers to send with the image content.
    *
+   * @todo
    */
-  protected function initialise() {
-    # Set a high memory limit for this script.
-    ini_set('memory_limit', '64M');
-    # Make sure that we have the correct quality if PNG
-    $this->transformQuality();
-  }
-
-  /**
-   *
-   */
-  protected function cleanup() {
-    # Clean up outstanding resources.
-    if (is_resource($this->dst)) imagedestroy($this->dst);
-    if (is_resource($this->src)) imagedestroy($this->src);
-    # Restore the original memory limit.
-    ini_restore('memory_limit');
-  }
-
-  /**
-   *
-   */
-  protected function transformQuality() {
-    if ($this->dst_mime !== self::MIME_PNG) return;
-    if ($this->quality < 100) {
-      $this->quality = min(9, floor((100 - $this->quality) / 10));
-    } else {
-      $this->quality = 0;
-    }
-  }
-
-  /**
-   *
-   */
-  protected function generate() {
-    if ($this->cache_mode === self::CACHE_MODE_RETRIEVE) return;
-    # Create source image resource
-    $this->src = $imgfrom($img); #TODO:FIX
-    # Initialise dimensions and offsets
-    $this->dstx = 0;
-    $this->dsty = 0;
-    $this->srcx = 0;
-    $this->srcy = 0;
-    $this->srcw = imagesx($this->src);
-    $this->srch = imagesy($this->src);
-    # Create destination image resource
-    if (is_resource($this->dst)) imagedestroy($this->dst);
-    switch ($this->behaviour) {
-      case self::BEHAVOUR_NORMAL:
-        switch ($this->method) {
-          case METHOD_CROP:
-            $this->dst = imagecreatetruecolor(($srcw > $maxw ? $maxw : $dstw), ($srch > $maxh ? $maxh : $dsth));
-            break;
-          case METHOD_SCALE:
-            $this->dst = imagecreatetruecolor($dstw, $dsth);
-            break;
-          default: # [should not get here]
-            throw new ImageException("Invalid resize method.");
-        }
-        break;
-      case self::BEHAVOUR_EXPAND:
-        # TODO: Implement this.
-        throw new ImageException("Selected resize behaviour not implemented.");
-        break;
-      case self::BEHAVIOUR_FIXED:
-        $this->dst = imagecreatetruecolor($this->maxw, $this->maxh);
-        break;
-      default: # [should not get here]
-        throw new ImageException("Invalid resize behaviour.");
-    }
-    # Set the background colour of the destination image.
-    $bg = imagecolorallocatealpha($this->dst, $this->background['r'], $this->background['g'], $this->background['b'], $this->background['a']);
-    imagefill($this->dst, 0, 0, $bg);
-    # Set additional image properties.
-    switch ($this->dst_mime) {
-      case self::MIME_GIF:
-        imagepalettecopy($this->dst, $this->src);
-        break;
-      case self::MIME_JPG:
-        break;
-      case self::MIME_PNG:
-        imagepalettecopy($this->dst, $this->src);
-        imagealphablending($this->dst, false);
-        imagesavealpha($this->dst, true);
-        break;
-      default: # [should not get here]
-        throw new ImageException("Invalid output mime type: '{$this->dst_mime}'.");
-    }
-    $this->generated = true;
-  }
-
-  /**
-   *
-   */
-  protected function outputHeader() {
-    if (headers_sent()) {
-      throw new ImageException('Headers already sent!');
-    }
+  protected function outputHeaders() {
+    if (headers_sent()) throw new ImageException('Headers already sent!');
     header('Content-Type: ' . $this->dst_mime);
-    header('Content-Disposition: inline; filename=' . basename($this->cache_file));
+    //header('Content-Disposition: inline; filename=' . basename($this->cache_file));
     header('Content-Description: auto-generated image');
-    switch ($this->cache_mode) {
-      case self::CACHE_MODE_IGNORE:
-        header('Expires: ' . date('r', strtotime('-1 week')));
-        header('Last-Modified: ' . date('r'));
-        header('Cache-Control: no-store, no-cache, must-revalidate');
-        header('Cache-Control: post-check=0, pre-check=0', false);
-        header('Pragma: no-cache');
-        break;
-      case self::CACHE_MODE_RETRIEVE:
-        header('Expires: ' . date('r', strtotime('+1 week')));
-        header('Last-Modified: ' . date('r', filemtime($this->cache_file)));
-        break;
-      case self::CACHE_MODE_REGENERATE:
-        header('Expires: ' . date('r', strtotime('+1 week')));
-        header('Last-Modified: ' . date('r'));
-        break;
-      default: # [should not get here]
-        throw new ImageException('Invalid cache mode.');
-    }
+    //switch ($this->cache_mode) {
+    //  case self::CACHE_MODE_IGNORE:
+    //    header('Expires: ' . date('r', strtotime('-1 week')));
+    //    header('Last-Modified: ' . date('r'));
+    //    header('Cache-Control: no-store, no-cache, must-revalidate');
+    //    header('Cache-Control: post-check=0, pre-check=0', false);
+    //    header('Pragma: no-cache');
+    //    break;
+    //  case self::CACHE_MODE_RETRIEVE:
+    //    header('Expires: ' . date('r', strtotime('+1 week')));
+    //    header('Last-Modified: ' . date('r', filemtime($this->cache_file)));
+    //    break;
+    //  case self::CACHE_MODE_REGENERATE:
+    //    header('Expires: ' . date('r', strtotime('+1 week')));
+    //    header('Last-Modified: ' . date('r'));
+    //    break;
+    //  default: # [should not get here]
+    //    throw new ImageException('Invalid cache mode.');
+    //}
   }
 
   /**
+   * Outputs the image content.
    *
+   * @todo
    */
   protected function outputContent() {
-    if (!$this->generated) $this->generate();
-    switch ($this->cache_mode) {
-      case CACHE_MODE_RETRIEVE:
-        if (is_readable($this->cache_file))
-          @readfile($this->cache_file);
-        else
-          throw new ImageException('Cache file cannot be read.', ImageException::PERMISSIONS_ERROR);
-        break;
-      case CACHE_MODE_REGENERATE:
-        if (is_writable(dirname($this->cache_file)))
-          imgout_wrapper($this->dst, $this->cache_file, $this->quality);
-        else
-          throw new ImageException('Cache directory cannot be written to.', ImageException::PERMISSIONS_ERROR);
-        # [fall through to display the image]
-      case CACHE_MODE_IGNORE:
-        imgout_wrapper($this->dst, null, $this->quality);
-        break;
-      default: # [should not get here]
-        throw new ImageException('Invalid cache mode.');
-    }
+    //if (!$this->generated) $this->generate();
+    //switch ($this->cache_mode) {
+    //  case CACHE_MODE_RETRIEVE:
+    //    if (is_readable($this->cache_file)) {
+    //      Error::warnOnSuppression(false);
+    //      @readfile($this->cache_file);
+    //    } else {
+    //      throw new ImageException('Cache file cannot be read.', ImageException::PERMISSIONS_ERROR);
+    //    }
+    //    break;
+    //  case CACHE_MODE_REGENERATE:
+    //    if (is_writable(dirname($this->cache_file))) {
+    //      imgout_wrapper($this->dst, $this->cache_file, $this->quality);
+    //    } else {
+    //      throw new ImageException('Cache directory cannot be written to.', ImageException::PERMISSIONS_ERROR);
+    //    }
+    //    # [fall through to display the image]
+    //  case CACHE_MODE_IGNORE:
+    //    imgout_wrapper($this->dst, null, $this->quality);
+    //    break;
+    //  default: # [should not get here]
+    //    throw new ImageException('Invalid cache mode.');
+    //}
   }
+
+  # }}} Functions: Output 
+  ########################################
 
 }
