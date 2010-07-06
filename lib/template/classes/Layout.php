@@ -378,7 +378,11 @@ class Layout implements Renderable {
       $output .= '>' . PHP_EOL;
       if ($content) {
         foreach ($content as $item) {
-          $output .= $item->render();
+          if ($item instanceof Renderable) {
+            $output .= $item->render();
+          } else {
+            $output .= $item;
+          }
         }
       }
       $output .= '</div>' . PHP_EOL;
