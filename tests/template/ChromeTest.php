@@ -18,8 +18,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Title tests {{{
 
   /**
-   * @covers  Chrome::setTitle()
-   * @covers  Chrome::getTitle()
    */
   public function testEmptyTitle() {
     Chrome::setTitle(null);
@@ -28,8 +26,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  titleSeparatorProvider
-   * @covers        Chrome::getTitleSeparator()
-   * @covers        Chrome::getTitle()
    */
   public function testTitleSeparator($sep) {
     if ($sep === null) $sep = Chrome::getTitleSeparator();
@@ -53,7 +49,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::getTitle()
    */
   public function testGetTitleArray() {
     $title = array('Jerity', 'test', 'title');
@@ -65,7 +60,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Title append tests {{{
 
   /**
-   * @covers  Chrome::addToTitle()
    */
   public function testAddTitleAppend() {
     $title = array('Jerity', 'test');
@@ -76,7 +70,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::addToTitle()
    */
   public function testAddTitleAppend2() {
     $title = array('Jerity', 'test');
@@ -87,7 +80,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::addToTitle()
    */
   public function testAddTitleAppend3() {
     $title = array('Jerity', 'test');
@@ -100,7 +92,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::addToTitle()
    */
   public function testAddTitleAppend4() {
     $title = array('Jerity', 'test');
@@ -118,7 +109,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Title prepend tests {{{
 
   /**
-   * @covers  Chrome::addToTitle()
    */
   public function testAddTitlePrepend() {
     $title = array('Jerity', 'test');
@@ -129,7 +119,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::addToTitle()
    */
   public function testAddTitlePrepend2() {
     $title = array('Jerity', 'test');
@@ -140,7 +129,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::addToTitle()
    */
   public function testAddTitlePrepend3() {
     $title = array('Jerity', 'test');
@@ -163,10 +151,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Single content tests {{{
 
   /**
-   * @covers  Chrome::__construct()
-   * @covers  Chrome::clearContent()
-   * @covers  Chrome::getContent()
-   * @covers  Chrome::setContent()
    */
   public function testContent1() {
     $c = new Chrome('simple');
@@ -185,9 +169,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::__construct()
-   * @covers  Chrome::clearContent()
-   * @covers  Chrome::getContent()
    */
   public function testContent2() {
     $c = new Chrome('simple');
@@ -215,7 +196,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException  InvalidArgumentException
-   * @covers             Chrome::setContent()
    */
   public function testContentFail1() {
     $c = new Chrome('simple');
@@ -226,7 +206,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException  InvalidArgumentException
-   * @covers             Chrome::setContent()
    */
   public function testContentFail2() {
     $c = new Chrome('simple');
@@ -242,11 +221,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Multiple content tests {{{
 
   /**
-   * @covers  Chrome::__construct()
-   * @covers  Chrome::clearContent()
-   * @covers  Chrome::setContent()
-   * @covers  Chrome::render()
-   * @covers  Chrome::getNextContent()
    */
   public function testMultiContent1() {
     $c = new Chrome('multicontent');
@@ -257,11 +231,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::__construct()
-   * @covers  Chrome::clearContent()
-   * @covers  Chrome::setContent()
-   * @covers  Chrome::render()
-   * @covers  Chrome::getNextContent()
    */
   public function testMultiContent1a() {
     $c = new Chrome('multicontent');
@@ -274,11 +243,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::__construct()
-   * @covers  Chrome::clearContent()
-   * @covers  Chrome::setContent()
-   * @covers  Chrome::render()
-   * @covers  Chrome::getNextContent()
    */
   public function testMultiContent2() {
     $c = new Chrome('multicontent');
@@ -289,11 +253,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::__construct()
-   * @covers  Chrome::clearContent()
-   * @covers  Chrome::setContent()
-   * @covers  Chrome::render()
-   * @covers  Chrome::getNextContent()
    */
   public function testMultiContent3() {
     $c = new Chrome('multicontent');
@@ -314,7 +273,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Modular head tests {{{
 
   /**
-   * @covers  Chrome::outputHead()
    */
   public function testModularHead() {
     Chrome::setLanguage('en-gb');
@@ -362,7 +320,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Foot tests {{{
 
   /**
-   * @covers  Chrome::outputFoot()
    */
   public function testFoot() {
     ob_start();
@@ -379,10 +336,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # HTTP header tests {{{
 
   /**
-   * @covers  Chrome::clearHeaders()
-   * @covers  Chrome::getHeaders()
-   * @covers  Chrome::addHeader()
-   * @covers  Chrome::removeHeader()
    */
   public function testHTTPHeader1() {
     Chrome::clearHeaders();
@@ -404,10 +357,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearHeaders()
-   * @covers  Chrome::getHeaders()
-   * @covers  Chrome::addHeader()
-   * @covers  Chrome::removeHeader()
    */
   public function testHTTPHeader2() {
     Chrome::clearHeaders();
@@ -429,10 +378,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearHeaders()
-   * @covers  Chrome::getHeaders()
-   * @covers  Chrome::addHeader()
-   * @covers  Chrome::removeHeader()
    */
   public function testHTTPHeader3() {
     Chrome::clearHeaders();
@@ -459,10 +404,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Named metadata tests {{{
 
   /**
-   * @covers  Chrome::clearMetadata()
-   * @covers  Chrome::getMetadata()
-   * @covers  Chrome::addMetadata()
-   * @covers  Chrome::removeMetadata()
    */
   public function testMetaName1() {
     Chrome::clearMetadata();
@@ -475,10 +416,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearMetadata()
-   * @covers  Chrome::getMetadata()
-   * @covers  Chrome::addMetadata()
-   * @covers  Chrome::removeMetadata()
    */
   public function testMetaName2() {
     Chrome::clearMetadata();
@@ -494,9 +431,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::getMetadata()
-   * @covers  Chrome::addMetadata()
-   * @covers  Chrome::clearMetadata()
    */
   public function testMetaName3() {
     Chrome::clearMetadata();
@@ -516,10 +450,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # HTTP metadata tests {{{
 
   /**
-   * @covers  Chrome::clearMetadata()
-   * @covers  Chrome::getMetadata()
-   * @covers  Chrome::addMetadata()
-   * @covers  Chrome::removeMetadata()
    */
   public function testMetaHttp1() {
     Chrome::clearMetadata();
@@ -532,10 +462,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearMetadata()
-   * @covers  Chrome::getMetadata()
-   * @covers  Chrome::addMetadata()
-   * @covers  Chrome::removeMetadata()
    */
   public function testMetaHttp2() {
     Chrome::clearMetadata();
@@ -548,9 +474,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearMetadata()
-   * @covers  Chrome::getMetadata()
-   * @covers  Chrome::addMetadata()
    */
   public function testMetaHttp3() {
     Chrome::clearMetadata();
@@ -569,9 +492,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Mixed metadata tests {{{
 
   /**
-   * @covers  Chrome::clearMetadata()
-   * @covers  Chrome::getMetadata()
-   * @covers  Chrome::addMetadata()
    */
   public function testMetaMixed1() {
     Chrome::clearMetadata();
@@ -596,9 +516,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearMetadata()
-   * @covers  Chrome::addMetadata()
-   * @covers  Chrome::getMetadata()
    */
   public function testMetaMixed2() {
     Chrome::clearMetadata();
@@ -632,9 +549,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Link tests {{{
 
   /**
-   * @covers  Chrome::clearLinks()
-   * @covers  Chrome::getLinks()
-   * @covers  Chrome::addLink()
    */
   public function testCustomRelLink() {
     Chrome::clearLinks();
@@ -651,9 +565,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearLinks()
-   * @covers  Chrome::getLinks()
-   * @covers  Chrome::addLink()
    */
   public function testCustomRevLink() {
     Chrome::clearLinks();
@@ -676,10 +587,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Script tests {{{
 
   /**
-   * @covers  Chrome::clearScripts()
-   * @covers  Chrome::getScripts()
-   * @covers  Chrome::addScript()
-   * @covers  Chrome::removeScript()
    */
   function testScript1() {
     Chrome::clearScripts();
@@ -695,9 +602,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearScripts()
-   * @covers  Chrome::getScripts()
-   * @covers  Chrome::addScript()
    */
   function testDuplicateScript() {
     Chrome::clearScripts();
@@ -713,9 +617,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearScripts()
-   * @covers  Chrome::getScripts()
-   * @covers  Chrome::addScript()
    */
   function testScriptPriority1() {
     Chrome::clearScripts();
@@ -741,9 +642,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearScripts()
-   * @covers  Chrome::getScripts()
-   * @covers  Chrome::addScript()
    */
   function testScriptPriority2() {
     Chrome::clearScripts();
@@ -774,9 +672,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers             Chrome::clearScripts()
-   * @covers             Chrome::getScripts()
-   * @covers             Chrome::addScript()
    * @expectedException  OutOfRangeException
    */
   function testScriptPriorityFail() {
@@ -792,10 +687,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   # Stylesheet tests {{{
 
   /**
-   * @covers  Chrome::clearStylesheets()
-   * @covers  Chrome::getStylesheets()
-   * @covers  Chrome::addStylesheet()
-   * @covers  Chrome::removeStylesheet()
    */
   function testStylesheet1() {
     Chrome::clearStylesheets();
@@ -807,9 +698,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearStylesheets()
-   * @covers  Chrome::getStylesheets()
-   * @covers  Chrome::addStylesheet()
    */
   function testDuplicateStylesheet() {
     Chrome::clearStylesheets();
@@ -825,9 +713,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearStylesheets()
-   * @covers  Chrome::getStylesheets()
-   * @covers  Chrome::addStylesheet()
    */
   function testStylesheetPriority1() {
     Chrome::clearStylesheets();
@@ -845,9 +730,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::clearStylesheets()
-   * @covers  Chrome::getStylesheets()
-   * @covers  Chrome::addStylesheet()
    */
   function testStylesheetPriority2() {
     Chrome::clearStylesheets();
@@ -868,9 +750,6 @@ class ChromeTest extends PHPUnit_Framework_TestCase {
 
 
   /**
-   * @covers             Chrome::clearStylesheets()
-   * @covers             Chrome::getStylesheets()
-   * @covers             Chrome::addStylesheet()
    * @expectedException  OutOfRangeException
    */
   function testStylesheetPriorityFail() {

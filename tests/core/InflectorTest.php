@@ -39,7 +39,6 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Inflector::singularize()
    *
    * @dataProvider  wordPairProvider()
    */
@@ -49,7 +48,6 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Inflector::pluralize()
    *
    * @dataProvider  wordPairProvider()
    */
@@ -59,8 +57,6 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Inflector::singularize()
-   * @covers  Inflector::pluralize()
    *
    * @dataProvider  pluralWordProvider()
    */
@@ -70,8 +66,6 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Inflector::singularize()
-   * @covers  Inflector::pluralize()
    *
    * @dataProvider  singularWordProvider()
    */

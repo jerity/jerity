@@ -13,7 +13,6 @@ class NumberTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  intEqProvider
-   * @covers        Number::intcmp()
    */
   public function testIntCmpEQ($a, $b) {
     $this->assertSame(0, Number::intcmp($a, $b));
@@ -35,7 +34,6 @@ class NumberTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  intGtProvider
-   * @covers        Number::intcmp()
    */
   public function testIntCmpGT($a, $b) {
     $this->assertSame(1, Number::intcmp($a, $b));
@@ -57,7 +55,6 @@ class NumberTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  intLtProvider
-   * @covers        Number::intcmp()
    */
   public function testIntCmpLT($a, $b) {
     $this->assertSame(-1, Number::intcmp($a, $b));
@@ -79,7 +76,6 @@ class NumberTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  dblEqProvider
-   * @covers        Number::dblcmp()
    */
   public function testDblCmpEQ($a, $b) {
     $this->assertSame(0, Number::dblcmp($a, $b));
@@ -103,7 +99,6 @@ class NumberTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  dblGtProvider
-   * @covers        Number::dblcmp()
    */
   public function testDblCmpGT($a, $b) {
     $this->assertSame(1, Number::dblcmp($a, $b));
@@ -127,7 +122,6 @@ class NumberTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  dblLtProvider
-   * @covers        Number::dblcmp()
    */
   public function testDblCmpLT($a, $b) {
     $this->assertSame(-1, Number::dblcmp($a, $b));
@@ -151,7 +145,6 @@ class NumberTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  parseBitsProvider
-   * @covers        Number::parseBits()
    */
   public function testParseBits($a, $b, $c) {
     $this->assertEquals(Number::parseBits($a, $b), $c);
@@ -188,7 +181,6 @@ class NumberTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  parseBytesProvider
-   * @covers        Number::parseBytes()
    */
   public function testParseBytes($a, $b, $c) {
     $this->assertEquals(Number::parseBytes($a, $b), $c);

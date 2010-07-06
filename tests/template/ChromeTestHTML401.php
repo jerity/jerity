@@ -17,7 +17,6 @@ class ChromeTestHTML401 extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::outputLinkTags()
    */
   public function testCustomLinkRender() {
     Chrome::clearLinks();
@@ -35,7 +34,6 @@ class ChromeTestHTML401 extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  ChromeTest::titleSeparatorProvider
-   * @covers        Chrome::outputTitleTag()
    */
   public function testTitleRender($sep) {
     if (is_null($sep)) $sep = Chrome::getTitleSeparator();
@@ -51,8 +49,6 @@ class ChromeTestHTML401 extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::__construct()
-   * @covers  Chrome::render()
    */
   public function testFullRender() {
     $c = new Chrome('simple');
@@ -62,8 +58,6 @@ class ChromeTestHTML401 extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Chrome::create()
-   * @covers  Chrome::render()
    */
   public function testFullRenderByCreate() {
     $c = Chrome::create('simple');

@@ -13,7 +13,6 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  flattenProvider
-   * @covers        ArrayUtil::flatten()
    */
   public function testFlatten($input, $expected) {
     $this->assertSame($expected, ArrayUtil::flatten($input));
@@ -59,7 +58,6 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  collapseKeysProvider
-   * @covers        ArrayUtil::collapseKeys()
    */
   public function testCollapseKeys($input, $expected) {
     $this->assertSame($expected, ArrayUtil::collapseKeys($input));
