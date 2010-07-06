@@ -92,6 +92,17 @@ class Layout implements Renderable {
   }
 
   /**
+   * Converts the Layout object to a string by calling the render function.
+   *
+   * @return  string  The rendered layout.
+   *
+   * @see  self::render()
+   */
+  public function __toString() {
+    return $this->render();
+  }
+
+  /**
    * Create a new layout in a fluent API manner.
    *
    * @param  array  $columns  An array of column widths.
