@@ -15,7 +15,6 @@ class TagTestXHTML10 extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Tag::base()
    */
   public function testBase() {
     $href = 'http://www.example.com/';
@@ -23,28 +22,24 @@ class TagTestXHTML10 extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Tag::br()
    */
   public function testBr() {
     $this->assertSame('<br />', Tag::br());
   }
 
   /**
-   * @covers  Tag::hr()
    */
   public function testHr() {
     $this->assertSame('<hr />', Tag::hr());
   }
 
   /**
-   * @covers  Tag::wbr()
    */
   public function testWbr() {
     $this->assertSame('<wbr />', Tag::wbr());
   }
 
   /**
-   * @covers  Tag::isImpliedCData()
    */
   public function testIsImpliedCData() {
     $data = array('script', 'style');
@@ -54,7 +49,6 @@ class TagTestXHTML10 extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Tag::shouldMaskContent()
    */
   public function testShouldMaskContent() {
     $data = array('script', 'style');
@@ -64,7 +58,6 @@ class TagTestXHTML10 extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Tag::getContentMask()
    */
   public function testGetContentMaskOpen() {
     $data = array(
@@ -77,7 +70,6 @@ class TagTestXHTML10 extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Tag::getContentMask()
    */
   public function testGetContentMaskClose() {
     $data = array(

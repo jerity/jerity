@@ -12,8 +12,6 @@
 class StringTest extends PHPUnit_Framework_TestCase {
 
   /**
-   * @covers  String::escapeHTML()
-   * @covers  String::escape()
    *
    * @dataProvider  escapeHtmlProvider()
    */
@@ -62,8 +60,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  String::escapeXML()
-   * @covers  String::escape()
    *
    * @dataProvider  escapeXmlProvider()
    */
@@ -108,8 +104,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  String::escapeJS()
-   * @covers  String::escape()
    *
    * @dataProvider  escapeJsProvider()
    */
@@ -144,7 +138,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  String::escape()
    */
   public function testEscapeDefault() {
     $text = '<foo\">\'&thing';
@@ -161,7 +154,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  String::naturalConjunction()
    *
    * @dataProvider  conjunctionProvider()
    */
@@ -188,7 +180,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  String::truncate()
    *
    * @dataProvider  truncateProvider()
    */
@@ -226,7 +217,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  String::splitCamelCase()
    *
    * @dataProvider  splitCamelCaseProvider()
    */
@@ -251,7 +241,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  String::splitSplitCase()
    *
    * @dataProvider  splitSplitCaseProvider()
    */

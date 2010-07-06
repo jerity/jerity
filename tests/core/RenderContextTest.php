@@ -12,7 +12,6 @@
 class RenderContextTest extends PHPUnit_Framework_TestCase {
 
   /**
-   * @covers  RenderContext::get()
    */
   public function testInitialGlobalContext() {
     $ctx = RenderContext::get();
@@ -20,8 +19,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::push()
-   * @covers  RenderContext::pop()
    */
   public function testPushPopContext() {
     $ctx1 = RenderContext::get();
@@ -44,9 +41,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::get()
-   * @covers  RenderContext::push()
-   * @covers  RenderContext::pop()
    */
   public function testEmptyGlobalContext() {
     $ctxs = array();
@@ -64,10 +58,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::create()
-   * @covers  RenderContext::getLanguage()
-   * @covers  RenderContext::getVersion()
-   * @covers  RenderContext::getDialect()
    *
    * @dataProvider  createProvider
    */
@@ -103,7 +93,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::create()
    *
    * @expectedException  InvalidArgumentException
    */
@@ -112,16 +101,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::getDoctype()
-   * @covers  RenderContext::renderPreContent()
-   * @covers  RenderContext::setLanguage()
-   * @covers  RenderContext::setVersion()
-   * @covers  RenderCOntext::setXHTML1CompatibilityMode()
-   * @covers  RenderContext::setDialect()
-   * @covers  RenderContext::getLanguage()
-   * @covers  RenderContext::getVersion()
-   * @covers  RenderCOntext::getXHTML1CompatibilityMode()
-   * @covers  RenderContext::getDialect()
    *
    * @dataProvider  getDoctypeProvider
    */
@@ -187,7 +166,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::getDoctype()
    *
    * @dataProvider  getDoctypeFailProvider
    *
@@ -207,7 +185,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::getContentType()
    *
    * @dataProvider  contentTypeProvider
    */
@@ -239,7 +216,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::getContentType()
    */
   public function testContentTypeCache() {
     $ctx = RenderContext::create(RenderContext::TYPE_HTML5);
@@ -248,7 +224,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  RenderContext::isXMLSyntax()
    *
    * @dataProvider  xmlSyntaxProvider
    */

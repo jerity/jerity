@@ -15,9 +15,6 @@ class ContentTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Content::__construct()
-   * @covers  Content::set()
-   * @covers  Content::render()
    */
   public function testRender() {
     $c = new Content('simple');
@@ -28,9 +25,6 @@ class ContentTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @covers  Content::create()
-   * @covers  Content::set()
-   * @covers  Content::render()
    */
   public function testRender2() {
     $c = Content::create('simple');
