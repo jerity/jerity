@@ -288,6 +288,76 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     );
   }
 
+  /**
+   * @dataProvider  romanProvider
+   */
+  public function testToRoman($a, $b, $c, $d) {
+    $this->assertEquals(Number::toRoman($b, $c, $d), $a);
+  }
+
+  /**
+   * @dataProvider  romanProvider
+   */
+  public function testFromRoman($a, $b, $c) {
+    $this->assertEquals(Number::fromRoman($a, $c), $b);
+  }
+
+  public function romanProvider() {
+    return array(
+      # Check zero:
+      array('',           0,    false, true),
+      # Check individual numerals:
+      array('I',          1,    false, true),
+      array('V',          5,    false, true),
+      array('X',          10,   false, true),
+      array('L',          50,   false, true),
+      array('C',          100,  false, true),
+      array('D',          500,  false, true),
+      array('M',          1000, false, true),
+      # Check individual medieval numerals:
+      // XXX: array('S',         5000,    true, true),
+      // XXX: array('R',         10000,   true, true),
+      // XXX: array('P',         50000,   true, true),
+      // XXX: array('Q',         100000,  true, true),
+      // XXX: array('O',         500000,  true, true),
+      // XXX: array('N',         1000000, true, true),
+      # Check subtractive numerals:
+      array('IV',         4,    false, true),
+      array('IX',         9,    false, true),
+      array('XL',         40,   false, true),
+      array('XC',         90,   false, true),
+      array('CD',         400,  false, true),
+      array('CM',         900,  false, true),
+      # Check subtractive medieval numerals:
+      // XXX: array('MS',        4000,    true, true),
+      //      ...
+      # Check some arbitrary numbers:
+      array('XLII',       42,   false, true),
+      array('MCMX',       1910, false, true),
+      array('MCMXCVIII',  1998, false, true),
+      array('MCMXCIX',    1999, false, true),
+      array('MM',         2000, false, true),
+      array('MMX',        2010, false, true),
+      # Check subtractive flag works correctly:
+      array('XIII',       13,   false, false),
+      array('XIII',       13,   false, true),
+      array('XIIII',      14,   false, false),
+      array('XIV',        14,   false, true),
+      # Check non-subtractive special cases:
+      array('IIII',       4,    false, false),
+      array('CCCC',       400,  false, false),
+      array('MDCCCCX',    1910, false, false),
+      array('MDCCCCIIII', 1904, false, false),
+      # Check subtractive special cases:
+      array('XCIX',       99,   false, true),
+      // XXX: array('IC',         99,   false, true),
+
+      // XXX: array('VV',        10,   false, false),
+      // XXX: array('LL',        100,   false, false),
+      // XXX: array('DD',        1000,   false, false),
+    );
+  }
+
 }
 
 # vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

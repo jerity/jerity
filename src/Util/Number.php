@@ -106,6 +106,16 @@ class Number {
   );
 
   /**
+   * Mapping from from roman numerals to numbers.
+   *
+   * @var  array
+   */
+  protected static $ROMAN_NUMERAL_MAP = array(
+    'M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90,
+    'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1
+  );
+
+  /**
    * This is a non-instantiable utility class.
    */
   // @codeCoverageIgnoreStart
@@ -158,7 +168,7 @@ class Number {
 
   /**
    * Parses a string specifying a size of information and converts it to bytes.
-   * Expects a string with a value followed by a symbol or named unit with an 
+   * Expects a string with a value followed by a symbol or named unit with an
    * optional space in between.
    *
    * @param  string  $s      The string to parse.
@@ -221,6 +231,93 @@ class Number {
     if (isset($m[4]) && $m[4] == 'b' || isset($m[6])
       && substr(strtolower($m[6]), 0, 3) == 'bit') $n /= 8;
     # Return the value.
+    return $n;
+  }
+
+  /**
+   * Converts a number to roman numerals.
+   *
+   * @param  int  $n  Number to convert to roman numerals.
+   *
+   * @return  string  The number as roman numerals.
+   *
+   * @todo  Support bar numerals?
+   * @todo  Support medieval numerals?
+   * @todo  Support fractional values?
+   */
+  public static function toRoman($n, $medieval = false, $subtractive = true) {
+    $n = intval($n);
+    $s = '';
+    foreach (self::$ROMAN_NUMERAL_MAP as $r => $v) {
+      if (!$subtractive && strlen($r) > 1) continue;
+      $c = intval($n / $v);
+      $s .= str_repeat($r, $c);
+      $n %= $v;
+    }
+    return $s;
+  }
+
+  /**
+   * Converts roman numerals to a number.
+   *
+   * @param  string  $s  Roman numerals to convert to number.
+   *
+   * @return  int  The roman numerals as a number.
+   *
+   * @todo  Support bar numerals?
+   * @todo  Support medieval numerals?
+   * @todo  Support fractional values?
+   * @todo  Nicer code?
+   * @todo  http://pear.php.net/manual/en/package.numbers.numbers-roman.romantoarabic.php
+   * @todo  http://en.wikipedia.org/wiki/Roman_numerals
+   */
+  public static function fromRoman($s, $medieval = false) {
+    if ($s == '') return 0;
+    $n = 0;
+    $a = str_split(strtoupper($s));
+    for ($i = 0; $i < count($a); $i++) {
+      switch ($a[$i]) {
+        //case 'N': case '_M': $n += 1000000; break;
+        //case 'O': case '_D': $n += 500000; break;
+        //case 'Q': case '_C': $n += 100000; break;
+        //case 'P': case '_L': $n += 50000; break;
+        //case 'R': case '_X': $n += 10000; break;
+        //case 'S': case '_V': $n += 5000; break;
+        case 'M': $n += 1000; break;
+        case 'D': $n += 500; break;
+        case 'C':
+          switch ($a[$i+1]) {
+            case 'M': $n += 900; break;
+            case 'D': $n += 400; break;
+            default:  $n += 100; break 2;
+          }
+          $i++; break;
+        case 'L': $n += 50; break;
+        case 'X':
+          switch ($a[$i+1]) {
+            case 'M': $n += 990; break;
+            case 'D': $n += 490; break;
+            case 'C': $n += 90; break;
+            case 'L': $n += 40; break;
+            default:  $n += 10; break 2;
+          }
+          $i++; break;
+        case 'V': $n += 5; break;
+        case 'I':
+          switch ($a[$i+1]) {
+            case 'M': $n += 999; break;
+            case 'D': $n += 499; break;
+            case 'C': $n += 99; break;
+            case 'L': $n += 49; break;
+            case 'X': $n += 9; break;
+            case 'V': $n += 4; break;
+            default:  $n += 1; break 2;
+          }
+          $i++; break;
+        default:
+          throw new JerityException('Invalid character in roman numeral.');
+      }
+    }
     return $n;
   }
 
