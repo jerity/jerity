@@ -210,18 +210,6 @@ class RenderContext {
   }
 
   /**
-   * (Deprecated) Return the global shared rendering context.
-   *
-   * @return  RenderContext
-   */
-  // @codeCoverageIgnoreStart
-  public static function getGlobalContext() {
-    trigger_error('Deprecated in favour of RenderContext::get()', E_USER_WARNING);
-    return self::get();
-  }
-  // @codeCoverageIgnoreEnd
-
-  /**
    * Set the global shared rendering context.
    *
    * @param   RenderContext  $context  The new global rendering context.
@@ -230,19 +218,6 @@ class RenderContext {
   public static function set(RenderContext $context) {
     return (self::$globalContext = array($context));
   }
-
-  /**
-   * (Deprecated) Set the global shared rendering context.
-   *
-   * @param   RenderContext  $context  The new global rendering context.
-   * @return  RenderContext
-   */
-  // @codeCoverageIgnoreStart
-  public static function setGlobalContext(RenderContext $context) {
-    trigger_error('Deprecated in favour of RenderContext::set()', E_USER_WARNING);
-    return self::set($context);
-  }
-  // @codeCoverageIgnoreEnd
 
   /**
    * Push a new rendering context onto the global shared rendering context
@@ -257,20 +232,6 @@ class RenderContext {
   }
 
   /**
-   * (Deprecated) Push a new rendering context onto the global shared rendering
-   * context stack.
-   *
-   * @param   RenderContext  $context  The new global rendering context.
-   * @return  RenderContext
-   */
-  // @codeCoverageIgnoreStart
-  public static function pushGlobalContext(RenderContext $context) {
-    trigger_error('Deprecated in favour of RenderContext::push()', E_USER_WARNING);
-    return self::push($context);
-  }
-  // @codeCoverageIgnoreEnd
-
-  /**
    * Pop a rendering context from the global shared rendering context stack and
    * return it.
    *
@@ -279,19 +240,6 @@ class RenderContext {
   public static function pop() {
     return array_shift(self::$globalContext);
   }
-
-  /**
-   * (Deprecated) Pop a rendering context from the global shared rendering
-   * context stack and return it.
-   *
-   * @return  RenderContext
-   */
-  // @codeCoverageIgnoreStart
-  public static function popGlobalContext() {
-    trigger_error('Deprecated in favour of RenderContext::pop()', E_USER_WARNING);
-    return self::pop();
-  }
-  // @codeCoverageIgnoreEnd
 
   /**
    * Generate one of a number of common rendering contexts.
@@ -371,21 +319,6 @@ class RenderContext {
 
     return $ctx;
   }
-
-  /**
-   * (Deprecated) Generate one of a number of common rendering contexts.
-   *
-   * @param   string  $type  One of the TYPE_* class constants.
-   * @return  RenderContext
-   *
-   * @throws  InvalidArgumentException
-   */
-  // @codeCoverageIgnoreStart
-  public static function makeContext($type) {
-    trigger_error('Deprecated in favour of RenderContext::create()', E_USER_WARNING);
-    return self::create($type);
-  }
-  // @codeCoverageIgnoreEnd
 
   /**
    * Generate the doctype for the current rendering context, if applicable.
