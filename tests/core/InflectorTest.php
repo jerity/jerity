@@ -56,6 +56,8 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  pluralWordProvider()
+   * @depends       testPluralize()
+   * @depends       testSingularize()
    */
   public function testSingularReverses($plural, $fix_case) {
     $replural = Inflector::pluralize(Inflector::singularize($plural, true, $fix_case), true, $fix_case);
@@ -64,6 +66,8 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  singularWordProvider()
+   * @depends       testPluralize()
+   * @depends       testSingularize()
    */
   public function testPluralReverses($singular, $fix_case) {
     $resingular = Inflector::singularize(Inflector::pluralize($singular, true, $fix_case), true, $fix_case);
@@ -72,6 +76,8 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  fixLetterCaseProvider()
+   * @depends       testPluralize()
+   * @depends       testSingularize()
    */
   public function testFixLetterCase($a, $b, $pluralise) {
     # We disable simplification for this test to ensure that we do not split
