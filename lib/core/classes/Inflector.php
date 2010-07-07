@@ -255,9 +255,10 @@ class Inflector {
    *
    * @return  string  Word in plural form.
    */
-  public static function pluralize($word, $fix = true) {
-    list($stub, $word) = self::simplify($word);
-    if (!$word) return $stub;
+  public static function pluralize($word, $simplify = false, $fix = true) {
+    $stub = '';
+    if ($simplify) list($stub, $word) = self::simplify($word);
+    if (!$word && $stub) return $stub;
     $inflected = self::inflect($word, self::$plural);
     if ($fix) $inflected = self::fixLetterCase($word, $inflected);
     return $stub.$inflected;
@@ -273,9 +274,10 @@ class Inflector {
    *
    * @return  string  Word in singular form.
    */
-  public static function singularize($word, $fix = true) {
-    list($stub, $word) = self::simplify($word);
-    if (!$word) return $stub;
+  public static function singularize($word, $simplify = false, $fix = true) {
+    $stub = '';
+    if ($simplify) list($stub, $word) = self::simplify($word);
+    if (!$word && $stub) return $stub;
     $inflected = self::inflect($word, self::$singular);
     if ($fix) $inflected = self::fixLetterCase($word, $inflected);
     return $stub.$inflected;

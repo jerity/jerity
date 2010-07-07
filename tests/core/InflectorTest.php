@@ -39,38 +39,34 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  wordPairProvider()
    */
   public function testSingularize($singular, $plural, $fix_case) {
-    $our_singular = Inflector::singularize($plural, $fix_case);
+    $our_singular = Inflector::singularize($plural, true, $fix_case);
     $this->assertSame($singular, $our_singular, 'Singular form of "'.$plural.'" differs');
   }
 
   /**
-   *
    * @dataProvider  wordPairProvider()
    */
   public function testPluralize($singular, $plural, $fix_case) {
-    $our_plural = Inflector::pluralize($singular, $fix_case);
+    $our_plural = Inflector::pluralize($singular, true, $fix_case);
     $this->assertSame($plural, $our_plural, 'Plural form of "'.$singular.'" differs');
   }
 
   /**
-   *
    * @dataProvider  pluralWordProvider()
    */
   public function testSingularReverses($plural, $fix_case) {
-    $replural = Inflector::pluralize(Inflector::singularize($plural, $fix_case), $fix_case);
+    $replural = Inflector::pluralize(Inflector::singularize($plural, true, $fix_case), true, $fix_case);
     $this->assertSame($plural, $replural, 'Plural and replural form of "'.$plural.'" differ');
   }
 
   /**
-   *
    * @dataProvider  singularWordProvider()
    */
   public function testPluralReverses($singular, $fix_case) {
-    $resingular = Inflector::singularize(Inflector::pluralize($singular, $fix_case), $fix_case);
+    $resingular = Inflector::singularize(Inflector::pluralize($singular, true, $fix_case), true, $fix_case);
     $this->assertSame($singular, $resingular, 'Singular and resingular form of "'.$singular.'" differ');
   }
 
