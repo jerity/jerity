@@ -53,6 +53,7 @@ attribute       attributes       1
 authentication  authentications  1
 author          authors          1
 authority       authorities      1
+automaton       automata         1
 average         averages         1
 axis            axes             1
 bacillus        bacilli          1
