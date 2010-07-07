@@ -89,6 +89,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
       array(RenderContext::TYPE_XHTML1_1),
       array(RenderContext::TYPE_XHTML1_1_MOBILE),
       array(RenderContext::TYPE_XHTML1_2_MOBILE),
+      array(RenderContext::TYPE_XHTML5),
     );
   }
 
