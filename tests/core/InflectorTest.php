@@ -70,4 +70,38 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($singular, $resingular, 'Singular and resingular form of "'.$singular.'" differ');
   }
 
+  /**
+   * @dataProvider  fixLetterCaseProvider()
+   */
+  public function testFixLetterCase($a, $b, $pluralise) {
+    # We disable simplification for this test to ensure that we do not split
+    # as camel case when testing with silly capitalisation.
+    if ($pluralise) {
+      $this->assertSame($b, Inflector::pluralize($a, false));
+    } else {
+      $this->assertSame($b, Inflector::singularize($a, false));
+    }
+  }
+
+  public function fixLetterCaseProvider() {
+    return array(
+      array('WORD', 'WORDS', true),
+      array('word', 'words', true),
+      array('Word', 'Words', true),
+      array('WoRd', 'WoRds', true),
+      array('VORTEX', 'VORTICES', true),
+      array('vortex', 'vortices', true),
+      array('Vortex', 'Vortices', true),
+      array('VoRtEx', 'VoRtices', true),
+      array('WORDS', 'WORD', false),
+      array('words', 'word', false),
+      array('Words', 'Word', false),
+      array('WoRds', 'WoRd', false),
+      array('VORTICES', 'VORTEX', false),
+      array('vortices', 'vortex', false),
+      array('Vortices', 'Vortex', false),
+      array('VoRtIcEs', 'VoRtex', false),
+    );
+  }
+
 }
