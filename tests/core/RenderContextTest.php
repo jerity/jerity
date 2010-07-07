@@ -122,11 +122,13 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($ver,    $ctx->getVersion());
     $this->assertSame($dialect,  $ctx->getDialect());
 
+    $ctx->setCharset('utf-8');
+
     $ctx->setXHTML1CompatibilityMode($xhtml_1_0_compat);
     $preContent = $ctx->renderPreContent();
     if ($ctx->getLanguage() == RenderContext::LANG_XML ||
       ($ctx->getLanguage() == RenderContext::LANG_XHTML && !$ctx->getXHTML1CompatibilityMode())) {
-      $this->assertContains('<'.'?xml version="1.0" ?'.">\n", $preContent);
+      $this->assertContains('<'.'?xml version="1.0" encoding="utf-8" ?'.">\n", $preContent);
       if ($expected !== '') {
         $this->assertContains($expected, $preContent);
       }
