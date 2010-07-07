@@ -180,6 +180,23 @@ class NumberTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   * @dataProvider  parseBitsExceptionProvider
+   */
+  public function testParseBitsException($a, $b, $c) {
+    $this->setExpectedException($c);
+    Number::parseBits($a, $b);
+  }
+
+  public static function parseBitsExceptionProvider() {
+    return array(
+      array('Not a size.', false, 'JerityException'),
+      array('Not a size.', true,  'JerityException'),
+      array('1 KB',        false, 'JerityException'),
+      array('1 TB',        true,  'JerityException'),
+    );
+  }
+
+  /**
    * @dataProvider  parseBytesProvider
    */
   public function testParseBytes($a, $b, $c) {
@@ -213,6 +230,23 @@ class NumberTest extends PHPUnit_Framework_TestCase {
       }
     }
     return $data;
+  }
+
+  /**
+   * @dataProvider  parseBytesExceptionProvider
+   */
+  public function testParseBytesException($a, $b, $c) {
+    $this->setExpectedException($c);
+    Number::parseBytes($a, $b);
+  }
+
+  public static function parseBytesExceptionProvider() {
+    return array(
+      array('Not a size.', false, 'JerityException'),
+      array('Not a size.', true,  'JerityException'),
+      array('1 KB',        false, 'JerityException'),
+      array('1 TB',        true,  'JerityException'),
+    );
   }
 
 }
