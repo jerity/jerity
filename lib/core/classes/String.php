@@ -374,7 +374,7 @@ class String {
    * @return  bool
    */
   public static function isTitleCase($str) {
-    return !preg_match('/\b\p{Ll}/', $str);
+    return !preg_match('/\b\p{Ll}|\b\p{Lu}{2,}|\b\p{Lu}\p{Ll}+\p{Lu}/', $str);
   }
 
   /**
