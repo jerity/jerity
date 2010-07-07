@@ -266,6 +266,30 @@ class StringTest extends PHPUnit_Framework_TestCase {
     );
   }
 
+  public function testIsLower() {
+    $this->assertTrue(String::isLower('word'));
+    $this->assertFalse(String::isLower('WORD'));
+    $this->assertFalse(String::isLower('Word'));
+    $this->assertFalse(String::isLower('WoRd'));
+    $this->assertFalse(String::isLower('WOrd'));
+  }
+
+  public function testIsUpper() {
+    $this->assertFalse(String::isUpper('word'));
+    $this->assertTrue(String::isUpper('WORD'));
+    $this->assertFalse(String::isUpper('Word'));
+    $this->assertFalse(String::isUpper('WoRd'));
+    $this->assertFalse(String::isUpper('WOrd'));
+  }
+
+  public function testIsTitleCase() {
+    $this->assertFalse(String::isTitleCase('word'));
+    $this->assertFalse(String::isTitleCase('WORD'));
+    $this->assertTrue(String::isTitleCase('Word'));
+    $this->assertFalse(String::isTitleCase('WoRd'));
+    $this->assertFalse(String::isTitleCase('WOrd'));
+  }
+
 }
 
 # vim: encoding=utf-8 fileencoding=utf-8
