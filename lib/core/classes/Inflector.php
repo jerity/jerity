@@ -297,7 +297,7 @@ class Inflector {
       case String::isUpper($original):
         return strtoupper($inflected);
       case String::isTitleCase($original):
-        return strtoupper($inflected[0]).substr($inflected, 1);
+        return ucfirst($inflected);
       default:
         return $inflected;
     }
