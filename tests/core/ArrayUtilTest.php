@@ -92,4 +92,31 @@ class ArrayUtilTest extends PHPUnit_Framework_TestCase {
     return $final;
   }
 
+  /**
+   * @dataProvider  isNumericallyKeyedProvider
+   */
+  public function testIsNumericallyKeyed($expected, $input) {
+    $this->assertSame($expected, ArrayUtil::isNumericallyKeyed($input));
+  }
+
+  public static function isNumericallyKeyedProvider() {
+    return array(
+      array(true, array()), # An empty array could be numerically keyed later.
+      array(true,  array(1     => true, 2     => true, 3     => true)),
+      array(true,  array(1e3   => true, 2e3   => true, 3e3   => true)),
+      array(true,  array(-1    => true, -2    => true, -3    => true)),
+      array(true,  array(-1.0  => true, -2.0  => true, -3.0  => true)),
+      array(true,  array(-1.1  => true, -2.2  => true, -3.3  => true)),
+      array(true,  array(-1e3  => true, -2e3  => true, -3e3  => true)),
+      array(true,  array('1'   => true, '2'   => true, '3'   => true)),
+      array(true,  array('1.0' => true, '2.0' => true, '3.0' => true)),
+      array(true,  array('1.1' => true, '2.2' => true, '3.3' => true)),
+      array(true,  array('1e3' => true, '2e3' => true, '3e3' => true)),
+      array(false, array('a'   => true, 'b'   => true, 'c'   => true)),
+      array(false, array('a'   => true, 2     => true, 3     => true)),
+      array(false, array(1     => true, 'b'   => true, 3     => true)),
+      array(false, array(1     => true, 2     => true, 'c'   => true)),
+    );
+  }
+
 }
