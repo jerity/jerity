@@ -463,7 +463,7 @@ class Tag {
     if (!is_null($media_type)) {
       $media_type = strtolower(str_replace(' ', '', $media_type));
       if ($media_type != 'all') {
-        $mts = split(',', $media_type);
+        $mts = explode(',', $media_type);
         $mts = array_diff($mts, array(
           'aural', 'braille', 'handheld', 'print', 'projection', 'screen', 'tty', 
           'tv'));
