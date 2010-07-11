@@ -247,6 +247,7 @@ class Layout implements Renderable {
    */
   public function setLayoutId($v) {
     $this->layout_id = $v;
+    return $this;
   }
 
   /**
@@ -265,6 +266,7 @@ class Layout implements Renderable {
    */
   public function setLayoutClass($v) {
     $this->layout_class = $v;
+    return $this;
   }
 
   /**
@@ -283,6 +285,7 @@ class Layout implements Renderable {
    */
   public function setColumnClass($v) {
     $this->column_class = $v;
+    return $this;
   }
 
   /**
