@@ -24,39 +24,26 @@
 class Number {
 
   /**
-   * Unit of information symbols.
-   *
-   * @var  array
-   */
-  protected static $UNIT_SYMBOL = array('b', 'B');
-
-  /**
-   * Unit of information names.
-   *
-   * @var  array
-   */
-  protected static $UNIT_NAME = array('bit', 'byte');
-
-  /**
    * SI prefix symbols for units of information.
    *
    * @var  array
    */
-  protected static $SI_PREFIX_SYMBOL = array(1 => 'k', 'M', 'G', 'T', 'P', 'E', 'Z');
+  public static $SI_PREFIX_SYMBOL = array('', 'k', 'M', 'G', 'T', 'P', 'E', 'Z');
 
   /**
    * SI prefix names for units of information.
    *
    * @var  array
    */
-  protected static $SI_PREFIX_NAME = array(1 => 'kilo', 'mega', 'giga', 'tera', 'peta', 'exa', 'zetta');
+  public static $SI_PREFIX_NAME = array('', 'kilo', 'mega', 'giga', 'tera', 'peta', 'exa', 'zetta');
 
   /**
    * SI multiplier for units of information SI prefixes.
    *
    * @var  array
    */
-  protected static $SI_MULTIPLIER = array(
+  public static $SI_MULTIPLIER = array(
+    0 => 1e0,  # 10^0  == 1000^0 (2^00 == 1024^0)
     1 => 1e3,  # 10^3  == 1000^1 (2^10 == 1024^1)
     2 => 1e6,  # 10^6  == 1000^2 (2^20 == 1024^2)
     3 => 1e9,  # 10^9  == 1000^3 (2^30 == 1024^3)
@@ -71,21 +58,22 @@ class Number {
    *
    * @var  array
    */
-  protected static $IEC_PREFIX_SYMBOL = array(1 => 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei');
+  public static $IEC_PREFIX_SYMBOL = array('', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei');
 
   /**
    * IEC binary prefix symbols for units of information.
    *
    * @var  array
    */
-  protected static $IEC_PREFIX_NAME = array(1 => 'kibi', 'mebi', 'gibi', 'tebi', 'pebi', 'exbi');
+  public static $IEC_PREFIX_NAME = array('', 'kibi', 'mebi', 'gibi', 'tebi', 'pebi', 'exbi');
 
   /**
    * IEC multiplier for units of information IEC binary prefixes.
    *
    * @var  array
    */
-  protected static $IEC_MULTIPLIER = array(
+  public static $IEC_MULTIPLIER = array(
+    0 => 1,                  # 2^00 == 1024^0
     1 => 1024,               # 2^10 == 1024^1
     2 => 1048576,            # 2^20 == 1024^2
     3 => 1073741824,         # 2^30 == 1024^3
@@ -99,21 +87,22 @@ class Number {
    *
    * @var  array
    */
-  protected static $JEDEC_PREFIX_SYMBOL = array(1 => 'K', 'M', 'G');
+  public static $JEDEC_PREFIX_SYMBOL = array('', 'K', 'M', 'G');
 
   /**
    * JEDEC memory standards prefixes for units of information.
    *
    * @var  array
    */
-  protected static $JEDEC_PREFIX_NAME = array(1 => 'kilo', 'mega', 'giga');
+  public static $JEDEC_PREFIX_NAME = array('', 'kilo', 'mega', 'giga');
 
   /**
    * JEDEC multiplier for units of information JEDEC memory standards prefixes.
    *
    * @var  array
    */
-  protected static $JEDEC_MULTIPLIER = array(
+  public static $JEDEC_MULTIPLIER = array(
+    0 => 1,         # 2^00 == 1024^0
     1 => 1024,      # 2^10 == 1024^1
     2 => 1048576,   # 2^20 == 1024^2
     3 => 1073741824 # 2^30 == 1024^3
