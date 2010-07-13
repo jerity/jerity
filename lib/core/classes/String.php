@@ -439,9 +439,9 @@ class String {
    */
   public static function pluralize($string) {
     # Regular expression for matching textual number.
-    static $regex0 = '/(?:^|)((?:minus )?one).*?(\pL+)\PL*$/';
+    static $regex0 = '/(?:^|)((?<!point )(?:minus )?one(?! point)).*?(\pL+)\PL*$/';
     # Regular expression for matching normal number.
-    static $regex1 = '/(?:^|)(-?1(?:\.0+)?)?\PN*?(\pL+)\PL*$/';
+    static $regex1 = '/(?:^|)(-?(?<!(?:\.|\d))1(?:\.0+)?)?\PN*?(\pL+)\PL*$/';
     # Reguular expression for word replacement.
     static $regex2 = '/(\PL|one |^)(\pL+)(\PL*)$/';
     if (!preg_match($regex0, $string, $match)) {

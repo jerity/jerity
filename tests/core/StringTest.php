@@ -288,6 +288,62 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertTrue(String::isTitleCase('Word'));
     $this->assertFalse(String::isTitleCase('WoRd'));
     $this->assertFalse(String::isTitleCase('WOrd'));
+
+  /**
+   * @dataProvider  pluralizeProvider()
+   */
+  public function testPluralizeWithPrefix($count, $expected) {
+    $prefix = 'You have';
+    $this->assertSame("$prefix $count $expected", String::pluralize("$prefix $count new bunny!"));
+  }
+
+  public static function pluralizeProvider() {
+    return array(
+      array('',              'new bunnies!'),
+      array('0',             'new bunnies!'),
+      array('1',             'new bunny!'),
+      array('2',             'new bunnies!'),
+      array('0.1',           'new bunnies!'),
+      array('0.5',           'new bunnies!'),
+      array('1.0',           'new bunny!'),
+      array('1.1',           'new bunnies!'),
+      array('1.5',           'new bunnies!'),
+      array('2.0',           'new bunnies!'),
+      array('2.1',           'new bunnies!'),
+      array('2.5',           'new bunnies!'),
+      array('1500',          'new bunnies!'),
+      array('1501',          'new bunnies!'),
+      array('2500',          'new bunnies!'),
+      array('2501',          'new bunnies!'),
+      array('1,500',         'new bunnies!'),
+      array('1,501',         'new bunnies!'),
+      array('2,500',         'new bunnies!'),
+      array('2,501',         'new bunnies!'),
+      array('-1',            'new bunny!'),
+      array('-2',            'new bunnies!'),
+      array('-0.1',          'new bunnies!'),
+      array('-0.5',          'new bunnies!'),
+      array('-1.0',          'new bunny!'),
+      array('-1.1',          'new bunnies!'),
+      array('-1.5',          'new bunnies!'),
+      array('-2.0',          'new bunnies!'),
+      array('-2.1',          'new bunnies!'),
+      array('-2.5',          'new bunnies!'),
+      array('-1500',         'new bunnies!'),
+      array('-1501',         'new bunnies!'),
+      array('-2500',         'new bunnies!'),
+      array('-2501',         'new bunnies!'),
+      array('-1,500',        'new bunnies!'),
+      array('-1,501',        'new bunnies!'),
+      array('-2,500',        'new bunnies!'),
+      array('-2,501',        'new bunnies!'),
+      array('zero',          'new bunnies!'),
+      array('one',           'new bunny!'),
+      array('one point one', 'new bunnies!'),
+      array('two',           'new bunnies!'),
+      array('minus one',     'new bunny!'),
+      array('minus two',     'new bunnies!'),
+    );
   }
 
 }
