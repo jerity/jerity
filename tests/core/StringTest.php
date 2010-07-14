@@ -288,6 +288,7 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertTrue(String::isTitleCase('Word'));
     $this->assertFalse(String::isTitleCase('WoRd'));
     $this->assertFalse(String::isTitleCase('WOrd'));
+  }
 
   /**
    * @dataProvider  pluralizeProvider()
