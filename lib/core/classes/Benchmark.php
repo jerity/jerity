@@ -223,7 +223,7 @@ class Benchmark {
     $count = 0;
     if (class_exists('Propel')) {
       $connection = Propel::getConnection();
-      if (!$connection instanceof DebugPDO) {
+      if ($connection instanceof DebugPDO) {
         $count += $connection->getQueryCount();
       }
     }
