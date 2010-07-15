@@ -53,6 +53,20 @@ class Notification implements Renderable {
   protected $type = self::PLAIN;
 
   /**
+   * Creates a new notification and returns it for fluent method chaining.
+   *
+   * @param  string  $message
+   * @param  string  $type
+   *
+   * @return  Notification  For fluent method chaining.
+   *
+   * @throws  InvalidArgumentException
+   */
+  public static function create($message = null, $type = self::PLAIN) {
+    return new self($message, $type);
+  }
+
+  /**
    * Creates a new notification.
    *
    * @param  string  $message
@@ -123,9 +137,12 @@ class Notification implements Renderable {
    *       used.  Please ensure that you escape user input appropriately.
    *
    * @param  string  $message
+   *
+   * @return  Notification  For fluent method chaining.
    */
   public function setMessage($message) {
     $this->message = $message;
+    return $this;
   }
 
   /**
@@ -135,9 +152,12 @@ class Notification implements Renderable {
    *       used.  Please ensure that you escape user input appropriately.
    *
    * @param  string  $message
+   *
+   * @return  Notification  For fluent method chaining.
    */
   public function appendMessage($message) {
     $this->message .= $message;
+    return $this;
   }
 
   /**
@@ -156,6 +176,8 @@ class Notification implements Renderable {
    *
    * @param  string  $type
    *
+   * @return  Notification  For fluent method chaining.
+   *
    * @throws  InvalidArgumentException
    */
   public function setType($type) {
@@ -171,6 +193,7 @@ class Notification implements Renderable {
     }
 
     $this->type = $type;
+    return $this;
   }
 
   /**
