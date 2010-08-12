@@ -123,7 +123,7 @@ class RestManager {
         $func = $handler['handler'];
         if (( isset($handler['mutate']) && $handler['mutate']) ||
             (!isset($handler['mutate']) && !self::$constant_handlers)) {
-          $func = self::mutateFunctionName($func, $verb);
+          $func = self::mutateFunctionName($func, $handler_verb);
         }
         $retval = call_user_func($func, $request);
         return headers_sent() || $retval;
@@ -131,7 +131,7 @@ class RestManager {
         $func = $handler['handler'];
         if (( isset($handler['mutate']) && $handler['mutate']) ||
             (!isset($handler['mutate']) && !self::$constant_handlers)) {
-          $func = self::mutateFunctionName($func, $verb);
+          $func = self::mutateFunctionName($func, $handler_verb);
         }
         $request->setMatches($matches);
         $retval = call_user_func($func, $request);
