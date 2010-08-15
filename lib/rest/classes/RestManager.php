@@ -126,6 +126,9 @@ class RestManager {
           $func = self::mutateFunctionName($func, $handler_verb);
         }
         $retval = call_user_func($func, $request);
+        if ($retval instanceof RestResponse) {
+          $retval->render();
+        }
         return headers_sent() || $retval;
       } elseif (isset($handler['pattern']) && preg_match_all($handler['pattern'], $url, $matches)) {
         $func = $handler['handler'];
@@ -135,6 +138,9 @@ class RestManager {
         }
         $request->setMatches($matches);
         $retval = call_user_func($func, $request);
+        if ($retval instanceof RestResponse) {
+          $retval->render();
+        }
         return headers_sent() || $retval;
       }
     }
