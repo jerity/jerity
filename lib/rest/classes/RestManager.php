@@ -74,7 +74,7 @@ class RestManager {
   }
 
   /**
-   * Register a handler for a given path.
+   * Register a handler that matches a given pattern.
    */
   public static function registerPatternHandler($pattern, $handler, array $methods = null, $mutate=null) {
     $handler = array(
@@ -84,6 +84,17 @@ class RestManager {
     if ($mutate !== null) {
       $handler['mutate'] = (bool)$mutate;
     }
+    self::_registerHandler($handler, $methods);
+  }
+
+  /**
+   * Register a handler that matches many endpoints for a given pattern.
+   */
+  public static function registerClassHandler($pattern, $class, array $methods = null) {
+    $handler = array(
+      'pattern' => '!'.str_replace('!', '\\!', $pattern).'!',
+      'class' => $class,
+    );
     self::_registerHandler($handler, $methods);
   }
 
@@ -115,33 +126,40 @@ class RestManager {
     }
   }
 
+  protected static function _dispatch_handler(RestRequest $request, $handler, $handler_verb) {
+    $func = $handler['handler'];
+    if (( isset($handler['mutate']) && $handler['mutate']) ||
+        (!isset($handler['mutate']) && !self::$constant_handlers)) {
+      $func = self::mutateFunctionName($func, $handler_verb);
+    }
+    $retval = call_user_func($func, $request);
+    if ($retval instanceof RestResponse) {
+      $retval->render();
+    }
+    return headers_sent() || $retval;
+  }
+
   protected static function real_dispatch(RestRequest $request, $handler_verb) {
     $url = $request->getUrl();
     foreach (self::$handlers[$handler_verb] as $handler) {
       $matches = array();
       if (isset($handler['path']) && $url == $handler['path']) {
-        $func = $handler['handler'];
-        if (( isset($handler['mutate']) && $handler['mutate']) ||
-            (!isset($handler['mutate']) && !self::$constant_handlers)) {
-          $func = self::mutateFunctionName($func, $handler_verb);
-        }
-        $retval = call_user_func($func, $request);
-        if ($retval instanceof RestResponse) {
-          $retval->render();
-        }
-        return headers_sent() || $retval;
+        return self::_dispatch_handler($request, $handler, $handler_verb);
       } elseif (isset($handler['pattern']) && preg_match_all($handler['pattern'], $url, $matches)) {
-        $func = $handler['handler'];
-        if (( isset($handler['mutate']) && $handler['mutate']) ||
-            (!isset($handler['mutate']) && !self::$constant_handlers)) {
-          $func = self::mutateFunctionName($func, $handler_verb);
-        }
         $request->setMatches($matches);
-        $retval = call_user_func($func, $request);
-        if ($retval instanceof RestResponse) {
-          $retval->render();
+        if (!isset($handler['class'])) {
+          // straight pattern -> handler
+          return self::_dispatch_handler($request, $handler, $handler_verb);
+        } else {
+          $endpoint = isset($matches['cmd'][0]) ? $matches['cmd'][0] : (isset($matches[1][0]) ? $matches[1][0] : '');
+          if (method_exists($handler['class'], strtolower($request->getVerb()).'_'.$endpoint)) {
+            $retval = call_user_func(array($handler['class'], strtolower($request->getVerb()).'_'.$endpoint), $request);
+            if ($retval instanceof RestResponse) {
+              $retval->render();
+            }
+            return headers_sent() || $retval;
+          }
         }
-        return headers_sent() || $retval;
       }
     }
     return false;
