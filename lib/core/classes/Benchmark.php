@@ -157,17 +157,21 @@ class Benchmark {
     if ($verbose) {
       $output .= PHP_EOL.'     ';
       $output .= sprintf('Time:    %.5fs real, %.5fs user, %.5fs system', $real, $user, $system);
-      $output .= PHP_EOL.'     ';
-      $output .= sprintf('Memory:  %s current, %s peak',
-        String::formatBytes($b['memory']['current'], false, null, 2),
-        String::formatBytes($b['memory']['peak'], false, null, 2));
+      if (isset($b['memory'])) {
+        $output .= PHP_EOL.'     ';
+        $output .= sprintf('Memory:  %s current, %s peak',
+          String::formatBytes($b['memory']['current'], false, null, 2),
+          String::formatBytes($b['memory']['peak'], false, null, 2));
+      }
       $output .= PHP_EOL.'     ';
       $output .= sprintf('Queries: %d', $b['query']['count']);
-      $output .= PHP_EOL.'     ';
-      $output .= sprintf('Cache:   %d hits, %d misses, %s used, %s available',
-        $b['cache']['hits'], $b['cache']['misses'],
-        String::formatBytes($b['cache']['memory_used'], false, null, 2),
-        String::formatBytes($b['cache']['memory_limit'], false, null, 2));
+      if (isset($b['cache'])) {
+        $output .= PHP_EOL.'     ';
+        $output .= sprintf('Cache:   %d hits, %d misses, %s used, %s available',
+          $b['cache']['hits'], $b['cache']['misses'],
+          String::formatBytes($b['cache']['memory_used'], false, null, 2),
+          String::formatBytes($b['cache']['memory_limit'], false, null, 2));
+      }
       $output .= ' ';
     } else {
       $output .= ' ';
