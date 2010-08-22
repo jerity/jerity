@@ -19,10 +19,12 @@ $_er_ = error_reporting(E_ALL | E_STRICT);
 
 # Pull in Jerity core:
 require_once(JERITY_ROOT.'Jerity.class.php');
-RenderContext::set(RenderContext::create(RenderContext::TYPE_HTML4_STRICT));
 
 # Locate Jerity classes for autoloading:
 Jerity::addAutoloadDir(JERITY_ROOT);
+
+# Initialise default RenderContext:
+RenderContext::set(RenderContext::create(RenderContext::TYPE_HTML4_STRICT));
 
 # Restore original error reporting:
 error_reporting($_er_);
