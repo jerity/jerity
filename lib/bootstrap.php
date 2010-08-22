@@ -13,21 +13,16 @@ if (defined('JERITY_ROOT')) {
   trigger_error('Jerity should only be included once', E_USER_ERROR);
 }
 define('JERITY_ROOT', rtrim(dirname(__FILE__), '/').'/');
-if (!is_readable(JERITY_ROOT.'core/bootstrap.php')) {
-  trigger_error('Jerity core package is required at \''.JERITY_ROOT.'core\'', E_USER_ERROR);
-}
 
 # Enable strict error reporting:
 $_er_ = error_reporting(E_ALL | E_STRICT);
 
 # Pull in Jerity core:
-require_once(JERITY_ROOT.'core/bootstrap.php');
+require_once(JERITY_ROOT.'Jerity.class.php');
+RenderContext::set(RenderContext::create(RenderContext::TYPE_HTML4_STRICT));
 
-# Locate additional Jerity packages for autoloading:
-Jerity::addAutoloadDir(JERITY_ROOT.'form');
-Jerity::addAutoloadDir(JERITY_ROOT.'rest');
-Jerity::addAutoloadDir(JERITY_ROOT.'template');
-Jerity::addAutoloadDir(JERITY_ROOT.'ui');
+# Locate Jerity classes for autoloading:
+Jerity::addAutoloadDir(JERITY_ROOT);
 
 # Restore original error reporting:
 error_reporting($_er_);
