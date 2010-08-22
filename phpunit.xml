@@ -16,13 +16,9 @@
 
 <filter>
   <whitelist addUncoveredFilesFromWhitelist="true">
-    <directory suffix=".php">lib/core/classes</directory>
-    <directory suffix=".php">lib/core/exceptions</directory>
-    <directory suffix=".php">lib/core/interfaces</directory>
-    <directory suffix=".php">lib/form/classes</directory>
-    <directory suffix=".php">lib/rest/classes</directory>
-    <directory suffix=".php">lib/template/classes</directory>
-    <directory suffix=".php">lib/ui/classes</directory>
+    <directory suffix=".php">lib/classes</directory>
+    <directory suffix=".php">lib/exceptions</directory>
+    <directory suffix=".php">lib/interfaces</directory>
   </whitelist>
 </filter>
 
