@@ -203,6 +203,9 @@ class RestResponse {
     $this->renderStatusHeader();
     if (!in_array($this->code, array(self::CREATED, self::NO_CONTENT, self::RESET_CONTENT, self::MOVED_PERMANENTLY, self::FOUND, self::SEE_OTHER, self::NOT_MODIFIED, self::TEMPORARY_REDIRECT))) {
       $this->renderContent();
+    } else {
+      // generic content-type header because we're not outputting any content
+      header('Content-Type: application/octet-stream');
     }
   }
 }
