@@ -63,6 +63,14 @@ class RestRequest {
     return $this->get_args;
   }
 
+  public function hasArg($arg) {
+    return isset($this->get_args[$arg]);
+  }
+
+  public function getArg($arg) {
+    return isset($this->get_args[$arg]) ? $this->get_args[$arg] : null;
+  }
+
   public function getRawBody() {
     return $this->body;
   }
@@ -131,6 +139,14 @@ class RestRequest {
 
   public function getHeaders() {
     return $this->headers;
+  }
+
+  public function getHeader($header) {
+    return isset($this->headers[$header]) ? $this->headers[$header] : null;
+  }
+
+  public function hasHeader($header) {
+    return isset($this->headers[$header]);
   }
 
   public function getResponseFormat() {
