@@ -117,17 +117,23 @@ class RestResponse {
     return isset($statuses[$code]) ? $statuses[$code] : 'Unknown Response';
   }
 
-  protected function encodeArrayToXML($data, $parent) {
+  protected function encodeArrayToXML($data, $parent, $pretty_print = false) {
     $content = '';
     $parent_sing = Inflector::singularize($parent);
     $numeric_keys = ArrayUtil::isNumericallyKeyed($data);
+    if ($pretty_print !== false) {
+      $prefix = str_repeat('  ', $pretty_print);
+    } else {
+      $prefix = '';
+    }
     foreach ($data as $key => $value) {
       $key = $numeric_keys ? $parent_sing : $key;
-      $content .= '<'.htmlspecialchars($key).'>';
+      $content .= $prefix.'<'.htmlspecialchars($key).'>';
       switch (true) {
         case is_array($value):
         case is_object($value):
-          $content .= $this->encodeArrayToXML($value, $key);
+          if ($pretty_print !== false) $content .= "\n";
+          $content .= $this->encodeArrayToXML($value, $key, $pretty_print!==false ? $pretty_print+1 : false).$prefix;
           break;
         case is_bool($value):
           $content .= $value ? 'true' : 'false';
@@ -139,25 +145,30 @@ class RestResponse {
           break;
       }
       $content .= '</'.htmlspecialchars($key).'>';
+      if ($pretty_print !== false) $content .= "\n";
     }
     return $content;
   }
 
-  protected function encodeToXML(array $data) {
+  protected function encodeToXML(array $data, $pretty_print = false) {
     $content = '<'.'?xml version="1.0" encoding="utf-8" standalone="yes" ?'.">\n";
     if (count($data)!=1 || $this->force_envelope) {
-      $content .= '<response>';
-      $content .= $this->encodeArrayToXML($data, 'responses');
-      $content .= '</response>';
+      $content .= '<response>'.($pretty_print?"\n":'');
+      $content .= $this->encodeArrayToXML($data, 'responses', $pretty_print);
+      $content .= '</response>'.($pretty_print?"\n":'');
     } else {
-      $content .= $this->encodeArrayToXML($data, 'responses');
+      $content .= $this->encodeArrayToXML($data, 'responses', $pretty_print?0:false);
     }
     return $content;
   }
 
   protected function renderContentAsXML() {
     header('Content-Type: application/xml');
-    echo $this->encodeToXML($this->content);
+    $pretty_print = $this->request->hasHeader('X-Pretty-Print');
+    if ($pretty_print) {
+      header('X-Pretty-Print: true');
+    }
+    echo $this->encodeToXML($this->content, $pretty_print);
   }
 
   protected function renderContentAsJSON() {
