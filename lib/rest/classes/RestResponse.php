@@ -47,11 +47,13 @@ class RestResponse {
   protected $format = 'json';
   protected $location = null;
   protected $force_envelope = false;
+  protected $request = null;
 
   public function __construct($code, $content, RestRequest $request) {
     $this->code = $code;
     $this->content = $content;
     $this->setFormat($request->getResponseFormat());
+    $this->setRequest($request);
   }
 
   public function setFormat($format) {
@@ -60,6 +62,10 @@ class RestResponse {
 
   public function setLocation($location) {
     $this->location = $location;
+  }
+
+  public function setRequest(RestRequest $request) {
+    $this->request = $request;
   }
 
   public function setForceEnvelope($force=true) {
