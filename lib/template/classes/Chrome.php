@@ -1003,8 +1003,9 @@ class Chrome extends Template {
       $charset = strtolower($ctx->getCharset());
       if ($ctx->getVersion() == 5) { # only if (X)HTML5
         echo Tag::meta(Tag::META_CHAR, null, $charset), PHP_EOL;
+      } else {
+        echo Tag::meta(Tag::META_HTTP, 'Content-Type', "{$ctx->getContentType()};charset={$charset}"), PHP_EOL;
       }
-      echo Tag::meta(Tag::META_HTTP, 'Content-Type', "{$ctx->getContentType()};charset={$charset}"), PHP_EOL;
     }
     # Render other metadata
     $metadata = self::getMetadata(null);
