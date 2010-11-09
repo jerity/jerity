@@ -1,17 +1,10 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
-
 /**
- * @package    jerity.core
+ * @author     Dave Ingram <dave@dmi.me.uk>
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
  */
 
 /**
@@ -21,11 +14,13 @@
  * Note that the attribute hints in the comments for each method largely
  * adhere to the strict dialect.
  *
- * @todo  Support IE conditional comments for various items.
- *
- * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
+ *
+ * @todo  Support IE conditional comments for various items.
  */
 class Tag {
 
@@ -750,3 +745,5 @@ class Tag {
   }
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

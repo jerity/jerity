@@ -1,25 +1,20 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
-
 /**
- * @package    jerity.core
+ * @author     Dave Ingram <dave@dmi.me.uk>
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
  */
 
 /**
  * String utility class.
  *
- * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
  */
 class String {
 
@@ -93,7 +88,6 @@ class String {
     }
   }
 
-
   /**
    * Escapes the provided text according to the type of content being output.
    * The is the option to override to encode for a specific content type.  If
@@ -145,13 +139,13 @@ class String {
    * Converts the following characters to an underscore: < > : " \ / | ? *
    * Removes non-printing characters in the range [0..31].
    *
-   * @todo  Add parameter to select target OS/filsystem.
-   *
    * @param  string   $filename     The filename to make safe.
    * @param  array    $extra_rules  Character --> Replacement
    * @param  boolean  $reduce       Reduce multiple replaced characters to one.
    *
    * @return  string
+   *
+   * @todo  Add parameter to select target OS/filsystem.
    */
   public static function escapeFilename($filename, array $extra_rules = array(), $reduce = true) {
     $reserved = str_split('<>:"\\/|?*');
@@ -173,13 +167,13 @@ class String {
    *
    * @see  String::escapeFilename()
    *
-   * @todo  Add parameter to select target OS/filsystem.
-   *
    * @param  string   $filename     The filename to make safe.
    * @param  array    $extra_rules  Character --> Replacement
    * @param  boolean  $reduce       Reduce multiple replaced characters to one.
    *
    * @return  string
+   *
+   * @todo  Add parameter to select target OS/filsystem.
    */
   public static function escapePath($path, array $extra_rules = array(), $reduce = true) {
     return self::escapeFilename($path, $extra_rules, $reduce);
@@ -237,9 +231,6 @@ class String {
    * ellipsis displayed. Can also preserve the extension of a filename, which
    * will force the ellipsis to prevent confusion.
    *
-   * @todo  Preserve HTML tags and entities.
-   * @todo  Split into multiple functions: truncate, truncateFilename, truncatePath, ...
-   *
    * @param  string   $text       The text to truncate.
    * @param  integer  $length     The amount of text to show.
    * @param  boolean  $boundary   Truncate at word boundary
@@ -247,6 +238,9 @@ class String {
    * @param  boolean  $extension  If a file, do we want to keep the extension.
    *
    * @return  string
+   *
+   * @todo  Preserve HTML tags and entities.
+   * @todo  Split into multiple functions: truncate, truncateFilename, truncatePath, ...
    */
   public static function truncate($text, $length, $boundary = true, $ellipsis = true, $extension = false) {
     $ctx = RenderContext::get();
@@ -552,3 +546,5 @@ class String {
   }
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

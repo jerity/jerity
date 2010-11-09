@@ -1,154 +1,224 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
 
 /**
  * This class creates valid and accessible HTML forms.
  *
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ *
  * @todo  Separate form structure from HTML output to allow different HTML output methods
  */
 class FormGenerator {
+
   /**
    * List of form fields
    */
   protected $fields = array();
+
   /**
    * List of errors
    */
   protected $errors = array();
+
   /**
    * List of pre-filled data
    */
   protected $data = array();
+
   /**
    * Attributes for the form element
    */
   protected $formProperties = array();
+
   /**
    * Whether we need a top-level list
    */
   protected $topLevelList = true;
+
   /**
    * Whether we want the form tags to be generated.  If not, we can generate
    * nested chunks of form elements which can be added with addCustomHTML().
    */
   protected $generateFormTags = true;
 
-
   /**
    * Initialise the form generator.
    *
-   * @param bool $topLevelList Whether to create the top-level UL. You almost always want this off.
+   * @param  bool  $topLevelList  Whether to create the top-level UL. You almost always want this off.
    */
-  public function __construct($topLevelList=false, $generateFormTags=true) {
+  public function __construct($topLevelList = false, $generateFormTags = true) {
     $this->topLevelList = $topLevelList;
     $this->generateFormTags = $generateFormTags;
   }
 
+  /**
+   *
+   */
   public function setAttribute($name, $value) {
     $this->formProperties[$name] = $value;
   }
 
+  /**
+   *
+   */
   public function getAttribute($name) {
     return isset($this->formProperties[$name]) ? $this->formProperties[$name] : null;
   }
 
+  /**
+   *
+   */
   public function hasAttribute($name) {
     return isset($this->formProperties[$name]);
   }
 
+  /**
+   *
+   */
   public function delAttribute($name) {
     unset($this->formProperties[$name]);
   }
 
+  /**
+   *
+   */
   protected function &addElement($name, $label, $type, array $extra = null) {
     $newObj = new FormGenerator_Element($name, $label, $type, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addHidden($name, $value, array $extra = null) {
-    $extra = array_merge(array('value'=>$value), $extra?$extra:array());
+    $extra = array_merge(array('value' => $value), $extra ? $extra : array());
     return $this->addElement($name, null, 'hidden', $extra);
   }
 
+  /**
+   *
+   */
   public function addInput($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'text', $extra);
   }
 
+  /**
+   *
+   */
   public function addPassword($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'password', $extra);
   }
 
+  /**
+   *
+   */
   public function addCheckbox($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'checkbox', $extra);
   }
 
+  /**
+   *
+   */
   public function addRadio($name, $label, $value, array $extra = null) {
-    return $this->addElement($name, $label, 'radio', array('value'=>$value) + ($extra?$extra:array()));
+    return $this->addElement($name, $label, 'radio', array('value' => $value) + ($extra ? $extra : array()));
   }
 
+  /**
+   *
+   */
   public function addSubmit($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'submit', $extra);
   }
 
+  /**
+   *
+   */
   public function addReset($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'reset', $extra);
   }
 
+  /**
+   *
+   */
   public function addFieldset($label, array $extra = null) {
     $newObj = new FormGenerator_Fieldset($label, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addSelect($name, $label, $options, array $extra = null) {
     $newObj = new FormGenerator_Select($name, $label, $options, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addTextarea($name, $label, array $extra = null) {
     $newObj = new FormGenerator_Textarea($name, $label, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addHint($content, array $extra = null) {
     $newObj = new FormGenerator_Hint($content, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addCustomHTML($content, $label = null, array $extra = null) {
     $newObj = new FormGenerator_CustomHTML($content, $label, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function getError($name) {
-    if (!isset($this->errors[$name])) {
-      return null;
-    } else {
-      return $this->errors[$name];
-    }
+    if (!isset($this->errors[$name])) return null;
+    return $this->errors[$name];
   }
 
+  /**
+   *
+   */
   public function clearError($name) {
     unset($this->errors[$name]);
   }
 
+  /**
+   *
+   */
   public function setError($name, $msg) {
     $this->errors[$name] = $msg;
   }
 
-  public function setErrors(array $errors, $replace=false) {
+  /**
+   *
+   */
+  public function setErrors(array $errors, $replace = false) {
     if ($replace) {
       $this->errors = $errors;
     } else { // merge and overwrite
@@ -156,14 +226,23 @@ class FormGenerator {
     }
   }
 
+  /**
+   *
+   */
   public function hasErrors() {
     return count($this->errors);
   }
 
+  /**
+   *
+   */
   public function clearData() {
     $this->data = array();
   }
 
+  /**
+   *
+   */
   public function populateData(array $data, $replace = true) {
     // $data should be a single-dimension array
     $data = ArrayUtil::collapseKeys($data);
@@ -174,18 +253,30 @@ class FormGenerator {
     }
   }
 
+  /**
+   *
+   */
   public function populateFromGet($replace = true) {
     $this->populateData($_GET, $replace);
   }
 
+  /**
+   *
+   */
   public function populateFromPost($replace = true) {
     $this->populateData($_POST, $replace);
   }
 
+  /**
+   *
+   */
   public function populateFromRequest($replace = true) {
     $this->populateData($_REQUEST, $replace);
   }
 
+  /**
+   *
+   */
   public function renderElementList($elements) {
     if (!count($elements)) {
       return '';
@@ -208,20 +299,19 @@ class FormGenerator {
       if ($this->topLevelList && $e['type'] !== 'hidden') $out .= "</li>\n";
     }
     if ($this->topLevelList) $out .= "</ul>\n";
-
     return $out;
   }
 
   /**
    * Render the form.
    *
-   * @param string $action URL to submit to, defaults to self.
-   * @param string $method HTTP method to use: POST or GET.
-   * @return string
+   * @param  string  $action  URL to submit to, defaults to self.
+   * @param  string  $method  HTTP method to use: POST or GET.
+   *
+   * @return  string
    */
-  public function render($action=null, $method=null) {
+  public function render($action = null, $method = null) {
     $out = '';
-
     if ($this->generateFormTags) {
       $props = $this->formProperties;
       if (!is_null($action))            $props['action'] = $action;
@@ -229,41 +319,63 @@ class FormGenerator {
       if (!is_null($method))            $props['method'] = strtolower($method);
       elseif (!isset($props['method'])) $props['method'] = 'post';
       $out .= '<form';
-      foreach ($props as $k=>$v) {
+      foreach ($props as $k => $v) {
         $out .= ' '.$k.'="'.String::escape($v, true).'"';
       }
       $out .= ">\n";
     }
-
     // render elements
     $out .= $this->renderElementList($this->fields);
-
     if ($this->generateFormTags) $out .= "</form>\n";
-
     return $out;
   }
+
 }
 
-
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
 class FormGenerator_Element extends ArrayObject {
+
   /**
    * Unique ID number counter
    */
   protected static $uniqueCounter = 0;
+
+  /**
+   *
+   */
   protected $props = array();
+
+  /**
+   *
+   */
   protected $data = null;
+
+  /**
+   *
+   */
   protected $dataOnce = false;
+
+  /**
+   *
+   */
   protected $errors = array();
 
+  /**
+   *
+   */
   public function __construct($name, $label, $type, array $extra = null) {
-    $this->props = array(
-      'type'  => $type,
-    );
+    $this->props = array('type' => $type);
     if (!is_null($name)) {
       $this->props['name'] = $name;
     }
     if (!is_null($label)) {
-      if ($type=='submit' || $type=='reset') {
+      if ($type == 'submit' || $type == 'reset') {
         $this->props['value'] = $label;
       } else {
         $this->props['label'] = $label;
@@ -283,22 +395,37 @@ class FormGenerator_Element extends ArrayObject {
     ksort($this->props);
   }
 
+  /**
+   *
+   */
   public function offsetExists($k) {
     return isset($this->props[$k]);
   }
 
+  /**
+   *
+   */
   public function offsetGet($k) {
     return $this->props[$k];
   }
 
+  /**
+   *
+   */
   public function offsetUnset($k) {
     unset($this->props[$k]);
   }
 
+  /**
+   *
+   */
   public function getIterator() {
     return new ArrayIterator($this->props);
   }
 
+  /**
+   *
+   */
   public function getError($name) {
     if (!isset($this->errors[$name])) {
       return null;
@@ -334,8 +461,8 @@ class FormGenerator_Element extends ArrayObject {
   /**
    * Renders an error string.
    *
-   * @param array  $attrs Associative array of attributes for the errored element.
-   * @param string $error The error string to display for the errored element.
+   * @param  array   $attrs  Associative array of attributes for the errored element.
+   * @param  string  $error  The error string to display for the errored element.
    */
   protected static function renderError(array $attrs = null, $error = null) {
     $attrs['id'] .= '-error';
@@ -346,10 +473,11 @@ class FormGenerator_Element extends ArrayObject {
   /**
    * Render a form element.
    *
-   * @param string $error An error message to show, if applicable.
-   * @return string
+   * @param  string  $error  An error message to show, if applicable.
+   *
+   * @return  string
    */
-  public function render($error=null) {
+  public function render($error = null) {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label']) && !in_array($this['type'], array('hidden', 'checkbox', 'radio'))) {
@@ -357,9 +485,8 @@ class FormGenerator_Element extends ArrayObject {
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
-      $out .= Tag::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
+      $out .= Tag::renderTag('label', array('for' => $this['id']), $labelcontent)."\n";
     }
-
     if (!is_null($this->data)) {
       switch ($this['type']) {
         case 'text':
@@ -374,14 +501,12 @@ class FormGenerator_Element extends ArrayObject {
           break;
       }
       if ($this->dataOnce) {
-        $this->dataOnce=false;
+        $this->dataOnce = false;
         $this->data = null;
       }
     }
-
     if ($error && $this['type'] !== 'hidden') {
       $out .= self::renderError($this->props, $error);
-
       if (!isset($this->props['class'])) {
         $this->props['class'] = 'haserror';
       } elseif (!preg_match('/(?:^| )haserror(?:$| )/', $this->props['class'])) {
@@ -390,19 +515,36 @@ class FormGenerator_Element extends ArrayObject {
     }
     $attrs = array_diff_key($this->props, array_flip(array('label', 'required')));
     $out .= Tag::renderTag('input', $attrs)."\n";
-
     if (isset($this['label']) && in_array($this['type'], array('checkbox', 'radio'))) {
-      $out .= Tag::renderTag('label', array('for'=>$this['id']), String::escape($this['label']))."\n";
+      $out .= Tag::renderTag('label', array('for' => $this['id']), String::escape($this['label']))."\n";
     }
-
     return $out;
   }
+
 }
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
 class FormGenerator_Fieldset extends FormGenerator_Element {
+
+  /**
+   *
+   */
   protected $fields = array();
+
+  /**
+   *
+   */
   protected static $fsUniqueCounter = 0;
 
+  /**
+   *
+   */
   public function __construct($label, array $extra = null) {
     $this->props = array(
       'label' => $label,
@@ -417,66 +559,105 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
     ksort($this->props);
   }
 
+  /**
+   *
+   */
   protected function &addElement($name, $label, $type, array $extra = null) {
     $newObj = new FormGenerator_Element($name, $label, $type, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addInput($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'text', $extra);
   }
 
+  /**
+   *
+   */
   public function addPassword($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'password', $extra);
   }
 
+  /**
+   *
+   */
   public function addCheckbox($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'checkbox', $extra);
   }
 
+  /**
+   *
+   */
   public function addRadio($name, $label, $value, array $extra = null) {
-    return $this->addElement($name, $label, 'radio', array('value'=>$value) + ($extra?$extra:array()));
+    return $this->addElement($name, $label, 'radio', array('value' => $value) + ($extra ? $extra : array()));
   }
 
+  /**
+   *
+   */
   public function addSubmit($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'submit', $extra);
   }
 
+  /**
+   *
+   */
   public function addReset($name, $label, array $extra = null) {
     return $this->addElement($name, $label, 'reset', $extra);
   }
 
+  /**
+   *
+   */
   public function addFieldset($label, array $extra = null) {
     $newObj = new FormGenerator_Fieldset($label, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addSelect($name, $label, $options, array $extra = null) {
     $newObj = new FormGenerator_Select($name, $label, $options, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addTextarea($name, $label, array $extra = null) {
     $newObj = new FormGenerator_Textarea($name, $label, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addHint($content, array $extra = null) {
     $newObj = new FormGenerator_Hint($content, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function addCustomHTML($content, $label = null, array $extra = null) {
     $newObj = new FormGenerator_CustomHTML($content, $label, $extra);
     $this->fields[] = $newObj;
     return $newObj;
   }
 
+  /**
+   *
+   */
   public function renderElementList($elements) {
     if (!count($elements)) {
       return '';
@@ -499,28 +680,39 @@ class FormGenerator_Fieldset extends FormGenerator_Element {
       if ($e['type'] !== 'hidden') $out .= "</li>\n";
     }
     $out .= "</ul>\n";
-
     return $out;
   }
 
-  public function render($error=null) {
+  /**
+   *
+   */
+  public function render($error = null) {
     $attrs = array_diff_key($this->props, array_flip(array('label', 'type')));
     $out = Tag::renderTag('fieldset', $attrs)."\n";
     if (isset($this['label']) && $this['label']) {
       # TODO: required flag
       $out .= '<legend><span>'.String::escape($this['label'])."</span></legend>\n";
     }
-
     // render elements
     $out .= $this->renderElementList($this->fields);
-
     $out .= "</fieldset>\n";
-
     return $out;
   }
+
 }
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
 class FormGenerator_Textarea extends FormGenerator_Element {
+
+  /**
+   *
+   */
   public function __construct($name, $label, array $extra = null) {
     parent::__construct($name, $label, 'textarea', $extra);
   }
@@ -531,7 +723,7 @@ class FormGenerator_Textarea extends FormGenerator_Element {
    * @param string $error An error message to show, if applicable.
    * @return string
    */
-  public function render($error=null) {
+  public function render($error = null) {
     $out = '';
     # add label, and remove from properties array
     if (isset($this['label'])) {
@@ -539,7 +731,7 @@ class FormGenerator_Textarea extends FormGenerator_Element {
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
-      $out .= Tag::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
+      $out .= Tag::renderTag('label', array('for' => $this['id']), $labelcontent)."\n";
     }
     if (!is_null($this->data)) {
       $data = $this->data;
@@ -550,7 +742,6 @@ class FormGenerator_Textarea extends FormGenerator_Element {
     }
     if ($error) {
       $out .= self::renderError($this->props, $error);
-
       if (!isset($this->props['class'])) {
         $this->props['class'] = 'haserror';
       } elseif (!preg_match('/(?:^| )haserror(?:$| )/', $this->props['class'])) {
@@ -559,17 +750,43 @@ class FormGenerator_Textarea extends FormGenerator_Element {
     }
     $attrs = array_diff_key($this->props, array_flip(array('label', 'value', 'type')));
     $out .= Tag::renderTag('textarea', $attrs, String::escape($data))."\n";
-
     return $out;
   }
+
 }
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
 class FormGenerator_Select extends FormGenerator_Element {
-  protected $options = array();
-  const OPTIONS_KEY_VALUE  = 0;
-  const OPTIONS_VALUE_ONLY = 1;
-  const OPTIONS_FULL       = 2;
 
+  /**
+   *
+   */
+  const OPTIONS_KEY_VALUE = 0;
+
+  /**
+   *
+   */
+  const OPTIONS_VALUE_ONLY = 1;
+
+  /**
+   *
+   */
+  const OPTIONS_FULL = 2;
+
+  /**
+   *
+   */
+  protected $options = array();
+
+  /**
+   *
+   */
   public function __construct($name, $label, array $options = null, array $extra = null) {
     parent::__construct($name, $label, 'select', $extra);
     if (!is_null($options)) {
@@ -577,20 +794,23 @@ class FormGenerator_Select extends FormGenerator_Element {
     }
   }
 
+  /**
+   *
+   */
   public function setOptions(array $options, $arraytype = self::OPTIONS_KEY_VALUE) {
     switch ($arraytype) {
       case self::OPTIONS_FULL:
         $this->options = $options;
-        return; # NOTE: this is a return
+        return;
       case self::OPTIONS_KEY_VALUE:
         foreach ($options as $k => $v) {
-          $this->options[$k] = array('value'=>$k, 'label'=>$v);
+          $this->options[$k] = array('value' => $k, 'label' => $v);
         }
         break;
       case self::OPTIONS_VALUE_ONLY:
         $this->options = array_combine($options, array_map($val_creator, $options));
         foreach ($this->options as $k => $v) {
-          $this->options[$k] = array('value'=>$k, 'label'=>$v);
+          $this->options[$k] = array('value' => $k, 'label' => $v);
         }
         break;
       default:
@@ -601,22 +821,22 @@ class FormGenerator_Select extends FormGenerator_Element {
   /**
    * Render a form element.
    *
-   * @param string $error An error message to show, if applicable.
-   * @return string
+   * @param  string  $error  An error message to show, if applicable.
+   *
+   * @return  string
    */
-  public function render($error=null) {
+  public function render($error = null) {
     $out = '';
-    # add label, and remove from properties array
+    # Add label, and remove from properties array
     if (isset($this['label'])) {
       $labelcontent = String::escape($this['label']).':';
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
-      $out .= Tag::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
+      $out .= Tag::renderTag('label', array('for' => $this['id']), $labelcontent)."\n";
     }
     if ($error) {
       $out .= self::renderError($this->props, $error);
-
       if (!isset($this->props['class'])) {
         $this->props['class'] = 'haserror';
       } elseif (!preg_match('/(?:^| )haserror(?:$| )/', $this->props['class'])) {
@@ -639,15 +859,28 @@ class FormGenerator_Select extends FormGenerator_Element {
       $out .= Tag::renderTag('option', $attrs, String::escape($option['label']))."\n";
     }
     $out .= "</select>\n";
-
     return $out;
   }
+
 }
 
-
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
 class FormGenerator_Hint extends FormGenerator_Element {
+
+  /**
+   *
+   */
   protected static $hintUniqueCounter = 0;
 
+  /**
+   *
+   */
   public function __construct($content, array $extra = null) {
     $this->props = array(
       'content' => $content,
@@ -670,10 +903,11 @@ class FormGenerator_Hint extends FormGenerator_Element {
   /**
    * Render a form hint.
    *
-   * @param string $error An error message to show, if applicable.
-   * @return string
+   * @param  string  $error  An error message to show, if applicable.
+   *
+   * @return  string
    */
-  public function render($error=null) {
+  public function render($error = null) {
     $out = '';
     if (isset($this['content'])) {
       if (!isset($this['escape']) || $this['escape']) {
@@ -684,18 +918,30 @@ class FormGenerator_Hint extends FormGenerator_Element {
     } else {
       $content = '';
     }
-
     $attrs = array_diff_key($this->props, array_flip(array('content', 'escape', 'type')));
     $out .= Tag::renderTag('div', $attrs, $content)."\n";
-
     return $out;
   }
+
 }
 
-
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
 class FormGenerator_CustomHTML extends FormGenerator_Element {
+
+  /**
+   *
+   */
   protected static $customUniqueCounter = 0;
 
+  /**
+   *
+   */
   public function __construct($content, $label = null, array $extra = null) {
     $this->props = array(
       'content' => $content,
@@ -732,7 +978,7 @@ class FormGenerator_CustomHTML extends FormGenerator_Element {
       if (isset($this['required']) && $this['required']) {
         $labelcontent .= ' <em>Required</em>';
       }
-      $out .= Tag::renderTag('label', array('for'=>$this['id']), $labelcontent)."\n";
+      $out .= Tag::renderTag('label', array('for' => $this['id']), $labelcontent)."\n";
     }
     if (isset($this['content'])) {
       $content = $this['content'];
@@ -741,7 +987,6 @@ class FormGenerator_CustomHTML extends FormGenerator_Element {
     }
     if ($error) {
       $out .= self::renderError($this->props, $error);
-
       if (!isset($this->props['class'])) {
         $this->props['class'] = 'haserror';
       } elseif (!preg_match('/(?:^| )haserror(?:$| )/', $this->props['class'])) {
@@ -750,14 +995,27 @@ class FormGenerator_CustomHTML extends FormGenerator_Element {
     }
     $attrs = array_diff_key($this->props, array_flip(array('content', 'escape', 'name', 'type')));
     $out .= Tag::renderTag('div', $attrs, $content)."\n";
-
     return $out;
   }
+
 }
 
-
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
 class FormGeneratorElementException extends Exception {
+
+  /**
+   *
+   */
   public function __construct($message, FormGenerator_Element $element) {
     $this->message = $message;
   }
+
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

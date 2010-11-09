@@ -1,17 +1,23 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 
-
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 class RenderContextTest extends PHPUnit_Framework_TestCase {
 
   /**
+   *
    */
   public function testInitialGlobalContext() {
     $ctx = RenderContext::get();
@@ -19,6 +25,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   *
    */
   public function testPushPopContext() {
     $ctx1 = RenderContext::get();
@@ -41,6 +48,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   *
    */
   public function testEmptyGlobalContext() {
     $ctxs = array();
@@ -58,7 +66,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  createProvider
    */
   public function testCreate($type) {
@@ -76,6 +83,9 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(  $dialect,  $ctx->getDialect());
   }
 
+  /**
+   *
+   */
   public static function createProvider() {
     return array(
       array(RenderContext::TYPE_HTML4_FRAMESET),
@@ -94,7 +104,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @expectedException  InvalidArgumentException
    */
   public function testCreateFail() {
@@ -102,7 +111,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  getDoctypeProvider
    */
   public function testGetDoctype($lang, $ver, $xhtml_1_0_compat, $dialect, $expected) {
@@ -137,6 +145,9 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
     }
   }
 
+  /**
+   *
+   */
   public static function getDoctypeProvider() {
     return array(
       array(RenderContext::LANG_HTML , 2   , false, RenderContext::DIALECT_NONE        , '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">'),
@@ -169,7 +180,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  getDoctypeFailProvider
    *
    * @expectedException  InvalidArgumentException
@@ -179,6 +189,9 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
     $dt = $ctx->getDoctype();
   }
 
+  /**
+   *
+   */
   public static function getDoctypeFailProvider() {
     return array(
       array(RenderContext::LANG_HTML , 3   , RenderContext::DIALECT_NONE        ),
@@ -188,7 +201,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  contentTypeProvider
    */
   public function testContentTypeDetection($lang, $dialect, $xhtml_1_0_compat, $expected) {
@@ -198,6 +210,9 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($expected, $ctx->getContentType());
   }
 
+  /**
+   *
+   */
   public static function contentTypeProvider() {
     return array(
       array(RenderContext::LANG_HTML , RenderContext::DIALECT_NONE  , false, RenderContext::CONTENT_HTML),
@@ -219,6 +234,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   *
    */
   public function testContentTypeCache() {
     $ctx = RenderContext::create(RenderContext::TYPE_HTML5);
@@ -227,7 +243,6 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  xmlSyntaxProvider
    */
   public function testIsXMLSyntax($lang, $expected) {
@@ -235,6 +250,9 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($expected, $ctx->isXMLSyntax());
   }
 
+  /**
+   *
+   */
   public static function xmlSyntaxProvider() {
     return array(
       array(RenderContext::LANG_CSS  , false),
@@ -254,3 +272,5 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
   }
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

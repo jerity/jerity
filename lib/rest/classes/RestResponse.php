@@ -1,54 +1,213 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 class RestResponse {
+
+  /**
+   *
+   */
   const OK = 200;
+
+  /**
+   *
+   */
   const CREATED = 201;
+
+  /**
+   *
+   */
   const NO_CONTENT = 204;
+
+  /**
+   *
+   */
   const RESET_CONTENT = 205;
+
+  /**
+   *
+   */
   const PARTIAL_CONTENT = 206;
+
+  /**
+   *
+   */
   const MOVED_PERMANENTLY = 301;
+
+  /**
+   *
+   */
   const FOUND = 302;
+
+  /**
+   *
+   */
   const SEE_OTHER = 303;
+
+  /**
+   *
+   */
   const NOT_MODIFIED = 304;
+
+  /**
+   *
+   */
   const TEMPORARY_REDIRECT = 307;
+
+  /**
+   *
+   */
   const BAD_REQUEST = 400;
+
+  /**
+   *
+   */
   const UNAUTHORIZED = 401;
+
+  /**
+   *
+   */
   const FORBIDDEN = 403;
+
+  /**
+   *
+   */
   const NOT_FOUND = 404;
+
+  /**
+   *
+   */
   const METHOD_NOT_ALLOWED = 405;
+
+  /**
+   *
+   */
   const NOT_ACCEPTABLE = 406;
+
+  /**
+   *
+   */
   const CONFLICT = 409;
+
+  /**
+   *
+   */
   const GONE = 410;
+
+  /**
+   *
+   */
   const LENGTH_REQUIRED = 411;
+
+  /**
+   *
+   */
   const PRECONDITION_FAILED = 412;
+
+  /**
+   *
+   */
   const REQUEST_ENTITY_TOO_LARGE = 413;
+
+  /**
+   *
+   */
   const REQUEST_URI_TOO_LONG = 414;
+
+  /**
+   *
+   */
   const UNSUPPORTED_MEDIA_TYPE = 415;
+
+  /**
+   *
+   */
   const REQUESTED_RANGE_NOT_SATISFIABLE = 416;
+
+  /**
+   *
+   */
   const EXPECTATION_FAILED = 417;
+
+  /**
+   *
+   */
   const IM_A_TEAPOT = 418;
+
+  /**
+   *
+   */
   const INTERNAL_ERROR = 500;
+
+  /**
+   *
+   */
   const NOT_IMPLEMENTED = 501;
+
+  /**
+   *
+   */
   const BAD_GATEWAY = 502;
+
+  /**
+   *
+   */
   const SERVICE_UNAVAILABLE = 503;
+
+  /**
+   *
+   */
   const GATEWAY_TIMEOUT = 504;
+
+  /**
+   *
+   */
   const HTTP_VERSION_NOT_SUPPORTED = 505;
 
-  protected $code = 200;
+  /**
+   *
+   */
+  protected $code = self::OK;
+
+  /**
+   *
+   */
   protected $content = null;
+
+  /**
+   *
+   */
   protected $format = 'json';
+
+  /**
+   *
+   */
   protected $location = null;
+
+  /**
+   *
+   */
   protected $force_envelope = false;
+
+  /**
+   *
+   */
   protected $request = null;
 
+  /**
+   *
+   */
   public function __construct($code, $content, RestRequest $request) {
     $this->code = $code;
     $this->content = $content;
@@ -56,22 +215,37 @@ class RestResponse {
     $this->setRequest($request);
   }
 
+  /**
+   *
+   */
   public function setFormat($format) {
     $this->format = $format;
   }
 
+  /**
+   *
+   */
   public function setLocation($location) {
     $this->location = $location;
   }
 
+  /**
+   *
+   */
   public function setRequest(RestRequest $request) {
     $this->request = $request;
   }
 
+  /**
+   *
+   */
   public function setForceEnvelope($force=true) {
     $this->force_envelope = $force;
   }
 
+  /**
+   *
+   */
   protected function statusFromCode($code) {
     $statuses = array(
       self::OK                              => 'OK',
@@ -117,6 +291,9 @@ class RestResponse {
     return isset($statuses[$code]) ? $statuses[$code] : 'Unknown Response';
   }
 
+  /**
+   *
+   */
   protected function encodeArrayToXML($data, $parent, $pretty_print = false) {
     $content = '';
     $parent_sing = Inflector::singularize($parent);
@@ -150,6 +327,9 @@ class RestResponse {
     return $content;
   }
 
+  /**
+   *
+   */
   protected function encodeToXML(array $data, $pretty_print = false) {
     $content = '<'.'?xml version="1.0" encoding="utf-8" standalone="yes" ?'.">\n";
     if (count($data)!=1 || $this->force_envelope) {
@@ -162,6 +342,9 @@ class RestResponse {
     return $content;
   }
 
+  /**
+   *
+   */
   protected function renderContentAsXML() {
     header('Content-Type: application/xml');
     $pretty_print = $this->request->hasHeader('X-Pretty-Print');
@@ -171,6 +354,9 @@ class RestResponse {
     echo $this->encodeToXML($this->content, $pretty_print);
   }
 
+  /**
+   *
+   */
   protected function renderContentAsJSON() {
     header('Content-Type: application/json');
     if (count($this->content)) {
@@ -180,6 +366,9 @@ class RestResponse {
     }
   }
 
+  /**
+   *
+   */
   protected function renderStatusHeader() {
     header($_SERVER['SERVER_PROTOCOL'].' '.$this->code.' '.$this->statusFromCode($this->code), true, $this->code);
     if ($this->location !== null) {
@@ -187,6 +376,9 @@ class RestResponse {
     }
   }
 
+  /**
+   *
+   */
   protected function renderContent() {
     switch ($this->format) {
       case 'xml':
@@ -199,6 +391,9 @@ class RestResponse {
     }
   }
 
+  /**
+   *
+   */
   public function render() {
     $this->renderStatusHeader();
     if (!in_array($this->code, array(self::CREATED, self::NO_CONTENT, self::RESET_CONTENT, self::MOVED_PERMANENTLY, self::FOUND, self::SEE_OTHER, self::NOT_MODIFIED, self::TEMPORARY_REDIRECT))) {
@@ -210,7 +405,17 @@ class RestResponse {
   }
 }
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 class RestResponseError extends RestResponse {
+
+  /**
+   *
+   */
   public function __construct($code, $errors, RestRequest $request) {
     if ($code < 400 || $code > 599) {
       throw new InvalidArgumentException('Invalid status code '.$code.'; only error codes accepted');
@@ -222,38 +427,96 @@ class RestResponseError extends RestResponse {
     }
     parent::__construct($code, $content, $request);
   }
+
 }
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 class RestResponseBadRequest extends RestResponseError {
+
+  /**
+   *
+   */
   public function __construct($errors, RestRequest $request) {
     if (!is_array($errors)) $errors = array($errors);
     parent::__construct(self::BAD_REQUEST, $errors, $request);
   }
+
 }
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 class RestResponseNotFound extends RestResponseError {
+
+  /**
+   *
+   */
   public function __construct($errors, RestRequest $request) {
     if (!is_array($errors)) $errors = array($errors);
     parent::__construct(self::NOT_FOUND, $errors, $request);
   }
+
 }
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 class RestResponseMethodNotAllowed extends RestResponseError {
+
+  /**
+   *
+   */
   public function __construct($errors, RestRequest $request) {
     if (!is_array($errors)) $errors = func_get_args();
     parent::__construct(self::METHOD_NOT_ALLOWED, $errors, $request);
   }
+
 }
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 class RestResponseNotAcceptable extends RestResponseError {
+
+  /**
+   *
+   */
   public function __construct($errors, RestRequest $request) {
     if (!is_array($errors)) $errors = func_get_args();
     parent::__construct(self::NOT_ACCEPTABLE, $errors, $request);
   }
+
 }
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 class RestResponseOk extends RestResponse {
+
+  /**
+   *
+   */
   public function __construct($content, RestRequest $request) {
     parent::__construct(self::OK, $content, $request);
   }
+
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

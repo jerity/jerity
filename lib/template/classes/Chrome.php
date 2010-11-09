@@ -1,17 +1,10 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
-
 /**
- * @package    jerity.template
+ * @author     Dave Ingram <dave@dmi.me.uk>
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.template
  */
 
 /**
@@ -19,9 +12,11 @@
  * and can be manipulated using various methods provided to make it easier to
  * add general styling, scripting and metadata to a page.
  *
- * @package    jerity.template
+ * @author     Dave Ingram <dave@dmi.me.uk>
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.template
  */
 class Chrome extends Template {
 
@@ -500,7 +495,6 @@ class Chrome extends Template {
   public static function getLinks() {
     return self::$links;
   }
-
 
   /**
    * Adds a script to the page, at most once. Scripts will be loaded in
@@ -1084,31 +1078,22 @@ class Chrome extends Template {
   public static function outputHead() {
     # HTTP Headers
     self::outputHeaders();
-
     # XML declaration and doctype (if required).
     echo RenderContext::get()->renderPreContent();
-
     # Opening <html> and <head> tags
     self::outputOpeningTags();
-
     # Any <meta> tags
     self::outputMetaTags();
-
     # page title
     self::outputTitleTag();
-
     # links
     self::outputLinkTags();
-
     # stylesheets
     self::outputStylesheetTags();
-
     # external scripts
     self::outputExternalScriptTags();
-
     # favicons
     self::outputFaviconTags();
-
     self::outputEndHead();
   }
 
@@ -1322,3 +1307,5 @@ class Chrome extends Template {
   ##############################################################################
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker
