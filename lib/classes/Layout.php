@@ -217,13 +217,19 @@ class Layout implements Renderable {
   /**
    * Sets the column to add content to the previous column.
    *
+   * @param  bool  $cycle  Whether to cycle back to the last column.
+   *
    * @return  Layout  The current Layout object, for method chaining.
    */
-  public function previousColumn() {
+  public function previousColumn($cycle = false) {
     $this->current_column--;
     if ($this->current_column < 0) {
-      $this->current_column = 0;
-      trigger_error('No previous column available.', E_USER_WARNING);
+      if ($cycle) {
+        $this->current_column = count($this->columns) - 1;
+      } else {
+        $this->current_column = 0;
+        trigger_error('No previous column available.', E_USER_WARNING);
+      }
     }
     return $this;
   }
@@ -231,13 +237,19 @@ class Layout implements Renderable {
   /**
    * Sets the column to add content to the next column.
    *
+   * @param  bool  $cycle  Whether to cycle forward to the first column.
+   *
    * @return  Layout  The current Layout object, for method chaining.
    */
-  public function nextColumn() {
+  public function nextColumn($cycle = false) {
     $this->current_column++;
     if ($this->current_column >= count($this->columns)) {
-      $this->current_column = count($this->columns) - 1;
-      trigger_error('No next column available.', E_USER_WARNING);
+      if ($cycle) {
+        $this->current_column = 0;
+      } else {
+        $this->current_column = count($this->columns) - 1;
+        trigger_error('No next column available.', E_USER_WARNING);
+      }
     }
     return $this;
   }
