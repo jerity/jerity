@@ -1,18 +1,22 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 
-
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 class StringTest extends PHPUnit_Framework_TestCase {
 
   /**
-   *
    * @dataProvider  escapeHtmlProvider()
    */
   public function testEscapeHtml($text, $full_encode, $double_encode, $expected) {
@@ -34,6 +38,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($expected, String::escape($text, RenderContext::CONTENT_XHTML, $full_encode), 'Escaping using XHTML content override');
   }
 
+  /**
+   *
+   */
   public static function escapeHtmlProvider() {
     return array(
       array('', false, true, ''),
@@ -60,7 +67,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  escapeXmlProvider()
    */
   public function testEscapeXml($text, $full_encode, $double_encode, $expected) {
@@ -78,6 +84,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($expected, String::escape($text, RenderContext::CONTENT_XML, $full_encode), 'Escaping using content override');
   }
 
+  /**
+   *
+   */
   public static function escapeXmlProvider() {
     return array(
       array('', false, true, ''),
@@ -104,7 +113,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  escapeJsProvider()
    */
   public function testEscapeJs($text, $double_quote, $expected) {
@@ -122,6 +130,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($expected, String::escape($text, RenderContext::CONTENT_JS), 'Escaping using content override');
   }
 
+  /**
+   *
+   */
   public static function escapeJsProvider() {
     return array(
       array('', true,  ''),
@@ -138,6 +149,7 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   *
    */
   public function testEscapeDefault() {
     $text = '<foo\">\'&thing';
@@ -154,13 +166,15 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  conjunctionProvider()
    */
   public function testNaturalConjunction($list, $oxford_comma, $joiner, $expected) {
     $this->assertSame($expected, String::naturalConjunction($list, $oxford_comma, $joiner));
   }
 
+  /**
+   *
+   */
   public static function conjunctionProvider() {
     return array(
       array(array(''),                            null,  null,  ''),
@@ -180,7 +194,6 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  truncateProvider()
    */
   public function testTruncate($text, $length, $boundary, $ellipsis, $extension, $text_mode, $expected) {
@@ -197,6 +210,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     }
   }
 
+  /**
+   *
+   */
   public static function truncateProvider() {
     return array(
       array('', 15, true,  true,  true,  true, ''),
@@ -217,13 +233,15 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  splitCamelCaseProvider()
    */
   public function testSplitCamelCase($input, $expected) {
     $this->assertSame($expected, String::splitCamelCase($input));
   }
 
+  /**
+   *
+   */
   public static function splitCamelCaseProvider() {
     return array(
       array('myCamelString', array('my', 'Camel', 'String')),
@@ -241,13 +259,15 @@ class StringTest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   *
    * @dataProvider  splitSplitCaseProvider()
    */
   public function testSplitSplitCase($input, $expected) {
     $this->assertSame($expected, String::splitSplitCase($input));
   }
 
+  /**
+   *
+   */
   public static function splitsplitCaseProvider() {
     return array(
       array('A_SPLIT_CASE_STRING', array('A', 'SPLIT', 'CASE', 'STRING')),
@@ -266,6 +286,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     );
   }
 
+  /**
+   *
+   */
   public function testIsLower() {
     $this->assertTrue(String::isLower('word'));
     $this->assertFalse(String::isLower('WORD'));
@@ -274,6 +297,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertFalse(String::isLower('WOrd'));
   }
 
+  /**
+   *
+   */
   public function testIsUpper() {
     $this->assertFalse(String::isUpper('word'));
     $this->assertTrue(String::isUpper('WORD'));
@@ -282,6 +308,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertFalse(String::isUpper('WOrd'));
   }
 
+  /**
+   *
+   */
   public function testIsTitleCase() {
     $this->assertFalse(String::isTitleCase('word'));
     $this->assertFalse(String::isTitleCase('WORD'));
@@ -298,6 +327,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertSame("$prefix $count $expected", String::pluralize("$prefix $count new bunny!"));
   }
 
+  /**
+   *
+   */
   public static function pluralizeProvider() {
     return array(
       array('',              'new bunnies!'),
@@ -355,6 +387,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($expected, String::formatBits($n, $si, $dp, $prefix, $symbol));
   }
 
+  /**
+   *
+   */
   public static function formatBitsProvider() {
     return array(
       # Test automatic prefix.
@@ -427,6 +462,9 @@ class StringTest extends PHPUnit_Framework_TestCase {
     $this->assertSame($expected, String::formatBytes($n, $si, $dp, $prefix, $symbol));
   }
 
+  /**
+   *
+   */
   public static function formatBytesProvider() {
     return array(
       # Test automatic prefix.
@@ -485,4 +523,4 @@ class StringTest extends PHPUnit_Framework_TestCase {
 
 }
 
-# vim: encoding=utf-8 fileencoding=utf-8
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

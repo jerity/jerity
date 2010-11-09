@@ -1,16 +1,24 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 
-
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 class InflectorTest extends PHPUnit_Framework_TestCase {
 
+  /**
+   *
+   */
   public static function getWordPairs() {
     static $pairs = array();
     if (count($pairs)) {
@@ -26,14 +34,23 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
     return $pairs;
   }
 
+  /**
+   *
+   */
   public static function wordPairProvider() {
     return self::getWordPairs();
   }
 
+  /**
+   *
+   */
   public static function singularWordProvider() {
     return array_map(create_function('$a', 'return array($a[0], $a[2]);'), self::getWordPairs());
   }
 
+  /**
+   *
+   */
   public static function pluralWordProvider() {
     return array_map(create_function('$a', 'return array($a[1], $a[2]);'), self::getWordPairs());
   }
@@ -89,6 +106,9 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
     }
   }
 
+  /**
+   *
+   */
   public function fixLetterCaseProvider() {
     return array(
       array('WORD', 'WORDS', true),
@@ -111,3 +131,5 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
   }
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

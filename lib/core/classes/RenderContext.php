@@ -1,25 +1,20 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
-
 /**
- * @package    jerity.core
  * @author     Dave Ingram <dave@dmi.me.uk>
- * @copyright  Copyright (c) 2009 Dave Ingram
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
  */
 
 /**
  * Rendering context information.
  *
- * @package    jerity.core
  * @author     Dave Ingram <dave@dmi.me.uk>
- * @copyright  Copyright (c) 2009 Dave Ingram
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
  */
 class RenderContext {
   /**#@+
@@ -601,3 +596,5 @@ class RenderContext {
     }
   }
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

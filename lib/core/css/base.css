@@ -1,9 +1,11 @@
-/******************************************************************************
- * Description: Base CSS [HTML 4] [XHTML 1]
- * Package:     JerityCore
- * Author:      Nick Pope <nick [at] nickpope [dot] me [dot] uk>
- * Copyright:   Copyright (c) 2009 Nick Pope
- ******************************************************************************/
+/**
+ * Base CSS [HTML4] [XHTML1]
+ *
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
+ */
 
 /********** Base Dimensions **********/
 

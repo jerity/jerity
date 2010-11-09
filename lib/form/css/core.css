@@ -1,9 +1,12 @@
-/******************************************************************************
- * Description: Form Core CSS
- * Package:     JerityForm
- * Author:      Dave Ingram <dave [at] dmi [dot] me [dot] uk>
- * Copyright:   Copyright (c) 2009 Dave Ingram
- ******************************************************************************/
+/**
+ * Form Core CSS [HTML4] [XHTML1]
+ *
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
+
 form fieldset {
   margin: 0 0 -1em 0;
   padding: 0 0 1em 0;
