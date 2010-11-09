@@ -1,0 +1,21 @@
+/******************************************************************************
+ * Description: Form Core CSS [<=IE7]
+ * Package:     JerityForm
+ * Author:      Dave Ingram <dave [at] dmi [dot] me [dot] uk>
+ * Copyright:   Copyright (c) 2009 Dave Ingram
+ ******************************************************************************/
+form legend {
+  position: relative;
+  left: -7px;
+  top: -0.75em;
+}
+form legend span {
+  margin-top: 1.25em;
+}
+form fieldset ul {
+  padding-top: 3.25em;
+  zoom: 1;
+}
+form fieldset {
+  position: relative;
+}

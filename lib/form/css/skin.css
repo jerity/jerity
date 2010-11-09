@@ -1,0 +1,56 @@
+/******************************************************************************
+ * Description: Form Default Skin CSS
+ * Package:     JerityForm
+ * Author:      Dave Ingram <dave [at] dmi [dot] me [dot] uk>
+ * Copyright:   Copyright (c) 2009 Dave Ingram
+ ******************************************************************************/
+form fieldset {
+  background-color: #f2efe9;
+  border-style: none;
+  border-top: 1px solid #bfbab0;
+}
+form legend {
+  color: #000;
+  font-weight: bold;
+}
+form fieldset.submit {
+  border-style: none;
+  background-color: transparent;
+}
+form legend span {
+  font-size: 135%;
+}
+form fieldset fieldset, form.leftlabels fieldset fieldset {
+  border-style: none;
+  background-color: transparent;
+  background-image: none;
+}
+form fieldset fieldset legend {
+  font-weight: normal;
+}
+/* NOTE: label width is 10em, and we have a 1em gap */
+form.leftlabels label {
+  width: 10em;
+}
+form.leftlabels fieldset.submit {
+  padding-left: 11em;
+}
+form.leftlabels fieldset fieldset ul {
+  margin-left: 11em;
+}
+form strong {
+  left: 11.5em;
+  color: #f00;
+  font-size: 95%;
+}
+form div.hint {
+  margin-left: 12.25em;
+  color: #666;
+  font-size: 90%;
+}
+form label em {
+  color: #cc0000;
+  font-size: 75%;
+  font-style: normal;
+  text-transform: uppercase;
+}
