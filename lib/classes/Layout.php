@@ -186,7 +186,7 @@ class Layout implements Renderable {
   }
 
   /**
-   * Sets the column to add content to to the first column.
+   * Sets the column to add content to the first column.
    *
    * @return  Layout  The current Layout object, for method chaining.
    */
@@ -196,7 +196,7 @@ class Layout implements Renderable {
   }
 
   /**
-   * Sets the column to add content to to the last column.
+   * Sets the column to add content to the last column.
    *
    * @return  Layout  The current Layout object, for method chaining.
    */
@@ -206,7 +206,7 @@ class Layout implements Renderable {
   }
 
   /**
-   * Sets the column to add content to to the previous column.
+   * Sets the column to add content to the previous column.
    *
    * @return  Layout  The current Layout object, for method chaining.
    */
@@ -220,7 +220,7 @@ class Layout implements Renderable {
   }
 
   /**
-   * Sets the column to add content to to the next column.
+   * Sets the column to add content to the next column.
    *
    * @return  Layout  The current Layout object, for method chaining.
    */
