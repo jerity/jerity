@@ -58,7 +58,7 @@ class Layout implements Renderable {
    *
    * @var  int
    */
-  protected $current_column = 1;
+  protected $current_column = 0;
 
   /**
    * The ID to use for the layout element.
@@ -161,7 +161,7 @@ class Layout implements Renderable {
    * @return  Layout  The current Layout object, for method chaining.
    */
   public function addContent($object, $index = null) {
-    $column = &$this->content[$this->current_column-1];
+    $column = &$this->content[$this->current_column];
     switch (true) {
       # Add to end of column.
       case (is_null($index)):
@@ -191,7 +191,7 @@ class Layout implements Renderable {
    * @return  Layout  The current Layout object, for method chaining.
    */
   public function firstColumn() {
-    $this->current_column = 1;
+    $this->current_column = 0;
     return $this;
   }
 
@@ -201,7 +201,7 @@ class Layout implements Renderable {
    * @return  Layout  The current Layout object, for method chaining.
    */
   public function lastColumn() {
-    $this->current_column = count($this->columns);
+    $this->current_column = count($this->columns) - 1;
     return $this;
   }
 
@@ -212,8 +212,8 @@ class Layout implements Renderable {
    */
   public function previousColumn() {
     $this->current_column--;
-    if ($this->current_column < 1) {
-      $this->current_column = 1;
+    if ($this->current_column < 0) {
+      $this->current_column = 0;
       trigger_error('No previous column available.', E_USER_WARNING);
     }
     return $this;
@@ -226,8 +226,8 @@ class Layout implements Renderable {
    */
   public function nextColumn() {
     $this->current_column++;
-    if ($this->current_column > count($this->columns)) {
-      $this->current_column = count($this->columns);
+    if ($this->current_column >= count($this->columns)) {
+      $this->current_column = count($this->columns) - 1;
       trigger_error('No next column available.', E_USER_WARNING);
     }
     return $this;
