@@ -888,11 +888,6 @@ class Chrome extends Template {
     $ns = array();
     $ctx = RenderContext::get();
     switch ($ctx->getLanguage()) {
-      case RenderContext::LANG_HTML:
-        if ($ctx->getVersion() == 5) {
-          $ns['xmlns'] = self::XMLNS_XHTML;
-        }
-        break;
       case RenderContext::LANG_XHTML:
         $ns['xmlns'] = self::XMLNS_XHTML;
         break;
@@ -966,10 +961,6 @@ class Chrome extends Template {
       foreach (self::getXMLNamespaces() as $k => $v) {
         $namespaces .= ' '.$k.'="'.$v.'"';
       }
-    } elseif ($ctx->getLanguage() == RenderContext::LANG_HTML && $ctx->getVersion() == 5) {
-      $ns = self::getDefaultXMLNamespace();
-      list($k, $v) = each($ns);
-      $namespaces .= ' '.$k.'="'.$v.'"';
     }
     if (self::getIcons()) {
       # If we have favicons then add in a profile as defined by W3.
