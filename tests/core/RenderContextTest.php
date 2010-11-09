@@ -155,7 +155,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
       array(RenderContext::LANG_HTML , 4.01, false, RenderContext::DIALECT_STRICT      , '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">'),
       array(RenderContext::LANG_HTML , 4.01, false, RenderContext::DIALECT_TRANSITIONAL, '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'),
       array(RenderContext::LANG_HTML , 4.01, false, RenderContext::DIALECT_FRAMESET    , '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">'),
-      array(RenderContext::LANG_HTML , 5   , false, RenderContext::DIALECT_NONE        , '<!DOCTYPE html>'),
+      array(RenderContext::LANG_HTML , 5   , false, RenderContext::DIALECT_NONE        , '<!doctype html>'),
       array(RenderContext::LANG_XHTML, 1.0 , false, RenderContext::DIALECT_STRICT      , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'),
       array(RenderContext::LANG_XHTML, 1.0 , false, RenderContext::DIALECT_TRANSITIONAL, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'),
       array(RenderContext::LANG_XHTML, 1.0 , false, RenderContext::DIALECT_FRAMESET    , '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'),
