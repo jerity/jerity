@@ -321,6 +321,7 @@ class StringTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  pluralizeProvider()
+   * @group         Inflector
    */
   public function testPluralizeWithPrefix($count, $expected) {
     $prefix = 'You have';
@@ -382,6 +383,7 @@ class StringTest extends PHPUnit_Framework_TestCase {
   /**
    * @dataProvider  formatBitsProvider()
    * @depends       NumberTest::parseBits()
+   * @group         Inflector
    */
   public function testFormatBits($n, $si, $dp, $prefix, $symbol, $expected) {
     $this->assertSame($expected, String::formatBits($n, $si, $dp, $prefix, $symbol));
@@ -457,6 +459,7 @@ class StringTest extends PHPUnit_Framework_TestCase {
   /**
    * @dataProvider  formatBytesProvider()
    * @depends       NumberTest::parseBytes()
+   * @group         Inflector
    */
   public function testFormatBytes($n, $si, $dp, $prefix, $symbol, $expected) {
     $this->assertSame($expected, String::formatBytes($n, $si, $dp, $prefix, $symbol));
