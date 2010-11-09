@@ -1,22 +1,63 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 class RestRequest {
+
+  /**
+   *
+   */
   protected $url;
+
+  /**
+   *
+   */
   protected $clean_url;
+
+  /**
+   *
+   */
   protected $verb;
+
+  /**
+   *
+   */
   protected $headers;
+
+  /**
+   *
+   */
   protected $get_args;
+
+  /**
+   *
+   */
   protected $body;
+
+  /**
+   *
+   */
   protected $response_format;
+
+  /**
+   *
+   */
   protected $forced_response_format = null;
+
+  /**
+   *
+   */
   protected $matches = null;
 
   /**
@@ -38,57 +79,89 @@ class RestRequest {
     }
   }
 
+  /**
+   *
+   */
   public function getMatches() {
     return $this->matches;
   }
 
-  public function setMatches(array $matches=null) {
+  /**
+   *
+   */
+  public function setMatches(array $matches = null) {
     $this->matches = $matches;
     return $this;
   }
 
-  public function getUrl($remove_extension=true) {
-    if ($remove_extension) {
-      return $this->clean_url;
-    } else {
-      return $this->url;
-    }
+  /**
+   *
+   */
+  public function getUrl($remove_extension = true) {
+    if ($remove_extension) return $this->clean_url;
+    return $this->url;
   }
 
+  /**
+   *
+   */
   public function getVerb() {
     return $this->verb;
   }
 
+  /**
+   *
+   */
   public function getArgs() {
     return $this->get_args;
   }
 
+  /**
+   *
+   */
   public function hasArg($arg) {
     return isset($this->get_args[$arg]);
   }
 
+  /**
+   *
+   */
   public function getArg($arg) {
     return isset($this->get_args[$arg]) ? $this->get_args[$arg] : null;
   }
 
+  /**
+   *
+   */
   public function getRawBody() {
     return $this->body;
   }
 
+  /**
+   *
+   */
   public function getJsonBody() {
     return json_decode($this->body, true);
   }
 
+  /**
+   *
+   */
   public function getXmlBody() {
     $doc = new DOMDocument();
     $doc->loadXML($this->body);
     return $doc;
   }
 
+  /**
+   * @todo Implement
+   */
   public function getXmlBodyArray() {
-    // TODO: implement
   }
 
+  /**
+   *
+   */
   public function getFormBody() {
     $array = array();
     parse_str(trim(strtolower($this->body)), $array);
@@ -98,29 +171,30 @@ class RestRequest {
     unset($array);
   }
 
+  /**
+   *
+   */
   public function getBody() {
     switch ($this->getBodyContentType()) {
       case 'application/x-www-form-urlencoded':
         return $this->getFormBody();
-
       case 'application/json':
         return $this->getJsonBody();
-
       case 'application/xml':
       case 'text/xml':
         return $this->getXmlBody();
-
       case 'text/plain':
         // hack, undocumented
         return $this->getRawBody();
     }
-
     return null;
   }
 
+  /**
+   *
+   */
   public function getBodyContentType() {
     $content_type = null;
-
     if (!isset($headers['Content-Type'])) {
       // try to autodetect based on actual content
       if (preg_match('/^{\s*"[^"]+"\s*:/', $this->body)) {
@@ -133,22 +207,33 @@ class RestRequest {
     } else {
       $content_type = $headers['Content-Type'];
     }
-
     return $content_type;
   }
 
+  /**
+   *
+   */
   public function getHeaders() {
     return $this->headers;
   }
 
+  /**
+   *
+   */
   public function getHeader($header) {
     return isset($this->headers[$header]) ? $this->headers[$header] : null;
   }
 
+  /**
+   *
+   */
   public function hasHeader($header) {
     return isset($this->headers[$header]);
   }
 
+  /**
+   *
+   */
   public function getResponseFormat() {
     if ($this->forced_response_format !== null) {
       return $this->forced_response_format;
@@ -156,11 +241,17 @@ class RestRequest {
     return $this->response_format;
   }
 
+  /**
+   *
+   */
   public function setResponseFormat($format) {
     $this->forced_response_format = $format;
     return $this;
   }
 
+  /**
+   *
+   */
   public function setResponseFormatFromRequest() {
     $this->setResponseFormatFromUrl();
     if ($this->response_format === null) {
@@ -169,6 +260,9 @@ class RestRequest {
     return $this;
   }
 
+  /**
+   *
+   */
   public function setResponseFormatFromUrl() {
     if ($this->clean_url != $this->url) {
       $this->response_format = substr($this->url, strrpos($this->url, '.')+1);
@@ -176,6 +270,9 @@ class RestRequest {
     return $this;
   }
 
+  /**
+   *
+   */
   public function setResponseFormatFromHeaders() {
     if (isset($this->headers['Accept'])) {
       $format = null;
@@ -197,6 +294,9 @@ class RestRequest {
     return $this;
   }
 
+  /**
+   *
+   */
   public static function createFromCurrent() {
     // XXX: The spec says that the verb is case-sensitive, but user-agents
     // don't really honour that
@@ -210,3 +310,5 @@ class RestRequest {
   }
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

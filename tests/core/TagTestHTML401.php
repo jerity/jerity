@@ -1,20 +1,30 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 
-
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 class TagTestHTML401 extends PHPUnit_Framework_TestCase {
+
+  /**
+   *
+   */
   public function setUp() {
     RenderContext::set(RenderContext::create(RenderContext::TYPE_HTML4_STRICT));
   }
 
   /**
+   *
    */
   public function testBase() {
     $href = 'http://www.example.com/';
@@ -22,24 +32,28 @@ class TagTestHTML401 extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   *
    */
   public function testBr() {
     $this->assertSame('<br>', Tag::br());
   }
 
   /**
+   *
    */
   public function testHr() {
     $this->assertSame('<hr>', Tag::hr());
   }
 
   /**
+   *
    */
   public function testWbr() {
     $this->assertSame('<wbr>', Tag::wbr());
   }
 
   /**
+   *
    */
   public function testIsImpliedCData() {
     $data = array('script', 'style');
@@ -49,6 +63,7 @@ class TagTestHTML401 extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   *
    */
   public function testShouldMaskContent() {
     $data = array('script', 'style');
@@ -58,6 +73,7 @@ class TagTestHTML401 extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   *
    */
   public function testGetContentMaskOpen() {
     $data = array(
@@ -70,6 +86,7 @@ class TagTestHTML401 extends PHPUnit_Framework_TestCase {
   }
 
   /**
+   *
    */
   public function testGetContentMaskClose() {
     $data = array(
@@ -82,3 +99,5 @@ class TagTestHTML401 extends PHPUnit_Framework_TestCase {
   }
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

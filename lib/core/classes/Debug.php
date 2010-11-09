@@ -1,26 +1,20 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
-
 /**
- * @package    jerity.core
+ * @author     Dave Ingram <dave@dmi.me.uk>
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
  */
 
 /**
  * Debugging class providing useful methods for diagnosing problems and
  * performance.
  *
- * @package    jerity.core
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
  */
 class Debug {
 
@@ -100,9 +94,9 @@ class Debug {
   /**
    * Outputs a comment based on the current render context into the document.
    *
-   * @todo  Allow single line comments with // and #
-   *
    * @param  string  $text  The debugging text to output.
+   *
+   * @todo  Allow single line comments with // and #
    */
   public static function comment($text) {
     if (!self::$enabled) return;
@@ -136,12 +130,12 @@ class Debug {
   /**
    * Outputs a block containing the data into the document.
    *
-   * @todo  Tidy this up.
-   * @todo  Formatting and highlighting without xdebug.
-   *
    * @param  mixed    $data       The debugging data to output.
    * @param  boolean  $highlight  Whether the data should be highlighted.
    * @param  boolean  $collapsed  Should the debug block be collapsed initially
+   *
+   * @todo  Tidy this up.
+   * @todo  Formatting and highlighting without xdebug.
    */
   public static function out($data, $highlight = true, $collapsed = false) {
     if (!self::$enabled) return;
@@ -175,7 +169,7 @@ class Debug {
     if ($collapsed) $style .= ' display: none;';
     if ($highlight) {
       echo '<div id="'.$id.'_data" style="'.$style.' font-family: monospace; max-height: 150px; overflow: auto; white-space: pre;">';
-	  # TODO: Need to escape data without clobbering highlight/xdebug modifications.
+      # TODO: Need to escape data without clobbering highlight/xdebug modifications.
       var_dump($data);
       echo '</div>';
     } else {
@@ -195,9 +189,9 @@ class Debug {
   /**
    * Outputs a message to a log file.
    *
-   * @todo  Implement this method...
-   *
    * @param  mixed  $message  The debugging message to log.
+   *
+   * @todo  Implement this method...
    */
   public static function log($message) {
     if (!self::$enabled) return;
@@ -208,3 +202,5 @@ class Debug {
   ##############################################################################
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

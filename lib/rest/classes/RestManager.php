@@ -1,17 +1,38 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.rest
+ */
 class RestManager {
+
+  /**
+   *
+   */
   protected static $base_path = '';
+
+  /**
+   *
+   */
   protected static $default_format = 'json';
+
+  /**
+   *
+   */
   protected static $constant_handlers = false;
+
+  /**
+   *
+   */
   protected static $handlers = array(
     'GET'    => array(),
     'POST'   => array(),
@@ -20,35 +41,48 @@ class RestManager {
     ''       => array(),
   );
 
+  /**
+   *
+   */
   private function __construct() {
   }
 
+  /**
+   *
+   */
   public static function setDefaultFormat($format) {
     self::$default_format = $format;
   }
 
+  /**
+   *
+   */
   public static function setBasePath($base_path) {
     $base_path = '/'.ltrim(rtrim($base_path, '/'), '/');
     self::$base_path = $base_path;
   }
 
+  /**
+   *
+   */
   public static function setConstantHandlers($value=true) {
     self::$constant_handlers = $value;
   }
 
+  /**
+   *
+   */
   protected static function _registerHandler($handler, array $methods = null) {
-    if ($methods === null) {
-      $methods = array('GET');
-    }
-
+    if ($methods === null) $methods = array('GET');
     foreach ($methods as $method) {
-      if ($method === '*') {
-        $method = '';
-      }
+      if ($method === '*') $method = '';
       self::$handlers[strtoupper($method)][] = &$handler;
     }
   }
 
+  /**
+   *
+   */
   protected static function mutateFunctionName($callable, $verb) {
     $new_callable = $callable;
     if (is_array($new_callable)) {
@@ -98,9 +132,11 @@ class RestManager {
     self::_registerHandler($handler, $methods);
   }
 
+  /**
+   *
+   */
   public static function getRequestHeaders() {
     static $headers = array();
-
     if (!count($headers)) {
       foreach ($_SERVER as $name => $value) {
         if (substr($name, 0, 5) == 'HTTP_') {
@@ -111,6 +147,9 @@ class RestManager {
     return $headers;
   }
 
+  /**
+   *
+   */
   protected static function could_dispatch($url, $check_nonstandard=false) {
     foreach (self::$handlers as $verb => $handler_group) {
       if (!$check_nonstandard && !in_array($verb, array('GET', 'POST', 'PUT', 'DELETE'))) {
@@ -126,6 +165,9 @@ class RestManager {
     }
   }
 
+  /**
+   *
+   */
   protected static function _dispatch_handler(RestRequest $request, $handler, $handler_verb) {
     $func = $handler['handler'];
     if (( isset($handler['mutate']) && $handler['mutate']) ||
@@ -139,6 +181,9 @@ class RestManager {
     return headers_sent() || $retval;
   }
 
+  /**
+   *
+   */
   protected static function real_dispatch(RestRequest $request, $handler_verb) {
     $url = $request->getUrl();
     foreach (self::$handlers[$handler_verb] as $handler) {
@@ -165,10 +210,12 @@ class RestManager {
     return false;
   }
 
+  /**
+   *
+   */
   public static function dispatch(RestRequest $request) { //$url, $verb, $headers, $get_args, $body) {
     $url = $request->getUrl();
     $handler_verb = $verb = $request->getVerb();
-
     if (!isset(self::$handlers[$verb])) {
       if (!count(self::$handlers[''])) {
         // error -- invalid verb
@@ -199,6 +246,9 @@ class RestManager {
     return;
   }
 
+  /**
+   *
+   */
   public static function getCurrentUrl($trim_base = true) {
     $url = $_SERVER['REQUEST_URI'];
     if ($trim_base) {
@@ -207,8 +257,13 @@ class RestManager {
     return $url;
   }
 
+  /**
+   *
+   */
   public static function dispatchFromCurrent() {
     return self::dispatch(RestRequest::createFromCurrent());
   }
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

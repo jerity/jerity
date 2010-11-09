@@ -1,9 +1,11 @@
-/******************************************************************************
- * Description: Layout CSS
- * Package:     JerityTemplate
- * Author:      Nick Pope <nick [at] nickpope [dot] me [dot] uk>
- * Copyright:   Copyright (c) 2010 Nick Pope
- ******************************************************************************/
+/**
+ * Layout CSS [HTML4] [XHTML1]
+ *
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.template
+ */
 
 .layout {
   margin: 0;
@@ -12,9 +14,8 @@
 
 .layout:after {
   clear: both;
-  content: ".";
+  content: "\0020";
   display: block;
-  font-size: 1px;
   height: 0;
   visibility: hidden;
 }
