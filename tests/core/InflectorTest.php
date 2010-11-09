@@ -8,7 +8,9 @@
 # San Francisco, California 94105, USA.
 ##############################################################################
 
-
+/**
+ * @group Inflector
+ */
 class InflectorTest extends PHPUnit_Framework_TestCase {
 
   public static function getWordPairs() {
