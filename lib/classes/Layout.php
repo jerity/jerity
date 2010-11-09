@@ -128,6 +128,15 @@ class Layout implements Renderable {
   }
 
   /**
+   * Returns the number of columns in this layout.
+   *
+   * @return  int
+   */
+  public function countColumns() {
+    return count($this->columns);
+  }
+
+  /**
    * Returns the units that the columns have been specified in.
    *
    * @return  int
@@ -229,6 +238,31 @@ class Layout implements Renderable {
     if ($this->current_column >= count($this->columns)) {
       $this->current_column = count($this->columns) - 1;
       trigger_error('No next column available.', E_USER_WARNING);
+    }
+    return $this;
+  }
+
+  /**
+   * Gets the currently selected column.
+   *
+   * @return  int  The current column index.
+   */
+  public function currentColumn() {
+    return $this->current_column;
+  }
+
+  /**
+   * Selects the column to add content to by index.
+   *
+   * @param  int  $index
+   *
+   * @return  Layout  The current Layout object, for method chaining.
+   */
+  public function selectColumn($index) {
+    $this->current_column = abs(intval($index));
+    if ($this->current_column >= count($this->columns)) {
+      $this->current_column = count($this->columns) - 1;
+      trigger_error('Cannot select column out of range.', E_USER_WARNING);
     }
     return $this;
   }
