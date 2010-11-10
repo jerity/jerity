@@ -345,7 +345,7 @@ class RenderContext {
               throw new InvalidArgumentException('Unrecognised HTML 4.01 dialect '.$this->dialect.'; cannot build doctype');
           }
         case 5:
-          return '<!doctype html>';
+          return '<!DOCTYPE html>';
         default:
           throw new InvalidArgumentException('Unrecognised HTML version '.$this->version.'; cannot build doctype');
       }
