@@ -1,32 +1,29 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
-
 /**
- * @package    jerity.core
+ * @author     Dave Ingram <dave@dmi.me.uk>
  * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
  */
 
 /**
  * URL utility class.
  *
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.core
+ *
  * @todo  Add support for multidimensional query arrays 'key[0]..[n]=value'
  * @todo  Add support for named query arrays 'key[name]=value'
  * @todo  Sanity checking - i.e. what characters can a URL fragment have?
- *
- * @package    jerity.core
- * @author     Nick Pope <nick@nickpope.me.uk>
- * @copyright  Copyright (c) 2009 Nick Pope
  */
 class URL {
 
+  /**
+   *
+   */
   protected $components = array(
     'scheme'   => '',       # Required
     'host'     => '',       # Required
@@ -38,8 +35,14 @@ class URL {
     'fragment' => '',
   );
 
+  /**
+   *
+   */
   protected static $current = null;
 
+  /**
+   *
+   */
   protected static $ignored_query_parameters = array();
 
   /**
@@ -609,9 +612,9 @@ class URL {
   /**
    * Checks whether this URL object is valid.
    *
-   * @todo  Perform additional checks on other components.
-   *
    * @return  bool  True if this URL object is valid.
+   *
+   * @todo  Perform additional checks on other components.
    */
   public function isValid() {
     if (!$this->components['scheme']) return false;
@@ -747,3 +750,5 @@ class URL {
     return preg_match($regex, $url);
   }
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

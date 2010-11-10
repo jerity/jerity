@@ -1,14 +1,19 @@
 <?php
-##############################################################################
-# Copyright © 2010 David Ingram, Nicholas Pope
-#
-# This work is licenced under the Creative Commons BSD License License. To
-# view a copy of this licence, visit http://creativecommons.org/licenses/BSD/
-# or send a letter to Creative Commons, 171 Second Street, Suite 300,
-# San Francisco, California 94105, USA.
-##############################################################################
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 
-
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
 class NumberTest extends PHPUnit_Framework_TestCase {
 
   /**
@@ -18,6 +23,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(0, Number::intcmp($a, $b));
   }
 
+  /**
+   *
+   */
   public static function intEqProvider() {
     return array(
       array(-25, -25),
@@ -39,6 +47,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(1, Number::intcmp($a, $b));
   }
 
+  /**
+   *
+   */
   public static function intGtProvider() {
     return array(
       array(-24, -25),
@@ -60,6 +71,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(-1, Number::intcmp($a, $b));
   }
 
+  /**
+   *
+   */
   public static function intLtProvider() {
     return array(
       array(-25, -24),
@@ -81,6 +95,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(0, Number::dblcmp($a, $b));
   }
 
+  /**
+   *
+   */
   public static function dblEqProvider() {
     return array(
       array(-25, -25),
@@ -104,6 +121,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(1, Number::dblcmp($a, $b));
   }
 
+  /**
+   *
+   */
   public static function dblGtProvider() {
     return array(
       array(-24, -25),
@@ -127,6 +147,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     $this->assertSame(-1, Number::dblcmp($a, $b));
   }
 
+  /**
+   *
+   */
   public static function dblLtProvider() {
     return array(
       array(-25, -24),
@@ -150,6 +173,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(Number::parseBits($a, $b), $c);
   }
 
+  /**
+   *
+   */
   public static function parseBitsProvider() {
     $values          = array(1, 10, 12.34);
     $prefix_symbol   = array('', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'K', 'M', 'G');
@@ -187,6 +213,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     Number::parseBits($a, $b);
   }
 
+  /**
+   *
+   */
   public static function parseBitsExceptionProvider() {
     return array(
       array('Not a size.', false, 'JerityException'),
@@ -203,6 +232,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(Number::parseBytes($a, $b), $c);
   }
 
+  /**
+   *
+   */
   public static function parseBytesProvider() {
     $values          = array(1, 10, 12.34);
     $prefix_symbol   = array('', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'K', 'M', 'G');
@@ -240,6 +272,9 @@ class NumberTest extends PHPUnit_Framework_TestCase {
     Number::parseBytes($a, $b);
   }
 
+  /**
+   *
+   */
   public static function parseBytesExceptionProvider() {
     return array(
       array('Not a size.', false, 'JerityException'),
@@ -250,3 +285,5 @@ class NumberTest extends PHPUnit_Framework_TestCase {
   }
 
 }
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

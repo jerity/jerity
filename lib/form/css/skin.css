@@ -1,9 +1,12 @@
-/******************************************************************************
- * Description: Form Default Skin CSS
- * Package:     JerityForm
- * Author:      Dave Ingram <dave [at] dmi [dot] me [dot] uk>
- * Copyright:   Copyright (c) 2009 Dave Ingram
- ******************************************************************************/
+/**
+ * Form Default Skin CSS [HTML4] [XHTML1]
+ *
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.form
+ */
+
 form fieldset {
   background-color: #f2efe9;
   border-style: none;
