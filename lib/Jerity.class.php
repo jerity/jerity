@@ -43,7 +43,7 @@ class Jerity {
    *
    * @internal
    *
-   * @param   string  $name  The name of the class to load
+   * @param  string  $name  The name of the class to load
    *
    * @return  bool
    */
@@ -51,7 +51,7 @@ class Jerity {
     $names = array($name);
     if (self::$autoload_harder) {
       if (!class_exists('String')) {
-        require_once(dirname(__FILE__).'/classes/String.php');
+        require_once dirname(__FILE__).'/classes/String.php';
       }
       // Break the class name up, so IterableRenderable will search for
       // Iterable and Renderable and MyFooClass will search for My, MyFoo,
@@ -80,9 +80,7 @@ class Jerity {
         $target_file = $dir.'/'.$name.'.php';
         if (file_exists($target_file)) {
           include_once($target_file);
-          if (class_exists($name)) {
-            return true;
-          }
+          if (class_exists($name)) return true;
         }
       }
     }
@@ -96,7 +94,7 @@ class Jerity {
    *
    * Returns true on success; false if the directory is not found.
    *
-   * @param   string  $dir  The name of the directory to add
+   * @param  string  $dir  The name of the directory to add
    *
    * @return  boolean
    */
@@ -105,21 +103,14 @@ class Jerity {
       spl_autoload_register(array('Jerity', 'autoload'));
     }
     $dir = realpath(rtrim($dir, '/'));
-    if ($dir === false || !is_dir($dir)) {
-      return false;
-    }
+    if ($dir === false || !is_dir($dir)) return false;
     $base_dir = $dir;
-
     self::$autoload_dirs[$dir] = 1;
-
     $auto_subdirs = array('interfaces', 'classes', 'exceptions');
     foreach ($auto_subdirs as $subdir) {
       $dir = "$base_dir/$subdir";
-      if (is_dir($dir)) {
-        self::$autoload_dirs[$dir] = 1;
-      }
+      if (is_dir($dir)) self::$autoload_dirs[$dir] = 1;
     }
-
     return true;
   }
 
