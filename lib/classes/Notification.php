@@ -85,7 +85,7 @@ class Notification implements Renderable {
     $this->setType($type);
   }
 
-  /*
+  /**
    * Overrides the default object to string conversion to force the Renderable
    * item to be rendered in string context.
    *

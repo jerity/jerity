@@ -20,15 +20,55 @@
  * @package    jerity.ui
  */
 class NavigationMenu implements Renderable {
+
+  /**
+   *
+   */
   protected $exact_url_class  = null;
+
+  /**
+   *
+   */
   protected $best_match_class = null;
+
+  /**
+   *
+   */
   protected $besturl = array();
+
+  /**
+   *
+   */
   protected $urls = array();
+
+  /**
+   *
+   */
   protected $url_cache = array();
+
+  /**
+   *
+   */
   protected $attrs = array();
+
+  /**
+   *
+   */
   protected $our_url = '';
+
+  /**
+   *
+   */
   protected $level_hints = false;
+
+  /**
+   *
+   */
   protected $static_best = false;
+
+  /**
+   *
+   */
   protected $static_exact = true;
 
   /**
@@ -92,8 +132,9 @@ class NavigationMenu implements Renderable {
 
   /**
    * Returns whether or not level hints are enabled. Level hints are
-   * additional classes added to the \t <ul> element in order to distinguish
-   * between multiple levels. They are of the form "level0", "level1", etc.
+   * additional classes added to the \t &lt;ul&gt; element in order to 
+   * distinguish between multiple levels. They are of the form "level0", 
+   * "level1", etc.
    *
    * @return  bool
    */
@@ -103,8 +144,8 @@ class NavigationMenu implements Renderable {
 
   /**
    * Enable or disable level hints. Level hints are additional classes added
-   * to the \t <ul> element in order to distinguish between multiple levels.
-   * They are of the form "level0", "level1", etc.
+   * to the \t &lt;ul&gt; element in order to distinguish between multiple 
+   * levels. They are of the form "level0", "level1", etc.
    *
    * @param  bool  $hint
    */
@@ -114,8 +155,9 @@ class NavigationMenu implements Renderable {
 
   /**
    * Returns whether or not level hints are enabled. Level hints are
-   * additional classes added to the \t <ul> element in order to distinguish
-   * between multiple levels. They are of the form "level0", "level1", etc.
+   * additional classes added to the \t &lt;ul&gt; element in order to 
+   * distinguish between multiple levels. They are of the form "level0", 
+   * "level1", etc.
    *
    * @return  bool
    */
@@ -125,8 +167,8 @@ class NavigationMenu implements Renderable {
 
   /**
    * Enable or disable level hints. Level hints are additional classes added
-   * to the \t <ul> element in order to distinguish between multiple levels.
-   * They are of the form "level0", "level1", etc.
+   * to the \t &lt;ul&gt; element in order to distinguish between multiple 
+   * levels. They are of the form "level0", "level1", etc.
    *
    * @param  bool  $hint
    */
@@ -159,8 +201,9 @@ class NavigationMenu implements Renderable {
 
   /**
    * Returns whether or not level hints are enabled. Level hints are
-   * additional classes added to the \t <ul> element in order to distinguish
-   * between multiple levels. They are of the form "level0", "level1", etc.
+   * additional classes added to the \t &lt;ul&gt; element in order to 
+   * distinguish between multiple levels. They are of the form "level0", 
+   * "level1", etc.
    *
    * @return  bool
    */
@@ -170,8 +213,8 @@ class NavigationMenu implements Renderable {
 
   /**
    * Enable or disable level hints. Level hints are additional classes added
-   * to the \t <ul> element in order to distinguish between multiple levels.
-   * They are of the form "level0", "level1", etc.
+   * to the \t &lt;ul&gt; element in order to distinguish between multiple 
+   * levels. They are of the form "level0", "level1", etc.
    *
    * @param  bool  $hint
    */
@@ -179,10 +222,16 @@ class NavigationMenu implements Renderable {
     $this->level_hints = $hint;
   }
 
+  /**
+   *
+   */
   public function getTopAttrs() {
     return $this->attrs;
   }
 
+  /**
+   *
+   */
   public function setTopAttrs(array $attrs) {
     $this->attrs = $attrs;
   }
@@ -236,7 +285,7 @@ class NavigationMenu implements Renderable {
    * to the \t <li> items as necessary.
    *
    * @param  array  $urls       The list of URLs to be rendered.
-   * @param  array  $top_attrs  The attributes for the \t <ul> parent.
+   * @param  array  $top_attrs  The attributes for the \t &lt;ul&gt; parent.
    * @param  int    $level      The current level in the URL tree.
    *
    * @return  string
