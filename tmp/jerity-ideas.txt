@@ -1,0 +1,220 @@
+= Jerity Ideas =
+
+== Improvements to Existing Code ==
+
+=== Render Context Issues ===
+ - ~~Ensure XHTML 1.0 uses application/xhtml+xml~~
+  * ~~See: http://www.greytower.net/archive/articles/xhtmlcontent.html~~
+ - ~~Add XHTML 1.0 Compatibility which uses text/html~~
+  * ~~Should probably be the default context right now...~~ ''need to call function...''
+  * ~~Ensure we have a comment about adhering to compatibility guidelines.~~
+  * ~~See: http://www.w3.org/TR/xhtml1/#guidelines~~
+ - ~~Disable XML declaration for XHTML 1.0 Compatibility~~
+  * ~~See: http://www.w3.org/TR/xhtml-media-types/~~
+  * ~~Need to check what this does to quirks/standards mode - IE?~~
+
+=== Default Content Types and Character Encodings ===
+ - Allow setting defaults that Jerity will use by default:
+  * Specifications:
+   - http://www.iana.org/assignments/character-sets
+   - http://www.w3.org/TR/html401/charset.html#spec-char-encoding
+   - http://www.w3.org/TR/html401/interact/scripts.html#default-script
+   - http://www.w3.org/TR/html401/present/styles.html#default-style
+   - http://www.w3.org/TR/html401/types.html#type-charset
+   - http://www.w3.org/TR/html401/types.html#type-content-type
+   - http://www.w3.org/TR/html5-diff/#character-encoding
+  * ~~Add charset constants to !RenderContext~~ ''not required...''
+   - ~~Limit to (?): US-ASCII, ISO-8859-1, UTF-{8,16,32}, Shift_JIS, GB2312, EUC-KR, Big5~~
+  * HTTP Headers:
+   i. `Content-Type:        "text/html; charset=UTF-8"`
+   i. `Content-Script-Type: text/javascript`
+   i. `Content-Style-Type:  text/css`
+   i. `Content-Language:    en-GB`
+  * (X)HTML Meta Tag:
+   i. ![HTML5] `<meta charset="UTF-8">`
+   i. `<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />`
+   i. `<meta http-equiv="Content-Script-Type" content="text/javascript"   />`
+   i. `<meta http-equiv="Content-Style-Type"  content="text/css"          />`
+   i. `<meta http-equiv="Content-Language"    content="en-GB"             />`
+  * ~~Automatically add `charset` to `<style>` and `<script>` (external only)~~
+  * ~~Automatically add `type` to `<style>` and `<script>` if external * reesource~~
+   - ~~`Tag::setDefault{Script,Style}ContentType()`~~
+
+=== Default Style Media Attribute ===
+ - ~~Update `Tag::{link,style}()` to choose a value for media attribute (`{link,style}[media]`):~~
+  1. ~~Attempt to use a provided value to the `$attrs` array, if set.~~
+  1. ~~Attempt to use the default, if set.~~
+  1. ~~Use ''"all"'' as the media attribute.~~
+
+=== Default Text Direction ===
+ - `Chrome::setDefaultTextDirection(Chrome::LTR)`
+
+=== Internet Explorer Conditional Comments ===
+ - ~~Support automatic inclusion of conditional comments based of filename.~~
+  * ~~e.g. forms.lt.ie6.css:  `<!--![if lt IE 6]><link ... /><!--![endif]>`~~
+
+== New Code ==
+
+=== Handle Special Metadata Links ===
+ - Add helper function to generate link tags.
+ - Specification:
+  * http://www.w3.org/TR/html401/struct/links.html
+  * http://www.w3.org/TR/html401/struct/links.html#search
+ - Available link types:
+  i. '''alternate''' - An alternate version of the document (i.e. print page, translated or mirror)
+  i. '''stylesheet''' - An external style sheet for the document
+  i. '''start''' - The first document in a selection
+  i. '''next''' - The next document in a selection
+  i. '''prev''' - The previous document in a selection
+  i. '''contents''' - A table of contents for the document
+  i. '''index''' - An index for the document
+  i. '''glossary''' - A glossary (explanation) of words used in the document
+  i. '''copyright''' - A document containing copyright information
+  i. '''chapter''' - A chapter of the document
+  i. '''section''' - A section of the document
+  i. '''subsection''' - A subsection of the document
+  i. '''appendix''' - An appendix for the document
+  i. '''help''' - A help document
+  i. '''bookmark''' - A related document
+ - Other link types:
+  i. '''home''' - The home page of the site
+ - Available media descriptors:
+  i. '''screen''' - Intended for non-paged computer screens.
+  i. '''tty''' - Intended for media using a fixed-pitch character grid, such as teletypes, terminals, or portable devices with limited display capabilities.
+  i. '''tv''' - Intended for television-type devices (low resolution, color, limited scrollability).
+  i. '''projection''' - Intended for projectors.
+  i. '''handheld''' - Intended for handheld devices (small screen, monochrome, bitmapped graphics, limited bandwidth).
+  i. '''print''' - Intended for paged, opaque material and for documents viewed on screen in print preview mode.
+  i. '''braille''' - Intended for braille tactile feedback devices.
+  i. '''aural''' - Intended for speech synthesizers.
+  i. '''all''' - Suitable for all devices.
+ - Examples:
+  i. `<link rel="home" href="/" />`
+  i. `<link rel="copyright" href="#copyright" />`
+  i. `<link rel='index' title='Mozilla Hacks - the Web developer blog' href='http://hacks.mozilla.org' />`
+  i. `<link rel='start' title='Firefox 3.5 for 35 days &#8211; dreaming about the future of the web' href='http://hacks.mozilla.org/2009/06/35-days/' />`
+  i. `<link rel='prev' title='Mozilla developer preview (Gecko 1.9.3a1) available for download' href='http://hacks.mozilla.org/2010/02/mozilla-developer-preview-gecko-1-9-3a1-available-for-download/' />`
+  i. `<link rel='next' title='improving JavaScript performance with JägerMonkey' href='http://hacks.mozilla.org/2010/03/improving-javascript-performance-with-jagermonkey/' />`
+
+=== Mobile Device Support ===
+ - Apple Touch Support
+  * Specification: http://developer.apple.com/safari/library/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+  * (X)HTML Meta Tag:
+   - `<meta name="apple-mobile-web-app-capable" content="yes" />`
+   - `<meta name="apple-mobile-web-app-status-bar-style" content="black" />`
+  * (X)HTML Link Tag:
+   - `<link rel="apple-touch-icon" href="/images/apple-touch-icon.png"/>`
+   - `<link rel="apple-touch-icon-precomposed" href="/images/apple-touch-icon.png"/>`
+   - `<link rel="apple-touch-startup-image" href="/startup.png">`
+ - Android Support
+  * The option ''apple-touch-icon-precomposed'' (see above) is supported.
+
+=== RSS/RDF/Atom Feeds ===
+ - Add helper function to generate feed tags.
+  * (X)HTML Link Tag:
+   - `<link rel="alternate" type="application/rss+xml" title="Mozilla Hacks &#8211; the Web developer blog RSS Feed" href="http://hacks.mozilla.org/feed/" />`
+
+=== Search Plugins ===
+ - Add helper function to generate search plugin tags.
+  * (X)HTML Link Tag:
+   - `<link rel="search" type="application/opensearchdescription+xml" title="MusicBrainz: Artist" href="/search/plugins/opensearch/musicbrainzartist.xml" />`
+   - `<link rel="search" type="application/opensearchdescription+xml" title="MusicBrainz: Label" href="/search/plugins/opensearch/musicbrainzlabel.xml" />`
+   - `<link rel="search" type="application/opensearchdescription+xml" title="MusicBrainz: Release" href="/search/plugins/opensearch/musicbrainzrelease.xml" />`
+   - `<link rel="search" type="application/opensearchdescription+xml" title="MusicBrainz: Track" href="/search/plugins/opensearch/musicbrainztrack.xml" />`
+
+=== Microformat Generator ===
+ - Generate appropriate markup for microformats
+ - ![CSS] Provide default styling for various microformats
+
+=== Pingback ===
+ - Add helper function to generate Pingback headers/tags.
+ - Specification: http://www.hixie.ch/specs/pingback/pingback
+  * HTTP Headers:
+   - `X-Pingback: http://www.example.com/pingback`
+  * (X)HTML Link Tag:
+   - `<link rel="pingback" href="http://www.example.com/pingback" />`
+
+=== Microsoft Internet Explorer Feature Toggling ===
+ - Add an optional function to disable various Microsoft extensions.
+ - Wrap in a conditional comment to ensure these are only visible to IE.
+ - Available featues to disable:
+  i. `<meta name="MSSmartTagsPreventParsing" content="true" />`
+  i. `<meta http-equiv="MSThemeCompatible" content="no" />`
+  i. `<meta http-equiv="imagetoolbar" content="no" />`
+ - Add an optional function to target specific rendering version of Internet Explorer
+  i. `<meta http-equiv="X-UA-Compatible" content="IE=Edge" />`
+   * Available versions: IE={5,7,8,Edge,EmulateIE{7,8}}
+
+== Support for New/Provisional Standards ==
+
+=== Early Partial HTML 5 Support ===
+ - ![CSS] Create a file to handle new tags:
+  * See: http://orderedlist.com/our-writing/resources/html-css/structural-tags-in-html5/
+  i. Structural tags:     `article, footer, header, nav, section { display: block; }`
+  i. Block Semantic tags: `aside, dialog, figure { display: block; }`
+ - ![JS] Create a file to handle new tags (IE Support):
+  * See: http://orderedlist.com/our-writing/resources/html-css/structural-tags-in-html5/
+  i. Structural tags:     `document.createElement('...');` for each
+  i. Block Semantic tags: `document.createElement('...');` for each
+ - Create a HTML5Layout class to handle easy creation of HTML5 layout markup
+  * e.g. `$layout->addHeader()`, `$layout->addSection()`
+  * Actually - better just rendering a layout as required:
+   - e.g. HTML5: `<section>`, HTML4: `<div class="section">`
+
+== External Resource Handling ==
+
+=== CSS Cruncher ===
+ - Options for level of crunching:
+  i. Just crunch to remove whitespace, or
+  i. crunch and merge into one monolithic file.
+ - Requires a hash list to see which files have changed and thus need to be
+   crunched.
+
+=== Cache Breaker ===
+ - Add support for cache breaking when writing tags - three modes:
+  i. Disabled
+  i. Cache based on content change...  Requires a hash list.
+  i. No caching - always update to be `time()` - useful for developing.
+ - Add support for global and individual caching.
+
+== Utilities ==
+
+=== HTTP Headers ===
+ - ~~Wrapper for the `header()` function call?~~
+ - Use when outputting certain `<meta>` also?
+ - Use when setting default character encodings, etc.
+ - ~~Only output when rendering the page.~~
+
+=== Page Profiler ===
+ - Options for output of profiling:
+  i. Output to a log file.
+  i. Output as comments in the target document (if possible)
+ - Details to output:
+  * Time-related output:
+   i. Date and time that profiling started
+   i. Date and time that profiling finished with time taken.
+   i. Date and time intervals on request with time taken so far.
+  * Database-related output:
+   i. Number of queries executed at intervals and at end.
+
+== Miscellaneous/Other ==
+
+=== Default Base Package ===
+ - Create a default base package for easy start with instructions
+ - Some problems to iron out such as PHP include path stuff...
+ - Provide default auto include that can be easily configured.
+
+=== QA Checking ===
+ - Ensure we can have multiple `<meta>` with the same key, but only where it
+   makes sense (e.g. cache control) i.e. http-equiv.
+ - Ensure we can add `lang` attribute to `<meta>`
+
+=== Documentation ===
+ - Write a list of Jerity features (completed + planned) by module.
+
+=== External Libraries ===
+ - http://ie7-js.googlecode.com/
+ - ~~http://html5shiv.googlecode.com/~~
+
+----
+vim:ft=tracwiki:nowrap

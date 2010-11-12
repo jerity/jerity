@@ -1,0 +1,61 @@
+FormElement (abstract, implements Renderable):
+ + __construct($name, $label)
+ + id($id)
+ + class($class)
+ + addClass($class)
+ + toggleClass($class) ?
+ + value($value)
+ + required([$required = true])
+ + set($attr, $value)
+ + set(array $attrs) // key-value pairs
+ + get($attr)
+ + render()
+ + __toString()
+ + getError()
+ # generateId()
+ # propagateErrors($errors)
+ # propagateData($data)
+
+FormElementContainer (interface, extends Renderable):
+ + add(FormElement $element)
+ + addText($name, $label)
+ + addPassword($name, $label)
+ + addCheckbox($name, $label)
+ + addCheckboxGroup(array $options[, $label]) // name-label pairs
+ + addRadio($name, $label, $value)
+ + addRadioGroup($name, array $options[, $label]) // value-label pairs
+ + addFile($name, $label)
+ + addSelect($name, $label[, array $options]) // key-value pairs
+ + addTextarea($name, $label)
+ + addDate($name, $label)
+ + addTime($name, $label)
+ + addDateTime($name, $label)
+ + addFieldset($label)
+ + addHint($content)
+ + addCustom($content[, $label])
+ + addSubmit($name, $label)
+ + addReset($name, $label)
+
+FormTemplate (implements FormElementContainer, Renderable):
+ + __construct([$action[, $method]])
+ + id($id)
+ + class($class)
+ + addClass($class)
+ + set($attr, $value)
+ + set(array $attrs) // key-value pairs
+ + get($attr)
+ + render()
+ + __toString()
+
+FormElementGroup (interface):
+ ???
+
+FormRenderer (interface, extends Renderable):
+ + __construct(FormTemplate $template)
+ + create(FormTemplate $template)
+ + setRenderFormTags($bool)
+ + getRenderFormTags()
+ + render()
+
+FormDefaultRenderer (implements FormRenderer):
+

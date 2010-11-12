@@ -1,0 +1,41 @@
+.mf_error {
+  background-color: #fcc;
+  border: solid 1px #f00;
+  padding: 10px;
+}
+
+.mf_warn {
+  background-color: #ffc;
+  border: solid 1px #fd0;
+  padding: 10px;
+}
+
+.mf_gallery {
+  clear: both;
+  display: table;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.mf_frame {
+  background-image: url(shadow.png);
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  display: table-cell;
+  float: left;
+  margin: 5px;
+  padding: 0 5px 5px 0;
+}
+
+.mf_thumbnail {
+  border: solid 1px #ccc;
+  padding: 10px;
+}
+
+.mf_thumbnail a {
+  outline: none;
+}
+
+.mf_thumbnail a img {
+  border: none;
+}

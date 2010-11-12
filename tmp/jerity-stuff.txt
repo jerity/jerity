@@ -1,0 +1,34 @@
+################################################################################
+# Miscellaneous
+################################################################################
+
+<meta name="Rating" content="General" />
+<meta name="Robots" content="ALL" />
+<link rel="canonical" href="http://hacks.mozilla.org/2010/02/firefox-46-features/" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://hacks.mozilla.org/wp-includes/wlwmanifest.xml" /> 
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://hacks.mozilla.org/xmlrpc.php?rsd" />
+<link rel="shortlink" href="http://wp.me/pLhDg-120" />
+<meta name="verify-v1" content="Og0xVSgWWrPKscW1zD3Jp9MB9rmerGnk3negxbYC9rc=" />
+<meta name="y_key" content="12decb8436a5e6c9" />
+<meta name="msvalidate.01" content="345C9BA588E2AF0C1768F8832F1DB5C0" />
+<meta name="DCSext.MLC" content="/jobs" />
+<meta name="DCSext.Channel" content="jobs" />
+<meta name="DCSext.Content_Type" content="Index" />
+<meta name="DCSext.Level" content="1" />
+<script type="text/javascript" src="http://jobs.telegraph.co.uk/core/webtrends/js/WTID.js"></script>
+<script type="text/javascript" src="http://jobs.telegraph.co.uk/core/webtrends/js/Webtrends.js"></script>
+<meta name="viewport" content="width=600; user-scalable=no">
+<meta name="blogcatalog" content="9BC9115276" />
+<meta content="14.5667, 121.0333" name="ICBM"/>
+<meta content="14.5667;121.0333" name="geo.position"/>
+<meta content="PH" name="geo.country"/>
+<meta content="PH-00" name="geo.region"/>
+<meta content="Makati City" name="geo.placename"/>
+<link rel="P3Pv1" href="/assets/w3c/p3p.xml" />
+
+http://dean.edwards.name/my/flicker.html
+http://www.telerik.com/community/forums/aspnet/general-discussions/stop-the-flicker-on-mouse-over.aspx
+<script type="text/javascript">try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {}</script>
+
+################################################################################
+# vim:nowrap

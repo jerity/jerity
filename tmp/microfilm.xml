@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin" group="content">
+	<name>Microfilm Plugin</name>
+	<author>Nick Pope</author>
+	<creationDate>15/11/2008</creationDate>	
+	<copyright>TBC</copyright>
+	<authorEmail>microfilm@nickpope.me.uk</authorEmail>
+  <authorUrl>http://www.nickpope.me.uk/projects/microfilm</authorUrl>
+	<version>0.1.0</version>
+	<description>MICROFILM_DESC</description>
+	<params>
+		<param name="thumb_width" type="text" default="150" size="5" label="Thumbnail Width" description="Maximum thumbnail width in pixels." />
+		<param name="thumb_height" type="text" default="150" size="5" label="Thumbnail Height" description="Maximum thumbnail height in pixels." />
+		<param name="thumb_quality" type="text" default="90" size="5" label="Thumbnail Quality" description="Quality of the generated image thumbnail [0-100]." />
+    <param name="thumb_method" type="list" default="scale" label="Thumbnail Method" description="Thumbnails can either be scaled or cropped.  You can also choose to contrain the proportions of the image to the given width and height.">
+      <option value="scale">Scale</option>
+      <option value="scale_constrain">Scale (Constrain)</option>
+      <option value="crop">Crop</option>
+      <option value="crop_constrain">Crop (Constrain)</option>
+    </param>
+    <param name="thumb_nocache" type="radio" default="0" label="Disable Thumbnail Caching?" description="Prevents caching of thumbnails. It is recommended that caching is left enabled to reduce server CPU load.">
+      <option value="1">Yes</option>
+      <option value="0">No</option>
+    </param>
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+    <param name="placeholder" type="text" default="gallery" label="Placeholder Text" description="The name to use for the gallery." />
+    <param name="root_dir" type="text" default="/images/stories" label="Root Path" description="The topmost level for gallery folders." />
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		<param name="def_caption" type="radio" default="1" label="Show default caption?" description="If no custom caption has been defined, use the name of the file.">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</param>
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		<param name="warn_empty" type="radio" default="1" label="Warn if the gallery is empty?" description="Show a warning message if the gallery is empty.">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</param>
+    <!--
+		<param name="displaymessage" type="radio" default="1" label="Should we display a nice message?" description="If set to yes, the message you enter below will display in the popup window containing the image, along with the content item's title. If set to no, then the filename of the image will only be displayed.">
+			<option value="1">Yes</option>
+			<option value="0">No</option>
+		</param>
+    <param name="message" type="text" default="You are browsing images from the article:" size="50" label="Popup window message" description="Insert here the text that will be displayed on the preview popup window, next to the content item title. Valid only if the above setting is set to 'Yes'." />
+    -->
+	</params>
+	<files>
+		<filename plugin="microfilm">microfilm.php</filename>
+		<filename plugin="microfilm">microfilm/closelabel.gif</filename>
+		<filename plugin="microfilm">microfilm/loading.gif</filename>
+		<filename plugin="microfilm">microfilm/logo.gif</filename>
+		<filename plugin="microfilm">microfilm/mootools.js</filename>
+		<filename plugin="microfilm">microfilm/nextlabel.gif</filename>
+		<filename plugin="microfilm">microfilm/prevlabel.gif</filename>
+		<filename plugin="microfilm">microfilm/shadow.gif</filename>
+		<filename plugin="microfilm">microfilm/shadowAlpha.png</filename>
+		<filename plugin="microfilm">microfilm/thumbnail.php</filename>
+		<filename plugin="microfilm">microfilm/sig.css</filename>
+		<filename plugin="microfilm">microfilm/slimbox.js</filename>
+	</files>
+  <languages>
+    <language tag="en-GB">en-GB.plg_content_microfilm.ini</language>
+  </languages>
+</install>

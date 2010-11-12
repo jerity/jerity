@@ -1,0 +1,17 @@
+1. PropelFormTranslator (and other form-related stuff, e.g. CSS)
+2. Image class to handle image resizing, cropping, borders, etc. - essentially what phpThumb does, but better - I already have some code written
+3. Error/Exception handler stuff, incl. @-suppression warnings
+4. Proper benchmarking/profiling stuff.
+5. CSS crunching / investigation of Less.js
+6. Finish work on the pluralisation/singularisation stuff in the Inflector
+7. Investigate PHP 5.3 namespaces for Jerity and 5.2 interoperability
+8. Mapping between ISO country codes and country names
+9. Default data lists (e.g. Countries, UK Counties, US States, Months (short/long), etc.) with translation (?)
+10. Translation stuff
+
+Fix jerity.ui.Scaffold when FormGenerator is changed.
+
+Generate phpDocumentor documentation (Write new documentor using PHP's
+tokenizer extension?  Support PHP 5.3 features.)
+
+Update Jerity test suite to remove use of AllTests.php
