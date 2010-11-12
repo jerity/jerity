@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <phpunit bootstrap="tests/bootstrap.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         syntaxCheck="true">
+         syntaxCheck="true"
+         strict="true">
 
 <testsuites>
   <testsuite name="jerity.core">
@@ -41,11 +43,16 @@
   </whitelist>
 </filter>
 
-<logging>
-  <log type="coverage-html" target="build/coverage"
-    charset="UTF-8" yui="true" highlight="false"
-    lowUpperBound="35" highLowerBound="70" />
-  <log type="plain" target="build/logs/plain.txt" />
-</logging>
+  <logging>
+    <log type="coverage-html" target="build/coverage"
+      charset="UTF-8" yui="true" highlight="false"
+      lowUpperBound="35" highLowerBound="70" />
+    <log type="coverage-clover" target="build/logs/phpunit.clover.xml" />
+    <log type="plain" target="build/logs/phpunit.txt" />
+    <log type="json" target="build/logs/phpunit.json" />
+    <log type="junit" target="build/logs/phpunit.xml" />
+    <log type="testdox-html" target="build/logs/phpunit.testdox.html" />
+    <log type="testdox-text" target="build/logs/phpunit.testdox.txt" />
+  </logging>
 
 </phpunit>

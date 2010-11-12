@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="jerity" default="build">
+
+  <property file="./build.properties" />
+  <property name="path.build" value="${project.basedir}/build" />
+  <property name="path.cache" value="${path.build}/cache" override="true" />
+  <property name="path.coverage" value="${path.build}/coverage" override="true" />
+  <property name="path.docs" value="${path.build}/docs" override="true" />
+  <property name="path.logs" value="${path.build}/logs" override="true" />
+  <property name="docs.title" value="Jerity PHP Framwork Documentation" />
+
+  <!-- Default target -->
+  <target name="build" depends="clean,prepare,check-errors,check-standards,reports,test,docs" />
+
+
+  <!-- ===================================================================== -->
+  <!-- Remove all generated output except for cache                          -->
+  <!-- ===================================================================== -->
+  <target name="clean" description="Removes generated output (minus cache).">
+
+    <!-- [clean] remove generated files -->
+    <delete dir="${path.coverage}" includeemptydirs="true" quiet="true" />
+    <delete dir="${path.docs}" includeemptydirs="true" quiet="true" />
+    <delete dir="${path.logs}" includeemptydirs="true" quiet="true" />
+
+  </target>
+
+
+  <!-- ===================================================================== -->
+  <!-- Remove all generated output except for cache                          -->
+  <!-- ===================================================================== -->
+  <target name="clean-all" description="Removes all generated output.">
+
+    <!-- [clean] remove generated files -->
+    <delete dir="${path.build}" includeemptydirs="true" quiet="true" />
+
+  </target>
+
+
+  <!-- ===================================================================== -->
+  <!-- Make preparations for running tasks that will output logs, data, etc. -->
+  <!-- ===================================================================== -->
+  <target name="prepare" description="Preparations for running tasks.">
+
+    <!-- [prepare] create directories for output -->
+    <mkdir dir="${path.cache}" />
+    <mkdir dir="${path.coverage}" />
+    <mkdir dir="${path.docs}" />
+    <mkdir dir="${path.logs}" />
+
+  </target>
+
+
+  <!-- ===================================================================== -->
+  <!-- Check for errors in codebase that would prevent scripts from running. --> 
+  <!-- ===================================================================== -->
+  <target name="check-errors" description="Checks the code for errors.">
+
+    <!-- [check-errors] syntax checking (lint) -->
+    <phplint cachefile="${path.cache}/phplint.cache" deprecatedAsError="true"
+             errorproperty="error.phplint" toFile="${path.logs}/phplint.txt">
+      <fileset dir="lib">
+        <include name="**/*.php"/>
+      </fileset>
+      <fileset dir="tests">
+        <include name="**/*.php"/>
+      </fileset>
+    </phplint>
+    <if><isset property="error.phplint" /><then>
+      <echo msg="PHP scripts syntax error - see ${path.logs}/phplint.txt"
+            level="error" />
+    </then></if>
+
+  </target>
+
+
+  <!-- ===================================================================== -->
+  <!-- Check scripts for standards compliance and coding style errors.       -->
+  <!-- ===================================================================== -->
+  <target name="check-standards" description="Checks for standards compliance.">
+
+    <!-- [check-standards] code sniffer -->
+    <!-- TODO: Set up appropriate coding standards. -->
+    <echo msg="Running PHP code sniffer..." />
+    <property name="log.root" value="${path.logs}/phpcodesniffer" override="true" />
+    <phpcodesniffer standard="Generic" showSniffs="false" showWarnings="true"
+                    tabWidth="2">
+      <fileset dir="lib">
+        <include name="**/*.php" />
+      </fileset>
+      <fileset dir="tests">
+        <include name="**/*.php" />
+      </fileset>
+      <formatter type="xml" outfile="${log.root}.xml" />
+      <formatter type="csv" outfile="${log.root}.csv" />
+      <formatter type="checkstyle" outfile="${log.root}.checkstyle.xml" />
+      <formatter type="summary" outfile="${log.root}.summary.txt" />
+    </phpcodesniffer>
+    <echo msg="Check for warnings/errors in ${path.logs}" level="warning" />
+
+    <!-- [check-standards] copy and paste detection -->
+    <phpcpd>
+      <fileset dir="lib">
+        <include name="**/*.php" />
+      </fileset>
+      <formatter type="pmd" outfile="${path.logs}/phpcpd.pmd.xml" />
+    </phpcpd>
+
+  </target>
+
+
+  <!-- ===================================================================== -->
+  <!-- Generate reports on the PHP code.                                     -->
+  <!-- ===================================================================== -->
+  <target name="reports" description="Generates reports based on the PHP code.">
+
+    <!-- [reports] lines of code -->
+    <echo msg="Report on lines of code:" />
+    <property name="log.root" value="${path.logs}/phploc" override="true" />
+    <exec command="phploc --log-xml ${log.root}.xml -- lib > ${log.root}.txt" />
+    <property name="log.root" value="${path.logs}/phploc.tests" override="true" />
+    <exec command="phploc --count-tests --log-xml ${log.root}.xml -- tests > ${log.root}.txt" />
+
+    <!-- [reports] dependency / metric tool -->
+    <echo msg="Running PHP dependency analyzer / metric tool..." />
+    <property name="log.root" value="${path.logs}/pdepend" override="true" />
+    <phpdepend>
+      <fileset dir="lib">
+        <include name="**/*.php" />
+      </fileset>
+      <logger type="jdepend-chart" outfile="${log.root}.jdepend.svg" />
+      <logger type="overview-pyramid" outfile="${log.root}.pyramid.svg" />
+      <logger type="jdepend-xml" outfile="${log.root}.jdepend.xml" />
+      <logger type="phpunit-xml" outfile="${log.root}.phpunit.xml" />
+      <logger type="summary-xml" outfile="${log.root}.summary.xml" />
+    </phpdepend>
+
+    <!-- [reports] mess detection -->
+    <property name="log.root" value="${path.logs}/phpmd" override="true" />
+    <phpmd>
+      <fileset dir="lib">
+        <include name="**/*.php" />
+      </fileset>
+      <formatter type="text" outfile="${log.root}.txt" />
+      <formatter type="html" outfile="${log.root}.html" />
+      <formatter type="xml" outfile="${log.root}.xml" />
+    </phpmd>
+
+  </target>
+
+
+  <!-- ===================================================================== -->
+  <!-- Run unit tests and generate reports on tests coverage, etc.           -->
+  <!-- ===================================================================== -->
+  <target name="test" description="Run tests on the codebase.">
+
+    <!-- [test] php unit testing -->
+    <!-- XXX: The phpunit task is broken for PHPUnit 3.5... -->
+    <echo msg="Running PHP unit tests:" />
+    <exec command="phpunit --configuration ${project.basedir}/phpunit.xml" />
+
+    <!-- [test] php unit reporting -->
+    <!-- XXX: Need to write up to date XSL... -->
+    <!--
+    <mkdir dir="${path.build}/report/test" />
+    <mkdir dir="${path.build}/report/coverage" />
+    <phpunitreport infile="${path.logs}/phpunit.xml" format="frames" 
+      todir="${path.build}/report/test" styledir="/usr/share/php5/data/phing/etc/" />
+    <coverage-setup database="${path.logs}/phpunit.clover.xml">
+      <fileset dir="lib">
+        <include name="**/*.php"/>
+      </fileset>
+    </coverage-setup>
+    <coverage-report outfile="${path.logs}/phpunit.clover2.xml">
+      <report todir="${path.build}/report/coverage" styledir="/usr/share/php5/data/phing/etc"/>
+    </coverage-report>
+    -->
+
+  </target>
+
+
+  <!-- ===================================================================== -->
+  <!-- Generate documentation for the package.                               -->
+  <!-- ===================================================================== -->
+  <target name="docs" description="Generate documentation.">
+
+    <!-- [docs] php documentation -->
+    <!-- XXX: Is projdocfileset not working? -->
+    <phpdoc configdir="." destdir="${path.docs}" output="HTML:Smarty:PHP"
+            quiet="true" sourcecode="false" title="${docs.title}"
+            undocumentedelements="true">
+      <fileset dir="lib">
+        <include name="**/*.php" />
+      </fileset>
+      <projdocfileset dir=".">
+        <include name="AUTHORS" />
+        <include name="COPYING" />
+        <include name="ChangeLog" />
+        <include name="INSTALL" />
+        <include name="README" />
+      </projdocfileset>
+    </phpdoc>
+    <echo msg="Check messages in ${path.docs}/errors.html" level="warning" />
+
+  </target>
+
+
+</project>
+<!--
+vim:et:ts=2:sts=2:sw=2:nowrap:ft=ant
+-->
