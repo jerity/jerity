@@ -8,7 +8,7 @@
  */
 
 # Pull in all Jerity packages.
-require_once dirname(dirname(__FILE__)).'/lib/bootstrap.php';
+require_once dirname(dirname(__FILE__)).'/src/bootstrap.php';
 
 # Define required paths.
 define('DATA_DIR', dirname(__FILE__).'/_data/');

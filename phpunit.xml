@@ -7,18 +7,37 @@
 
 <testsuites>
   <testsuite name="jerity.core">
-    <directory suffix=".php">tests/core</directory>
+    <directory suffix=".php">tests/Core</directory>
   </testsuite>
-  <testsuite name="jerity.template">
-    <directory suffix=".php">tests/template</directory>
+  <testsuite name="jerity.form">
+    <directory suffix=".php">tests/Form</directory>
+  </testsuite>
+  <testsuite name="jerity.layout">
+    <directory suffix=".php">tests/Layout</directory>
+  </testsuite>
+  <testsuite name="jerity.rest">
+    <directory suffix=".php">tests/REST</directory>
+  </testsuite>
+  <testsuite name="jerity.tool">
+    <directory suffix=".php">tests/Tool</directory>
+  </testsuite>
+  <testsuite name="jerity.ui">
+    <directory suffix=".php">tests/UI</directory>
+  </testsuite>
+  <testsuite name="jerity.util">
+    <directory suffix=".php">tests/Util</directory>
   </testsuite>
 </testsuites>
 
 <filter>
   <whitelist addUncoveredFilesFromWhitelist="true">
-    <directory suffix=".php">lib/classes</directory>
-    <directory suffix=".php">lib/exceptions</directory>
-    <directory suffix=".php">lib/interfaces</directory>
+    <directory suffix=".php">lib/Core</directory>
+    <directory suffix=".php">lib/Form</directory>
+    <directory suffix=".php">lib/Layout</directory>
+    <directory suffix=".php">lib/REST</directory>
+    <directory suffix=".php">lib/Tool</directory>
+    <directory suffix=".php">lib/UI</directory>
+    <directory suffix=".php">lib/Util</directory>
   </whitelist>
 </filter>
 
