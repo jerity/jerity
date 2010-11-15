@@ -814,7 +814,7 @@ class Generator_Select extends Generator_Element {
           $this->options[$k] = array('value' => $k, 'label' => $v);
         }
         break;
-      case self::OPTIONS_VALUE_ONLY:
+      case self::OPTIONS_VALUE_ONLY: # FIXME: $val_creator function does not exist!
         $this->options = array_combine($options, array_map($val_creator, $options));
         foreach ($this->options as $k => $v) {
           $this->options[$k] = array('value' => $k, 'label' => $v);
