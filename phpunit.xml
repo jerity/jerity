@@ -31,13 +31,13 @@
 
 <filter>
   <whitelist addUncoveredFilesFromWhitelist="true">
-    <directory suffix=".php">lib/Core</directory>
-    <directory suffix=".php">lib/Form</directory>
-    <directory suffix=".php">lib/Layout</directory>
-    <directory suffix=".php">lib/REST</directory>
-    <directory suffix=".php">lib/Tool</directory>
-    <directory suffix=".php">lib/UI</directory>
-    <directory suffix=".php">lib/Util</directory>
+    <directory suffix=".php">src/Core</directory>
+    <directory suffix=".php">src/Form</directory>
+    <directory suffix=".php">src/Layout</directory>
+    <directory suffix=".php">src/REST</directory>
+    <directory suffix=".php">src/Tool</directory>
+    <directory suffix=".php">src/UI</directory>
+    <directory suffix=".php">src/Util</directory>
   </whitelist>
 </filter>
 
