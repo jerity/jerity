@@ -1115,8 +1115,12 @@ class Chrome extends AbstractTemplate {
    * @param  &array  $items  The array to sort.
    */
   protected static function sortExternalsByPriority(array &$items) {
-    uasort($items, create_function('$a,$b', 'return \Jerity\Util\Number::intcmp($a[\'priority\'], $b[\'priority\']);'));
-    $items = array_map(create_function('$a', 'return $a[\'attrs\'];'), $items);
+    uasort($items, function ($a, $b) {
+      return Number::intcmp($a['priority'], $b['priority']);
+    });
+    $items = array_map(function ($a) {
+      return $a['attrs'];
+    }, $items);
   }
 
   /**

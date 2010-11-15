@@ -316,7 +316,9 @@ abstract class AbstractTemplate implements Renderable {
    * @return  string  The modified buffer contents.
    */
   protected function executePostRenderHooks($contents) {
-    uasort($this->post_render_hooks, create_function('$a,$b', 'return strcmp($a[\'priority\'], $b[\'priority\']);'));
+    uasort($this->post_render_hooks, function ($a, $b) {
+      return strcmp($a['priority'], $b['priority']);
+    });
     foreach ($this->post_render_hooks as $hash => $hook) {
       $contents = call_user_func($hook['callback'], $contents);
     }

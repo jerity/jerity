@@ -159,7 +159,9 @@ class String {
     $replace = array_merge(array_fill(0, count($reserved), '_'), array_values($extra_rules));
     $filename = str_replace($exclude, $replace, $filename);
     if ($reduce) {
-      return preg_replace(array_map(create_function('$c', 'return "/([{$c}])+/";'), array_unique($replace)), '$1', $filename);
+      return preg_replace(array_map(function ($c) {
+        return "/([{$c}])+/";
+      }, array_unique($replace)), '$1', $filename);
     } else {
       return $filename;
     }
@@ -314,7 +316,9 @@ class String {
    */
   public static function splitSplitCase($str) {
     $output = preg_split('/_+/', $str);
-    $output = array_merge(array_filter($output, create_function('$a', 'return $a!=="";')));
+    $output = array_merge(array_filter($output, function ($a) {
+      return $a !== '';
+    }));
     if (!count($output)) $output = array('');
     return $output;
   }

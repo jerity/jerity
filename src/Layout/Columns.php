@@ -384,8 +384,9 @@ class Columns implements Renderable {
     if (count($this->content) !== count($this->columns)) return false;
 
     # Check for valid content objects.
-    $check_class = create_function('&$v,$k', 'return (is_array($v) || is_string($v) || $v instanceof Content || $v instanceof Columns);');
-    return array_walk_recursive($this->content, $check_class);
+    return array_walk_recursive($this->content, function (&$v, $k) {
+      return (is_array($v) || is_string($v) || $v instanceof Content || $v instanceof Columns);
+    });
   }
 
   /**

@@ -49,14 +49,18 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
    *
    */
   public static function singularWordProvider() {
-    return array_map(create_function('$a', 'return array($a[0], $a[2]);'), self::getWordPairs());
+    return array_map(function ($a) {
+      return array($a[0], $a[2]);
+    }, self::getWordPairs());
   }
 
   /**
    *
    */
   public static function pluralWordProvider() {
-    return array_map(create_function('$a', 'return array($a[1], $a[2]);'), self::getWordPairs());
+    return array_map(function ($a) {
+      return array($a[1], $a[2]);
+    }, self::getWordPairs());
   }
 
   /**
