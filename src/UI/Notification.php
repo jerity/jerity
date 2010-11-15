@@ -74,7 +74,7 @@ class Notification implements Renderable {
    * @throws  \InvalidArgumentException
    */
   public static function create($message = null, $type = self::PLAIN) {
-    return new self($message, $type);
+    return new static($message, $type);
   }
 
   /**

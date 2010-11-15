@@ -133,14 +133,17 @@ class Templateest extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Top-level AbstractTemplate::create() should throw an exception (until PHP 5.3)
+   * Test support for late static binding.
    *
-   * @todo  Review for PHP 5.3
+   * With late static binding introduced in PHP 5.3, AbstractTemplate::create() 
+   * should create a new instance of the child class without the need for 
+   * overriding the static create method.
    *
-   * @expectedException  \Jerity\Layout\Exception
+   * Note that the Template class used in this test should not declare a 
+   * create() method.
    */
   public function testCreate() {
-    $t = Template::create('foo-succeed');
+    $this->assertInstanceOf('Template', Template::create('foo-succeed'));
   }
 
   /**

@@ -108,12 +108,9 @@ abstract class AbstractTemplate implements Renderable {
    *
    * @return  AbstractTemplate
    * @see     self::__construct()
-   *
-   * @todo  Replace with PHP 5.3 late static binding support?
    */
   public static function create($t) {
-    throw new Exception('The AbstractTemplate::create() function must be overridden in child classes.');
-    return new AbstractTemplate($t);
+    return new static($t);
   }
 
   ##############################################################################

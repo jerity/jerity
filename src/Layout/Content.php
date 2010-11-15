@@ -32,20 +32,6 @@ class Content extends AbstractTemplate {
     parent::__construct('content/'.$t);
   }
 
-  /**
-   * Create a new content template in a fluent API manner.
-   *
-   * @param  string  $t  The template to use.
-   *
-   * @return  Content
-   * @see     self::__construct()
-   *
-   * @todo  Replace with PHP 5.3 late static binding support?
-   */
-  public static function create($t) {
-    return new Content($t);
-  }
-
 }
 
 # vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker

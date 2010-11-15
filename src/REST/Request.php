@@ -302,7 +302,7 @@ class Request {
   public static function createFromCurrent() {
     // XXX: The spec says that the verb is case-sensitive, but user-agents
     // don't really honour that
-    return new Request(
+    return new static(
       Manager::getCurrentUrl(),
       strtoupper($_SERVER['REQUEST_METHOD']),
       $_GET,

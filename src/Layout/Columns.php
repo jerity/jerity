@@ -120,7 +120,7 @@ class Columns implements Renderable {
    * @see     self::__construct()
    */
   public static function create(array $columns, $units = self::UNIT_CLASS_NAME) {
-    return new Columns($columns, $units);
+    return new static($columns, $units);
   }
 
   /**
