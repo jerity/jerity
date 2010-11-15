@@ -638,9 +638,9 @@ class URL {
    */
   public static function ize($url) {
     if (is_null($url)) {
-      return URL::getCurrent();
+      return self::getCurrent();
     } elseif (is_string($url)) {
-      return new URL($url);
+      return new self($url);
     } elseif ($url instanceof URL) {
       return $url;
     }
@@ -667,7 +667,7 @@ class URL {
    * @return  string
    */
   public function relative($minimal = true) {
-    $current = URL::getCurrent();
+    $current = self::getCurrent();
     $url = '';
     extract($this->components);
     if (!isset($user    )) $user    =null;
