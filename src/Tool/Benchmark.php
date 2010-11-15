@@ -242,6 +242,7 @@ class Benchmark {
    */
   protected static function getCacheInfo() {
     if (!extension_loaded('apc')) return null;
+    if (PHP_SAPI === 'cli' && !ini_get('apc.cli_enabled')) return null;
     if (!function_exists('apc_cache_info')) return null;
     $info = apc_cache_info();
     static $limit = null;
