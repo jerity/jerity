@@ -29,7 +29,7 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
       return $pairs;
     }
 
-    $fp = fopen(dirname(__FILE__).'/singular-plural-wordlist.txt', 'r');
+    $fp = fopen(__DIR__.'/singular-plural-wordlist.txt', 'r');
     while (!feof($fp) && $data = fscanf($fp, '%s %s %d')) {
       $pairs[] = $data;
     }

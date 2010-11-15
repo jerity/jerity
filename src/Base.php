@@ -4,7 +4,7 @@
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
  * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
- * @package    jerity.core
+ * @package    jerity
  */
 
 namespace Jerity;
@@ -15,7 +15,7 @@ namespace Jerity;
  * @author     Dave Ingram <dave@dmi.me.uk>
  * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
  * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
- * @package    jerity.core
+ * @package    jerity
  */
 class Base {
 
@@ -53,8 +53,8 @@ class Base {
   public static function autoload($name) {
     $names = array($name);
     if (self::$autoload_harder) {
-      if (!class_exists('\Jerity\Util\String')) {
-        require_once dirname(__FILE__).'/Util/String.php';
+      if (!class_exists(__NAMESPACE__.'\Util\String')) {
+        require_once __DIR__.'/Util/String.php';
       }
       // Break the class name up, so IterableRenderable will search for
       // Iterable and Renderable and MyFooClass will search for My, MyFoo,
@@ -79,7 +79,7 @@ class Base {
       $names = array_merge($names, array_reverse($new_names));
     }
     foreach ($names as $name) {
-      $path = preg_replace('/^\\\\?Jerity\\\\/', '', $name);
+      $path = preg_replace('/^\\\\?'.__NAMESPACE__.'\\\\/', '', $name);
       $path = str_replace('\\', '/', $path);
       foreach (array_keys(self::$autoload_dirs) as $dir) {
         $target_file = $dir.'/'.$path.'.php';
@@ -105,7 +105,7 @@ class Base {
    */
   public static function addAutoloadDir($dir) {
     if (!is_array(spl_autoload_functions()) || !in_array(array('Jerity', 'autoload'), spl_autoload_functions(), true)) {
-      spl_autoload_register(array('\Jerity\Base', 'autoload'));
+      spl_autoload_register(array(__CLASS__, 'autoload'));
     }
     $dir = realpath(rtrim($dir, '/'));
     if ($dir === false || !is_dir($dir)) return false;

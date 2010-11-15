@@ -18,7 +18,7 @@ if (defined('JERITY_ROOT_PATH')) {
 /**
  *
  */
-define('JERITY_ROOT_PATH'  , rtrim(dirname(__FILE__), '/'));
+define('JERITY_ROOT_PATH'  , rtrim(__DIR__, '/'));
 
 /**
  *

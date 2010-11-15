@@ -559,8 +559,7 @@ class Tag {
             # A complete stack trace is overkill for a deprecation error
             xdebug_disable();
           }
-          # XXX: Use E_DEPRECATED when we have PHP 5.3 support.
-          trigger_error("'{$tag}' is deprecated or removed in {$ctx->getLanguage()} {$ctx->getVersion()}", E_USER_NOTICE);
+          trigger_error("'{$tag}' is deprecated or removed in {$ctx->getLanguage()} {$ctx->getVersion()}", E_USER_DEPRECATED);
           if ($restore_xdebug) {
             xdebug_enable();
           }
@@ -636,8 +635,7 @@ class Tag {
               # A complete stack trace is overkill for a deprecation error
               xdebug_disable();
             }
-            # XXX: Use E_DEPRECATED when we have PHP 5.3 support.
-            trigger_error("'{$tag}[{$a}]' is deprecated or removed in {$ctx->getLanguage()} {$ctx->getVersion()}", E_USER_NOTICE);
+            trigger_error("'{$tag}[{$a}]' is deprecated or removed in {$ctx->getLanguage()} {$ctx->getVersion()}", E_USER_DEPRECATED);
             if ($restore_xdebug) {
               xdebug_enable();
             }

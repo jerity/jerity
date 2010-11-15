@@ -11,7 +11,7 @@ use \Jerity\Core\RenderContext;
 use \Jerity\Layout\Chrome;
 
 # Needed for separator provider
-require_once(dirname(__FILE__).'/ChromeTest.php');
+require_once(__DIR__.'/ChromeTest.php');
 
 /**
  * @author     Dave Ingram <dave@dmi.me.uk>
