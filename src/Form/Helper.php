@@ -102,10 +102,10 @@ class Helper {
     switch ($method) {
       case self::METHOD_POST:
         if (!isset($_POST[$field])) return false;
-        return String::isInteger($_POST[$field]);
+        return is_int($_POST[$field]);
       case self::METHOD_GET:
         if (!isset($_GET[$field])) return false;
-        return String::isInteger($_GET[$field]);
+        return is_int($_GET[$field]);
       default:
         throw new \InvalidArgumentException('Invalid method.');
     }
@@ -126,10 +126,10 @@ class Helper {
     switch ($method) {
       case self::METHOD_POST:
         if (!isset($_POST[$field])) return false;
-        return String::isFloat($_POST[$field]);
+        return is_float($_POST[$field]);
       case self::METHOD_GET:
         if (!isset($_GET[$field])) return false;
-        return String::isFloat($_GET[$field]);
+        return is_float($_GET[$field]);
       default:
         throw new \InvalidArgumentException('Invalid method.');
     }

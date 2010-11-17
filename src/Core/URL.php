@@ -211,7 +211,7 @@ class URL {
    * @return  URL  The current object, for fluent method chaining.
    */
   public function setPort($port) {
-    if (!String::isInteger($port) || $port < 0 || $port > 65535) {
+    if (!is_int($port) || $port < 0 || $port > 65535) {
       throw new \InvalidArgumentException('Ports must be in the range [0-65535]');
     }
     $this->components['port'] = $port;

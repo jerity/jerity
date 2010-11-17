@@ -324,28 +324,6 @@ class String {
   }
 
   /**
-   * Checks whether the string given is an integer.
-   *
-   * @param  string  $str  The string to check.
-   *
-   * @return  bool
-   */
-  public static function isInteger($str) {
-    return ($str == (string)(int)$str);
-  }
-
-  /**
-   * Checks whether the string given is a floating point number.
-   *
-   * @param  string  $str  The string to check.
-   *
-   * @return  bool
-   */
-  public static function isFloat($str) {
-    return ($str == (string)(float)$str);
-  }
-
-  /**
    * Checks whether the string given is lowercase (i.e. has no uppercase 
    * characters).
    *

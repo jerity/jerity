@@ -351,12 +351,12 @@ class Columns implements Renderable {
     switch ($this->units) {
       case self::UNIT_PIXELS:
         foreach ($this->columns as $column) {
-          if (!String::isInteger($column)) return false;
+          if (!is_int($column)) return false;
         }
         break;
       case self::UNIT_PERCENTAGE:
         foreach ($this->columns as $column) {
-          if (!String::isInteger($column)) return false;
+          if (!is_int($column)) return false;
         }
         if (array_sum($this->columns) !== 100) return false;
         break;
