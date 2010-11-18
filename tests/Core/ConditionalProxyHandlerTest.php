@@ -78,6 +78,10 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
    *
    */
   public function _elseif($condition) {
+    if (!$this->conditional_proxy instanceof ConditionalProxyHandler
+      || $this->conditional_proxy->hasEnded()) {
+      throw new \Jerity\Core\Exception('Must call _if() before _elseif().');
+    }
     return $this->conditional_proxy;
   }
 
@@ -85,6 +89,10 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
    *
    */
   public function _else() {
+    if (!$this->conditional_proxy instanceof ConditionalProxyHandler
+      || $this->conditional_proxy->hasEnded()) {
+      throw new \Jerity\Core\Exception('Must call _if() before _else().');
+    }
     return $this->conditional_proxy;
   }
 
@@ -92,6 +100,10 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
    *
    */
   public function _endif() {
+    if (!$this->conditional_proxy instanceof ConditionalProxyHandler
+      || $this->conditional_proxy->hasEnded()) {
+      throw new \Jerity\Core\Exception('Must call _if() before _endif().');
+    }
     $this->conditional_proxy = null;
     return $this;
   }
