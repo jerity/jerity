@@ -29,6 +29,13 @@ class ConditionalProxyHandler implements ConditionalProxy {
   protected $object;
 
   /**
+   * Whether a true condition has been encountered.
+   *
+   * @var  bool
+   */
+  public $true_condition = false;
+
+  /**
    * Whether <code>_endif()</code> has been called on the handler.
    *
    * @var  bool
@@ -40,8 +47,9 @@ class ConditionalProxyHandler implements ConditionalProxy {
    *
    * @param  mixed  $object  The proxied object.
    */
-  public function __construct($object) {
+  public function __construct($object, $condition) {
     $this->object = $object;
+    $this->true_condition = $condition;
   }
 
   /**
@@ -89,6 +97,8 @@ class ConditionalProxyHandler implements ConditionalProxy {
    *                 current proxy handler.
    */
   public function _elseif($condition) {
+    if ($this->true_condition) return $this;
+    $this->true_condition = $condition;
     return ($condition ? $this->object : $this);
   }
 
@@ -98,6 +108,8 @@ class ConditionalProxyHandler implements ConditionalProxy {
    * @return  mixed  The proxied object.
    */
   public function _else() {
+    if ($this->true_condition) return $this;
+    $this->true_condition = true;
     return $this->object;
   }
 

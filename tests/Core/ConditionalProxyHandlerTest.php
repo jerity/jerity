@@ -70,7 +70,7 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
       && !$this->conditional_proxy->hasEnded()) {
       throw new \Jerity\Core\Exception('_if() cannot be nested.');
     }
-    $this->conditional_proxy = new ConditionalProxyHandler($this);
+    $this->conditional_proxy = new ConditionalProxyHandler($this, $condition);
     return ($condition ? $this : $this->conditional_proxy);
   }
 
@@ -82,7 +82,8 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
       || $this->conditional_proxy->hasEnded()) {
       throw new \Jerity\Core\Exception('Must call _if() before _elseif().');
     }
-    return $this->conditional_proxy;
+    if ($this->conditional_proxy->true_condition) return $this->conditional_proxy;
+    return ($condition ? $this : $this->conditional_proxy);
   }
 
   /**
