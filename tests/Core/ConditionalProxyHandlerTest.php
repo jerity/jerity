@@ -29,6 +29,11 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
   /**
    *
    */
+  protected $conditional_proxy = null;
+
+  /**
+   *
+   */
   public function method1() {
     $this->value = 1;
     return $this;
@@ -61,27 +66,33 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
    *
    */
   public function _if($condition) {
-    return ($condition ? $this : new ConditionalProxyHandler($this));
+    if ($this->conditional_proxy instanceof ConditionalProxyHandler
+      && !$this->conditional_proxy->hasEnded()) {
+      throw new \Jerity\Core\Exception('_if() cannot be nested.');
+    }
+    $this->conditional_proxy = new ConditionalProxyHandler($this);
+    return ($condition ? $this : $this->conditional_proxy);
   }
 
   /**
    *
    */
   public function _elseif($condition) {
-    return new ConditionalProxyHandler($this);
+    return $this->conditional_proxy;
   }
 
   /**
    *
    */
   public function _else() {
-    return new ConditionalProxyHandler($this);
+    return $this->conditional_proxy;
   }
 
   /**
    *
    */
   public function _endif() {
+    $this->conditional_proxy = null;
     return $this;
   }
 
@@ -310,6 +321,74 @@ class ConditionalProxyHandlerTest extends PHPUnit_Framework_TestCase {
     $o = $o->method3()->_endif();
     $this->assertInstanceOf('ConditionalProxyImplementation', $o);
     $this->assertEquals(3, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testConsecutiveIfTrueTrue() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testConsecutiveIfTrueFalse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue()); # $value = 1 because object is same!
+  }
+
+  /**
+   *
+   */
+  public function testConsecutiveIfFalseTrue() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertNull($o->getValue());
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testConsecutiveIfFalseFalse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertNull($o->getValue());
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertNull($o->getValue());
   }
 
 }

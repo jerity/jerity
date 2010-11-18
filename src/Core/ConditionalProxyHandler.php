@@ -24,9 +24,16 @@ class ConditionalProxyHandler implements ConditionalProxy {
   /**
    * The proxied object.
    *
-   * @var
+   * @var  mixed
    */
   protected $object;
+
+  /**
+   * Whether <code>_endif()</code> has been called on the handler.
+   *
+   * @var  bool
+   */
+  protected $has_ended = false;
 
   /**
    * Creates a new conditional proxy handler.
@@ -52,6 +59,15 @@ class ConditionalProxyHandler implements ConditionalProxy {
   }
 
   /**
+   * Checks whether <code>_endif()</code> has been called on the handler.
+   *
+   * @return  bool  Whether if block has ended.
+   */
+  public function hasEnded() {
+    return $this->has_ended;
+  }
+
+  /**
    * Substitute for an <code>if</code> statement in a method chain.
    *
    * Note that we disallow nesting of <code>if</code> statments.
@@ -61,7 +77,7 @@ class ConditionalProxyHandler implements ConditionalProxy {
    * @throw  \Jerity\Core\Exception
    */
   public function _if($condition) {
-    throw new Exception(__FUNCTION__.' cannot be nested.');
+    throw new Exception('_if() cannot be nested.');
   }
 
   /**
@@ -91,6 +107,7 @@ class ConditionalProxyHandler implements ConditionalProxy {
    * @return  mixed  The proxied object.
    */
   public function _endif() {
+    $this->has_ended = true;
     return $this->object;
   }
 
