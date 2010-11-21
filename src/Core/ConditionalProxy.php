@@ -58,6 +58,46 @@ namespace Jerity\Core;
 interface ConditionalProxy {
 
   /**
+   * The state when the conditional statement has been started by calling the
+   * _if() method.
+   *
+   * May only be followed by <tt>STATE_ELSEIF</tt>, <tt>STATE_ELSE</tt>, or
+   * <tt>STATE_ENDIF</tt>.
+   *
+   * @var  int
+   */
+  const STATE_IF     = 0;
+
+  /**
+   * The state of the conditional statement when _elseif() has been called.
+   *
+   * May only be followed by <tt>STATE_ELSEIF</tt>, <tt>STATE_ELSE</tt>, or
+   * <tt>STATE_ENDIF</tt>.
+   *
+   * @var  int
+   */
+  const STATE_ELSEIF = 1;
+
+  /**
+   * The state of the conditional statement when _else() has been called.
+   *
+   * May only be followed by <tt>STATE_ELSE</tt>.
+   *
+   * @var  int
+   *
+   */
+  const STATE_ELSE   = 2;
+
+  /**
+   * The state when the conditional statement has been finished.
+   *
+   * May only be followed by <tt>STATE_IF</tt>.
+   *
+   * @var  int
+   */
+  const STATE_ENDIF  = 3;
+
+  /**
    * Substitute for an <code>if</code> statement in a method chain.
    *
    * @param  bool  $condition  The condition.

@@ -29,11 +29,6 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
   /**
    *
    */
-  protected $conditional_proxy = null;
-
-  /**
-   *
-   */
   public function method1() {
     $this->value = 1;
     return $this;
@@ -58,6 +53,14 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
   /**
    *
    */
+  public function method4() {
+    $this->value = 4;
+    return $this;
+  }
+
+  /**
+   *
+   */
   public function getValue() {
     return $this->value;
   }
@@ -66,52 +69,116 @@ final class ConditionalProxyImplementation implements ConditionalProxy {
    *
    */
   public function _if($condition) {
-    if ($this->conditional_proxy instanceof ConditionalProxyHandler
-      && !$this->conditional_proxy->hasEnded()) {
-      throw new \Jerity\Core\Exception('_if() cannot be nested.');
-    }
-    $this->conditional_proxy = new ConditionalProxyHandler($this, $condition);
-    return ($condition ? $this : $this->conditional_proxy);
+    return ConditionalProxyHandler::create($this, $condition);
   }
 
   /**
    *
    */
   public function _elseif($condition) {
-    if (!$this->conditional_proxy instanceof ConditionalProxyHandler
-      || $this->conditional_proxy->hasEnded()) {
-      throw new \Jerity\Core\Exception('Must call _if() before _elseif().');
-    }
-    if ($this->conditional_proxy->true_condition) return $this->conditional_proxy;
-    return ($condition ? $this : $this->conditional_proxy);
+    return ConditionalProxyHandler::progress($this, $condition);
   }
 
   /**
    *
    */
   public function _else() {
-    if (!$this->conditional_proxy instanceof ConditionalProxyHandler
-      || $this->conditional_proxy->hasEnded()) {
-      throw new \Jerity\Core\Exception('Must call _if() before _else().');
-    }
-    return $this->conditional_proxy;
+    return ConditionalProxyHandler::progress($this);
   }
 
   /**
    *
    */
   public function _endif() {
-    if (!$this->conditional_proxy instanceof ConditionalProxyHandler
-      || $this->conditional_proxy->hasEnded()) {
-      throw new \Jerity\Core\Exception('Must call _if() before _endif().');
-    }
-    $this->conditional_proxy = null;
-    return $this;
+    return ConditionalProxyHandler::destroy($this);
   }
 
 }
 
 /**
+ * A bad implementation of a conditional proxy class for the purposes of
+ * testing.
+ *
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
+final class ConditionalProxyBadImplementation1 {
+
+  /**
+   *
+   */
+  public function _if($condition) {
+    return ConditionalProxyHandler::create($this, $condition);
+  }
+
+  /**
+   *
+   */
+  public function _elseif($condition) {
+  }
+
+  /**
+   *
+   */
+  public function _else() {
+  }
+
+  /**
+   *
+   */
+  public function _endif() {
+  }
+
+}
+
+/**
+ * A bad implementation of a conditional proxy class for the purposes of
+ * testing.
+ *
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
+final class ConditionalProxyBadImplementation2 implements ConditionalProxy {
+
+  /**
+   *
+   */
+  public function _if($condition) {
+    # Workaround to get a conditional proxy handler:
+    $handler = ConditionalProxyHandler::create($this, false);
+    ConditionalProxyHandler::destroy($this);
+    return ConditionalProxyHandler::create($handler, $condition);
+  }
+
+  /**
+   *
+   */
+  public function _elseif($condition) {
+  }
+
+  /**
+   *
+   */
+  public function _else() {
+  }
+
+  /**
+   *
+   */
+  public function _endif() {
+  }
+
+}
+
+/**
+ * Test for the conditional proxy handler.
+ *
  * @author     Nick Pope <nick@nickpope.me.uk>
  * @author     Dave Ingram <dave@dmi.me.uk>
  * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
@@ -339,6 +406,278 @@ class ConditionalProxyHandlerTest extends PHPUnit_Framework_TestCase {
   /**
    *
    */
+  public function testIfTrueElseIfTrueElseIfTrue() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfTrueElseIfTrueElseIfFalse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfTrueElseIfFalseElseIfTrue() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfTrueElseIfFalseElseIfFalse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfFalseElseIfTrueElseIfTrue() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_elseif(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method2()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(2, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfFalseElseIfTrueElseIfFalse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_elseif(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method2()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(2, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfFalseElseIfFalseElseIfTrue() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(3, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfFalseElseIfFalseElseIfFalse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertNull($o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfTrueElseIfTrueElseIfTrueElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method4()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfTrueElseIfTrueElseIfFalseElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method4()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfTrueElseIfFalseElseIfTrueElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method4()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfTrueElseIfFalseElseIfFalseElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method4()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfFalseElseIfTrueElseIfTrueElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_elseif(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method2()->_elseif(true);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method4()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(2, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfFalseElseIfTrueElseIfFalseElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_elseif(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method2()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method4()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(2, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfFalseElseIfFalseElseIfTrueElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method3()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method4()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(3, $o->getValue());
+  }
+
+  /**
+   *
+   */
+  public function testIfFalseElseIfFalseElseIfFalseElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_elseif(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_else();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method4()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(4, $o->getValue());
+  }
+
+  /**
+   *
+   */
   public function testConsecutiveIfTrueTrue() {
     $o = new ConditionalProxyImplementation();
     $o = $o->_if(true);
@@ -493,6 +832,54 @@ class ConditionalProxyHandlerTest extends PHPUnit_Framework_TestCase {
     $o = $o->method3()->_endif();
     $this->assertInstanceOf('ConditionalProxyImplementation', $o);
     $this->assertEquals(2, $o->getValue());
+  }
+
+  /**
+   * @expectedException  \Jerity\Core\Exception
+   */
+  public function testElseAfterIfTrueElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(true);
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method1()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method2()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(1, $o->getValue());
+  }
+
+  /**
+   * @expectedException  \Jerity\Core\Exception
+   */
+  public function testElseAfterIfFalseElse() {
+    $o = new ConditionalProxyImplementation();
+    $o = $o->_if(false);
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method1()->_else();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $o = $o->method2()->_else();
+    $this->assertInstanceOf('\Jerity\Core\ConditionalProxyHandler', $o);
+    $o = $o->method3()->_endif();
+    $this->assertInstanceOf('ConditionalProxyImplementation', $o);
+    $this->assertEquals(2, $o->getValue());
+  }
+
+  /**
+   * @expectedException  \Jerity\Core\Exception
+   */
+  public function testNotInstanceOfConditionalProxy() {
+    $o = new ConditionalProxyBadImplementation1();
+    $o = $o->_if(true);
+  }
+
+  /**
+   * @expectedException  \Jerity\Core\Exception
+   */
+  public function testInstanceOfConditionalProxyHandler() {
+    $o = new ConditionalProxyBadImplementation2();
+    $o = $o->_if(true);
   }
 
 }
