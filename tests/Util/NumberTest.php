@@ -15,6 +15,8 @@ use \Jerity\Util\Number;
  * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
  * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
  * @package    jerity.test
+ *
+ * @group  utility
  */
 class NumberTest extends PHPUnit_Framework_TestCase {
 

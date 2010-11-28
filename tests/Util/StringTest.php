@@ -16,6 +16,8 @@ use \Jerity\Util\String;
  * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
  * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
  * @package    jerity.test
+ *
+ * @group  utility
  */
 class StringTest extends PHPUnit_Framework_TestCase {
 
@@ -324,7 +326,7 @@ class StringTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  pluralizeProvider()
-   * @group         Inflector
+   * @group         inflector
    */
   public function testPluralizeWithPrefix($count, $expected) {
     $prefix = 'You have';
@@ -386,7 +388,7 @@ class StringTest extends PHPUnit_Framework_TestCase {
   /**
    * @dataProvider  formatBitsProvider()
    * @depends       NumberTest::parseBits()
-   * @group         Inflector
+   * @group         inflector
    */
   public function testFormatBits($n, $si, $dp, $prefix, $symbol, $expected) {
     $this->assertSame($expected, String::formatBits($n, $si, $dp, $prefix, $symbol));
@@ -462,7 +464,7 @@ class StringTest extends PHPUnit_Framework_TestCase {
   /**
    * @dataProvider  formatBytesProvider()
    * @depends       NumberTest::parseBytes()
-   * @group         Inflector
+   * @group         inflector
    */
   public function testFormatBytes($n, $si, $dp, $prefix, $symbol, $expected) {
     $this->assertSame($expected, String::formatBytes($n, $si, $dp, $prefix, $symbol));

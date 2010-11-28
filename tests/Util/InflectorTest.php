@@ -16,7 +16,8 @@ use \Jerity\Util\Inflector;
  * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
  * @package    jerity.test
  *
- * @group  Inflector
+ * @group  inflector
+ * @group  utility
  */
 class InflectorTest extends PHPUnit_Framework_TestCase {
 
