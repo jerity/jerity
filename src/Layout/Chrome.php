@@ -395,13 +395,13 @@ class Chrome extends AbstractTemplate {
    */
   public static function addMetadata($name, $value, $http_equiv = false) {
     # transition properties
-    if ($http_equiv === Tag::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
-    if ($http_equiv === Tag::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
+    if ($http_equiv === 'http-equiv') { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
+    if ($http_equiv === 'name') { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
     if ($http_equiv && strtolower($name) == 'content-type') {
       trigger_error('Content-Type should be set by changing render context.');
       return;
     }
-    self::$metadata[$http_equiv ? Tag::META_HTTP : Tag::META_NAME][$name] = $value;
+    self::$metadata[$http_equiv ? 'http-equiv' : 'name'][$name] = $value;
   }
 
   /**
@@ -411,13 +411,13 @@ class Chrome extends AbstractTemplate {
    * @param  string  $http_equiv  Whether this is HTTP header-equivalent metadata
    */
   public static function removeMetadata($name, $http_equiv = false) {
-    if ($http_equiv === Tag::META_HTTP) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
-    if ($http_equiv === Tag::META_NAME) { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
+    if ($http_equiv === 'http-equiv') { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = true;  }
+    if ($http_equiv === 'name') { trigger_error('Third argument to addMetadata() is now a boolean'); $http_equiv = false; }
     if ($http_equiv && strtolower($name) == 'content-type') {
       trigger_error('Content-Type should be set by changing render context.');
       return;
     }
-    unset(self::$metadata[$http_equiv ? Tag::META_HTTP : Tag::META_NAME][$name]);
+    unset(self::$metadata[$http_equiv ? 'http-equiv' : 'name'][$name]);
   }
 
   /**
@@ -428,11 +428,11 @@ class Chrome extends AbstractTemplate {
    */
   public static function clearMetadata($http_equiv = null) {
     if (is_null($http_equiv)) {
-      self::$metadata = array(Tag::META_HTTP => array(), Tag::META_NAME => array());
+      self::$metadata = array('http-equiv' => array(), 'name' => array());
     } elseif ($http_equiv) {
-      self::$metadata[Tag::META_HTTP] = array();
+      self::$metadata['http-equiv'] = array();
     } else {
-      self::$metadata[Tag::META_NAME] = array();
+      self::$metadata['name'] = array();
     }
   }
 
@@ -447,11 +447,11 @@ class Chrome extends AbstractTemplate {
     if (is_null($http_equiv)) {
       return self::$metadata;
     } elseif ($http_equiv) {
-      if (!isset(self::$metadata[Tag::META_HTTP])) self::$metadata[Tag::META_HTTP] = array();
-      return self::$metadata[Tag::META_HTTP];
+      if (!isset(self::$metadata['http-equiv'])) self::$metadata['http-equiv'] = array();
+      return self::$metadata['http-equiv'];
     } else {
-      if (!isset(self::$metadata[Tag::META_NAME])) self::$metadata[Tag::META_NAME] = array();
-      return self::$metadata[Tag::META_NAME];
+      if (!isset(self::$metadata['name'])) self::$metadata['name'] = array();
+      return self::$metadata['name'];
     }
   }
 
@@ -981,9 +981,11 @@ class Chrome extends AbstractTemplate {
     if ($ctx->getCharset()) {
       $charset = strtolower($ctx->getCharset());
       if ($ctx->getVersion() == 5) { # only if (X)HTML5
-        echo Tag::meta(Tag::META_CHAR, null, $charset), PHP_EOL;
+        echo Tag::create('meta')->charset($charset), PHP_EOL;
       } else {
-        echo Tag::meta(Tag::META_HTTP, 'Content-Type', "{$ctx->getContentType()};charset={$charset}"), PHP_EOL;
+        echo Tag::create('meta')
+          ->http_equiv('Content-Type')
+          ->content("{$ctx->getContentType()};charset={$charset}"), PHP_EOL;
       }
     }
     # Render other metadata
@@ -991,11 +993,17 @@ class Chrome extends AbstractTemplate {
     ksort($metadata);
     foreach ($metadata as $type => $a) {
       foreach ($a as $name => $content) {
-        echo Tag::meta($type, $name, $content), PHP_EOL;
+        echo Tag::create('meta')
+          ->_if($type == 'http-equiv')
+            ->http_equiv($name)
+          ->_else()
+            ->name($name)
+          ->_endif()
+          ->content($content), PHP_EOL;
       }
     }
     if (isset($content_type)) {
-      $metadata[Tag::META_HTTP]['Content-Type'] = $content_type;
+      $metadata['http-equiv']['Content-Type'] = $content_type;
     }
   }
 
@@ -1042,10 +1050,16 @@ class Chrome extends AbstractTemplate {
   public static function outputFaviconTags() {
     foreach (self::getIcons() as $type => $href) {
       if ($type === self::ICON_X_ICON) {
-        $icon = Tag::link($href, $type, array('rel' => 'shortcut icon'));
-        echo Tag::ieConditionalComment('IE', $icon);
+        $icon = Tag::create('link')
+          ->href($href)
+          ->type($type)
+          ->rel('shortcut icon')
+          ->_cc('IE');
       } else {
-        echo Tag::link($href, $type, array('rel' => 'icon')), PHP_EOL;
+        echo Tag::create('link')
+          ->href($href)
+          ->type($type)
+          ->rel('icon'), PHP_EOL;
       }
     }
   }
@@ -1195,7 +1209,7 @@ class Chrome extends AbstractTemplate {
     $expression = join(' ', $expr);
     $content = join(PHP_EOL, $content);
     $newline = (count($items) > 1);
-    echo Tag::ieConditionalComment($expression, $content, $newline);
+    echo Tag::wrapConditionalComment($expression, $content, $newline);
   }
 
   /**
@@ -1263,7 +1277,7 @@ class Chrome extends AbstractTemplate {
           $expression = (!empty($m[1]) ? $m[1].' ' : '');
           $expression .= 'IE';
           $expression .= (!empty($m[2]) ? ' '.strtr($m[2], '_', '.') : '');
-          $content = Tag::ieConditionalComment($expression, $content);
+          $content = Tag::wrapConditionalComment($expression, $content);
         } else {
           $content .= PHP_EOL;
         }
