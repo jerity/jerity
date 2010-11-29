@@ -1,0 +1,17 @@
+################################################################################
+# Inflector Tests: Code Class/Method Name List
+#
+# @author     Nick Pope <nick@nickpope.me.uk>
+# @author     Dave Ingram <dave@dmi.me.uk>
+# @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+# @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+# @package    jerity.test
+################################################################################
+EventCategory   EventCategories
+getMatrix       getMatrices
+getUserName     getUserNames
+getVacancy      getVacancies
+getGoose        getGeese
+getAnalytics    getAnalytics
+hasFeedback     hasFeedback
+isCorps         isCorps
