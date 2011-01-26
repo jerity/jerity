@@ -1,0 +1,144 @@
+<?php
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ */
+
+use \Jerity\Util\Inflector;
+
+/**
+ * @author     Dave Ingram <dave@dmi.me.uk>
+ * @author     Nick Pope <nick@nickpope.me.uk>
+ * @copyright  Copyright (c) 2010, Dave Ingram, Nick Pope
+ * @license    http://creativecommons.org/licenses/BSD/ CC-BSD
+ * @package    jerity.test
+ *
+ * @group  inflector
+ * @group  utility
+ */
+class InflectorTest extends PHPUnit_Framework_TestCase {
+
+  /**
+   *
+   */
+  public static function getWordPairs() {
+    static $pairs = array();
+    if (count($pairs)) {
+      return $pairs;
+    }
+
+    $fp = fopen(__DIR__.'/singular-plural-wordlist.txt', 'r');
+    while (!feof($fp) && $data = fscanf($fp, '%s %s %d')) {
+      $pairs[] = $data;
+    }
+    fclose($fp);
+
+    return $pairs;
+  }
+
+  /**
+   *
+   */
+  public static function wordPairProvider() {
+    return self::getWordPairs();
+  }
+
+  /**
+   *
+   */
+  public static function singularWordProvider() {
+    return array_map(function ($a) {
+      return array($a[0], $a[2]);
+    }, self::getWordPairs());
+  }
+
+  /**
+   *
+   */
+  public static function pluralWordProvider() {
+    return array_map(function ($a) {
+      return array($a[1], $a[2]);
+    }, self::getWordPairs());
+  }
+
+  /**
+   * @dataProvider  wordPairProvider()
+   */
+  public function testSingularize($singular, $plural, $fix_case) {
+    $our_singular = Inflector::singularize($plural, true, $fix_case);
+    $this->assertSame($singular, $our_singular, 'Singular form of "'.$plural.'" differs');
+  }
+
+  /**
+   * @dataProvider  wordPairProvider()
+   */
+  public function testPluralize($singular, $plural, $fix_case) {
+    $our_plural = Inflector::pluralize($singular, true, $fix_case);
+    $this->assertSame($plural, $our_plural, 'Plural form of "'.$singular.'" differs');
+  }
+
+  /**
+   * @dataProvider  pluralWordProvider()
+   * @depends       testPluralize()
+   * @depends       testSingularize()
+   */
+  public function testSingularReverses($plural, $fix_case) {
+    $replural = Inflector::pluralize(Inflector::singularize($plural, true, $fix_case), true, $fix_case);
+    $this->assertSame($plural, $replural, 'Plural and replural form of "'.$plural.'" differ');
+  }
+
+  /**
+   * @dataProvider  singularWordProvider()
+   * @depends       testPluralize()
+   * @depends       testSingularize()
+   */
+  public function testPluralReverses($singular, $fix_case) {
+    $resingular = Inflector::singularize(Inflector::pluralize($singular, true, $fix_case), true, $fix_case);
+    $this->assertSame($singular, $resingular, 'Singular and resingular form of "'.$singular.'" differ');
+  }
+
+  /**
+   * @dataProvider  fixLetterCaseProvider()
+   * @depends       testPluralize()
+   * @depends       testSingularize()
+   */
+  public function testFixLetterCase($a, $b, $pluralise) {
+    # We disable simplification for this test to ensure that we do not split
+    # as camel case when testing with silly capitalisation.
+    if ($pluralise) {
+      $this->assertSame($b, Inflector::pluralize($a, false));
+    } else {
+      $this->assertSame($b, Inflector::singularize($a, false));
+    }
+  }
+
+  /**
+   *
+   */
+  public function fixLetterCaseProvider() {
+    return array(
+      array('WORD', 'WORDS', true),
+      array('word', 'words', true),
+      array('Word', 'Words', true),
+      array('WoRd', 'WoRds', true),
+      array('VORTEX', 'VORTICES', true),
+      array('vortex', 'vortices', true),
+      array('Vortex', 'Vortices', true),
+      array('VoRtEx', 'VoRtices', true),
+      array('WORDS', 'WORD', false),
+      array('words', 'word', false),
+      array('Words', 'Word', false),
+      array('WoRds', 'WoRd', false),
+      array('VORTICES', 'VORTEX', false),
+      array('vortices', 'vortex', false),
+      array('Vortices', 'Vortex', false),
+      array('VoRtIcEs', 'VoRtex', false),
+    );
+  }
+
+}
+
+# vim:et:ts=2:sts=2:sw=2:nowrap:ft=php:fdm=marker
