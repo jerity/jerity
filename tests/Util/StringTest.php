@@ -387,7 +387,8 @@ class StringTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  formatBitsProvider()
-   * @depends       NumberTest::parseBits()
+   * @depends       \NumberTest::testParseBits()
+   * @depends       \NumberTest::testParseBitsException()
    * @group         inflector
    */
   public function testFormatBits($n, $si, $dp, $prefix, $symbol, $expected) {
@@ -463,7 +464,8 @@ class StringTest extends PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider  formatBytesProvider()
-   * @depends       NumberTest::parseBytes()
+   * @depends       \NumberTest::testParseBytes()
+   * @depends       \NumberTest::testParseBytesException()
    * @group         inflector
    */
   public function testFormatBytes($n, $si, $dp, $prefix, $symbol, $expected) {
