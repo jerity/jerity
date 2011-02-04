@@ -30,7 +30,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
    */
   public function testInitialGlobalContext() {
     $ctx = RenderContext::get();
-    $this->assertType('\Jerity\Core\RenderContext', $ctx);
+    $this->assertInstanceOf('\Jerity\Core\RenderContext', $ctx);
   }
 
   /**
@@ -62,7 +62,7 @@ class RenderContextTest extends PHPUnit_Framework_TestCase {
    */
   public function testPushPopContext() {
     $ctx1 = RenderContext::get();
-    $this->assertType('\Jerity\Core\RenderContext', $ctx1);
+    $this->assertInstanceOf('\Jerity\Core\RenderContext', $ctx1);
 
     $newctx = RenderContext::create(RenderContext::TYPE_HTML5);
     RenderContext::push($newctx);
