@@ -941,9 +941,11 @@ class Chrome extends AbstractTemplate {
    *
    * HTML5 can have a default XML namespace for XHTML to aid migration.
    *
+   * @param  bool  $html_cc_wrap  Wrap the HTML tag in conditional comments.
+   *
    * @see  http://wiki.whatwg.org/wiki/HTML_vs._XHTML
    */
-  public static function outputOpeningTags() {
+  public static function outputOpeningTags($html_cc_wrap = false) {
     $ctx = RenderContext::get();
     $languages  = '';
     $namespaces = '';
@@ -968,7 +970,15 @@ class Chrome extends AbstractTemplate {
       # head[profile] is no longer allowed in (X)HTML5.
       $profiles = '';
     }
-    echo '<html', $languages, $namespaces, '>', PHP_EOL;
+    if ($html_cc_wrap) {
+      echo '<!--[if IE 6]><html', $languages, $namespaces, ' class="no-js ie6"><![endif]-->', PHP_EOL;
+      echo '<!--[if IE 7]><html', $languages, $namespaces, ' class="no-js ie7"><![endif]-->', PHP_EOL;
+      echo '<!--[if IE 8]><html', $languages, $namespaces, ' class="no-js ie8"><![endif]-->', PHP_EOL;
+      echo '<!--[if IE 9]><html', $languages, $namespaces, ' class="no-js ie9"><![endif]-->', PHP_EOL;
+      echo '<!--[if (gt IE 9)|!(IE)]><!--><html', $languages, $namespaces, ' class="no-js"><!--<![endif]-->', PHP_EOL;
+    } else {
+      echo '<html', $languages, $namespaces, '>', PHP_EOL;
+    }
     echo '<head', $profiles, '>', PHP_EOL;
   }
 
