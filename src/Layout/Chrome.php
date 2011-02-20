@@ -160,11 +160,11 @@ class Chrome extends AbstractTemplate {
   protected static $title = array();
 
   /**
-   * Store for title separator. Defaults to ' &raquo; '.
+   * Store for title separator. Defaults to ' &laquo; '.
    *
    * @var  string
    */
-  protected static $titleSeparator = ' &raquo; ';
+  protected static $titleSeparator = ' &laquo; ';
 
   /**
    * Store for favourites icons (favicon).
@@ -757,18 +757,21 @@ class Chrome extends AbstractTemplate {
   }
 
   /**
-   * Appends/prepends one or more parts to the page title.
+   * Appends/prepends one or more parts to the page title.  By default we
+   * prepend to the title because we want the most specific part at the 
+   * beginning.
    *
-   * @param  mixed  $part  Part(s) to add to the title.
+   * @param  mixed  $part    Part(s) to add to the title.
+   * @param  bool   $append  Whether to append to the title.
    */
-  public static function addToTitle($part, $prepend = false) {
+  public static function addToTitle($part, $append = false) {
     if (!is_array($part)) {
       $part = array($part);
     }
-    if ($prepend) {
-      self::$title = array_merge($part, self::$title);
-    } else {
+    if ($append) {
       self::$title = array_merge(self::$title, $part);
+    } else {
+      self::$title = array_merge($part, self::$title);
     }
   }
 
