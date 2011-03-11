@@ -9,6 +9,8 @@
 
 namespace Jerity\UI;
 
+use \Jerity\Core\Redirector;
+use \Jerity\Core\RedirectorException;
 use \Jerity\Core\RenderContext;
 use \Jerity\Core\Renderable;
 
@@ -211,7 +213,7 @@ class Notification implements Renderable {
    * Redirects with saved state containing a message.  The notification is
    * automatically added to the extra state data.
    *
-   * @see  Redirector::redirect()
+   * @see  \Jerity\Core\Redirector::redirect()
    *
    * @param  string  $url         Where to redirect to.
    * @param  mixed   $extra_data  Extra data to preserve across redirect.
