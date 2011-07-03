@@ -304,7 +304,7 @@ class NavigationMenu implements Renderable {
         $top_attrs['class'] = 'level'.$level;
       }
     }
-    $out .= Tag::renderTag('ul', $top_attrs)."\n";
+    $out .= Tag::renderTag('ul', $top_attrs);
     $cururl = $this->getOurUrl();
     $besturl = $this->getBestUrl($level);
     foreach ($urls as $url) {
@@ -314,9 +314,9 @@ class NavigationMenu implements Renderable {
         if (isset($i_attrs['_children']) && count($i_attrs['_children'])) {
           $children = $i_attrs['_children'];
           $child_attrs = isset($i_attrs['_child_attrs']) ? $i_attrs['_child_attrs'] : array();
-          $content .= "\n".$this->renderURLs($children, $child_attrs, $level + 1);
+          $content .= $this->renderURLs($children, $child_attrs, $level + 1);
         }
-        $out .= Tag::renderTag('li', $i_attrs, $content)."\n";
+        $out .= Tag::renderTag('li', $i_attrs, $content);
 
         continue;
       }
@@ -357,7 +357,7 @@ class NavigationMenu implements Renderable {
         if (isset($i_attrs['_children']) && count($i_attrs['_children'])) {
           $children = $i_attrs['_children'];
           $child_attrs = isset($i_attrs['_child_attrs']) ? $i_attrs['_child_attrs'] : array();
-          $content .= "\n".$this->renderURLs($children, $child_attrs, $level + 1);
+          $content .= $this->renderURLs($children, $child_attrs, $level + 1);
         }
 
       } else {
@@ -365,12 +365,12 @@ class NavigationMenu implements Renderable {
         if (isset($i_attrs['_children']) && count($i_attrs['_children'])) {
           $children = $i_attrs['_children'];
           $child_attrs = isset($i_attrs['_child_attrs']) ? $i_attrs['_child_attrs'] : array();
-          $content .= "\n".$this->renderURLs($children, $child_attrs, $level + 1);
+          $content .= $this->renderURLs($children, $child_attrs, $level + 1);
         }
       }
-      $out .= Tag::renderTag('li', $i_attrs, $content)."\n";
+      $out .= Tag::renderTag('li', $i_attrs, $content);
     }
-    $out .= "</ul>\n";
+    $out .= "</ul>";
     return $out;
   }
 
