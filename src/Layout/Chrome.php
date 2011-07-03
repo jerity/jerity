@@ -188,6 +188,13 @@ class Chrome extends AbstractTemplate {
   protected static $language = null;
 
   /**
+   * Whether the <html> tag should be wrapped in conditional comments.
+   *
+   * @var  boolean
+   */
+  protected static $html_cc_wrap = null;
+
+  /**
    * Used when matching filenames of external resources for wrapping in 
    * Internet Explorer conditional comments.
    *
@@ -916,6 +923,24 @@ class Chrome extends AbstractTemplate {
   }
 
   /**
+   * Get whether to wrap the <html> tag in conditional comments.
+   *
+   * @return  boolean
+   */
+  public static function getWrapHtmlCC() {
+    return self::$html_cc_wrap;
+  }
+
+  /**
+   * Set whether to wrap the <html> tag in conditional comments.
+   *
+   * @param  boolean  Whether the <html> tag should be wrapped with conditional comments.
+   */
+  public static function setWrapHtmlCC($v = true) {
+    self::$html_cc_wrap = $v;
+  }
+
+  /**
    * Outputs HTTP headers.  If the values are arrays, we automatically output
    * multiple times and do not replace the previous header.
    */
@@ -941,11 +966,9 @@ class Chrome extends AbstractTemplate {
    *
    * HTML5 can have a default XML namespace for XHTML to aid migration.
    *
-   * @param  bool  $html_cc_wrap  Wrap the HTML tag in conditional comments.
-   *
    * @see  http://wiki.whatwg.org/wiki/HTML_vs._XHTML
    */
-  public static function outputOpeningTags($html_cc_wrap = false) {
+  public static function outputOpeningTags() {
     $ctx = RenderContext::get();
     $languages  = '';
     $namespaces = '';
@@ -970,7 +993,7 @@ class Chrome extends AbstractTemplate {
       # head[profile] is no longer allowed in (X)HTML5.
       $profiles = '';
     }
-    if ($html_cc_wrap) {
+    if (self::$html_cc_wrap) {
       echo '<!--[if IE 6]><html', $languages, $namespaces, ' class="no-js ie6"><![endif]-->', PHP_EOL;
       echo '<!--[if IE 7]><html', $languages, $namespaces, ' class="no-js ie7"><![endif]-->', PHP_EOL;
       echo '<!--[if IE 8]><html', $languages, $namespaces, ' class="no-js ie8"><![endif]-->', PHP_EOL;
