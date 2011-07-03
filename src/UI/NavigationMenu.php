@@ -137,8 +137,8 @@ class NavigationMenu implements Renderable {
 
   /**
    * Returns whether or not level hints are enabled. Level hints are
-   * additional classes added to the \t &lt;ul&gt; element in order to 
-   * distinguish between multiple levels. They are of the form "level0", 
+   * additional classes added to the \t &lt;ul&gt; element in order to
+   * distinguish between multiple levels. They are of the form "level0",
    * "level1", etc.
    *
    * @return  bool
@@ -149,7 +149,7 @@ class NavigationMenu implements Renderable {
 
   /**
    * Enable or disable level hints. Level hints are additional classes added
-   * to the \t &lt;ul&gt; element in order to distinguish between multiple 
+   * to the \t &lt;ul&gt; element in order to distinguish between multiple
    * levels. They are of the form "level0", "level1", etc.
    *
    * @param  bool  $hint
@@ -160,8 +160,8 @@ class NavigationMenu implements Renderable {
 
   /**
    * Returns whether or not level hints are enabled. Level hints are
-   * additional classes added to the \t &lt;ul&gt; element in order to 
-   * distinguish between multiple levels. They are of the form "level0", 
+   * additional classes added to the \t &lt;ul&gt; element in order to
+   * distinguish between multiple levels. They are of the form "level0",
    * "level1", etc.
    *
    * @return  bool
@@ -172,7 +172,7 @@ class NavigationMenu implements Renderable {
 
   /**
    * Enable or disable level hints. Level hints are additional classes added
-   * to the \t &lt;ul&gt; element in order to distinguish between multiple 
+   * to the \t &lt;ul&gt; element in order to distinguish between multiple
    * levels. They are of the form "level0", "level1", etc.
    *
    * @param  bool  $hint
@@ -206,8 +206,8 @@ class NavigationMenu implements Renderable {
 
   /**
    * Returns whether or not level hints are enabled. Level hints are
-   * additional classes added to the \t &lt;ul&gt; element in order to 
-   * distinguish between multiple levels. They are of the form "level0", 
+   * additional classes added to the \t &lt;ul&gt; element in order to
+   * distinguish between multiple levels. They are of the form "level0",
    * "level1", etc.
    *
    * @return  bool
@@ -218,7 +218,7 @@ class NavigationMenu implements Renderable {
 
   /**
    * Enable or disable level hints. Level hints are additional classes added
-   * to the \t &lt;ul&gt; element in order to distinguish between multiple 
+   * to the \t &lt;ul&gt; element in order to distinguish between multiple
    * levels. They are of the form "level0", "level1", etc.
    *
    * @param  bool  $hint

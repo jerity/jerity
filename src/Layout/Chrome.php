@@ -195,7 +195,7 @@ class Chrome extends AbstractTemplate {
   protected static $html_cc_wrap = null;
 
   /**
-   * Used when matching filenames of external resources for wrapping in 
+   * Used when matching filenames of external resources for wrapping in
    * Internet Explorer conditional comments.
    *
    * @var  string
@@ -204,7 +204,7 @@ class Chrome extends AbstractTemplate {
 
   /**
    * Whether to group linked resources that are wrapped in Internet Explorer
-   * conditional comments (true), or to only use priority sorting on resources 
+   * conditional comments (true), or to only use priority sorting on resources
    * (false).
    *
    * @var  boolean
@@ -565,16 +565,16 @@ class Chrome extends AbstractTemplate {
    * @see setExternalResourceGrouping()
    *
    * @param  string   $type   The type of script, or null for all scripts.
-   * @param  boolean  $group  Whether to group scripts by browser specific 
+   * @param  boolean  $group  Whether to group scripts by browser specific
    *                          information provided in filename.
    *
    * @return  array  The scripts for the current page.
    */
   public static function getScripts($type = RenderContext::CONTENT_JS, $group = false) {
-    # Check if there are any scripts of any type at all and if not return an 
+    # Check if there are any scripts of any type at all and if not return an
     # empty array.
     if (empty(self::$scripts)) return array();
-    # Check if there are any scripts of the specified type to retrieve and if 
+    # Check if there are any scripts of the specified type to retrieve and if
     # not return an empty array.
     if (!is_null($type) && empty(self::$scripts[$type])) return array();
     # Use either the entire script array, or just a specific type.
@@ -692,7 +692,7 @@ class Chrome extends AbstractTemplate {
    *
    * @see setExternalResourceGrouping()
    *
-   * @param  boolean  $group  Whether to group scripts by browser specific 
+   * @param  boolean  $group  Whether to group scripts by browser specific
    *                          information provided in filename.
    *
    * @return  array  The stylesheets for the current page.
@@ -765,7 +765,7 @@ class Chrome extends AbstractTemplate {
 
   /**
    * Appends/prepends one or more parts to the page title.  By default we
-   * prepend to the title because we want the most specific part at the 
+   * prepend to the title because we want the most specific part at the
    * beginning.
    *
    * @param  mixed  $part    Part(s) to add to the title.
@@ -1061,7 +1061,7 @@ class Chrome extends AbstractTemplate {
   }
 
   /**
-   * Renders the script tags that reference an external file, taking their 
+   * Renders the script tags that reference an external file, taking their
    * priorities and (optionally) groupings into account.
    */
   public static function outputExternalScriptTags() {
@@ -1146,12 +1146,12 @@ class Chrome extends AbstractTemplate {
   }
 
   /**
-   * Sorts the given array into groups by matching components of the filename.  
-   * The main purpose of this is to automatically group various styles or 
-   * scripts specific to Internet Explorer so that they can be wrapped in 
+   * Sorts the given array into groups by matching components of the filename.
+   * The main purpose of this is to automatically group various styles or
+   * scripts specific to Internet Explorer so that they can be wrapped in
    * conditional comments as a single block.
    *
-   * Groupings are ordered to be most general first, most specific last. The 
+   * Groupings are ordered to be most general first, most specific last. The
    * order of sorting is:
    *  - Scripts for all browsers
    *  - Scripts for any version of IE
@@ -1201,7 +1201,7 @@ class Chrome extends AbstractTemplate {
   }
 
   /**
-   * A helper function to output grouped external resources wrapped in the 
+   * A helper function to output grouped external resources wrapped in the
    * appropriate conditional comment for the group.
    *
    * @param  &array  $items  List of external resource links to be output.
@@ -1235,12 +1235,12 @@ class Chrome extends AbstractTemplate {
   }
 
   /**
-   * Outputs tags for external resources based on the type passed in.  If we 
-   * have a resource that should be grouped within conditional comments, then 
+   * Outputs tags for external resources based on the type passed in.  If we
+   * have a resource that should be grouped within conditional comments, then
    * the rendering is handed off to a helper function.
    *
    * @see outputGroupedExternalResources()
-   * 
+   *
    * @param  &array  $items  List of external resource groups to be output.
    * @param  strong  $type   Used to determine the tag function (style, script)
    */
