@@ -118,6 +118,13 @@ class Chrome extends AbstractTemplate {
   );
 
   /**
+   * HTTP response code.
+   *
+   * @var  int
+   */
+  protected static $response_code = 200;
+
+  /**
    * Store for HTTP headers.
    *
    * @var  array
@@ -336,6 +343,34 @@ class Chrome extends AbstractTemplate {
 
   ##############################################################################
   # chrome general settings management {{{
+
+  public static function setResponseCode($code) {
+    self::$response_code = $code;
+  }
+
+  public static function getResponseCode() {
+    return self::$response_code;
+  }
+
+  public static function getResponseCodeText($code = null) {
+    if ($code === null) {
+      $code = self::$response_code;
+    }
+    $responses = array(
+      200 => 'OK',
+      201 => 'Created',
+      400 => 'Bad Request',
+      401 => 'Authorization Required',
+      403 => 'Forbidden',
+      404 => 'Not Found',
+      500 => 'Internal Server Error',
+      501 => 'Not Implemented',
+    );
+    if (!isset($responses[$code])) {
+      throw new \InvalidArgumentException('Unrecognised HTTP response code: '.$code);
+    }
+    return $responses[$code];
+  }
 
   /**
    * Adds an HTTP header to the page which will be output when the Chrome is
@@ -941,10 +976,22 @@ class Chrome extends AbstractTemplate {
   }
 
   /**
+   * Output the HTTP response code header.
+   */
+  public static function outputResponseCode() {
+    header(implode(' ', array($_SERVER['SERVER_PROTOCOL'], self::getResponseCode(), self::getResponseCodeText())), true, self::getResponseCode());
+  }
+
+  /**
    * Outputs HTTP headers.  If the values are arrays, we automatically output
    * multiple times and do not replace the previous header.
    */
   public static function outputHeaders() {
+    # HTTP response code first
+    self::outputResponseCode();
+
+    header('Content-Type: ' . RenderContext::get()->getContentType());
+
     foreach (self::getHeaders() as $k => $v) {
       if (is_array($v)) {
         header("{$k}: {$v[0]}");
