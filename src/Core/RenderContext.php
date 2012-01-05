@@ -143,7 +143,7 @@ class RenderContext {
   protected $xhtml_1_0_compat = false;
 
   /**
-   * The character encoding with which to render content.  This is set to null 
+   * The character encoding with which to render content.  This is set to null
    * by default which indicates that no encoding should be explicitly set.
    *
    * @var  string|null
@@ -509,8 +509,8 @@ class RenderContext {
   }
 
   /**
-   * Sets a default character set to use when rendering.  If set to null then 
-   * no encoding will be explicitly set.  A valid IANA assigned character set 
+   * Sets a default character set to use when rendering.  If set to null then
+   * no encoding will be explicitly set.  A valid IANA assigned character set
    * must be used.
    *
    * @param  string | null  $charset  The character set to use.
