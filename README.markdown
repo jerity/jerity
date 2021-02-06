@@ -1,2 +1,0 @@
-Jerity - A PHP Framework
-========================
